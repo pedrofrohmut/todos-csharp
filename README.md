@@ -1,4 +1,4 @@
-# Todos AspNetCore 6
+# Todos CSharp
 
 Todos in csharp using TDD and AspNetCore 6.0.100
 

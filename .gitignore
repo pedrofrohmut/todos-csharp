@@ -1,0 +1,7 @@
+# CSharp/Dotnet build files
+**/bin/
+**/obj/
+
+# VIM
+*.swo
+*.swp

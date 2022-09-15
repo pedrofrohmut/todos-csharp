@@ -1,12 +1,8 @@
-using Todos.Api.Routes;
-
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors();
+builder.Services.AddControllers();
 
 var app = builder.Build();
-
-// Routes
-UsersRoutes.Map(app);
-TasksRoutes.Map(app);
-TodosRoutes.Map(app);
-
+app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.MapControllers();
 app.Run();

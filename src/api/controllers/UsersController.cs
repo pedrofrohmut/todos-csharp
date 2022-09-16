@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Todos.Core.Controllers;
+using Todos.Core.WebIO;
 using Todos.Core.Dtos;
 using Todos.Core.DataAccess;
 using Todos.Core.UseCases.Users;
@@ -9,12 +9,12 @@ using Todos.Services;
 namespace Todos.Api.Controllers;
 
 [Route("api/users")]
-public class UserApiController : ControllerBase
+public class UserController : ControllerBase
 {
     private readonly IConfiguration configuration;
     private readonly IConnectionManager connectionManager;
 
-    public UserApiController(IConfiguration configuration, IConnectionManager connectionManager)
+    public UserController(IConfiguration configuration, IConnectionManager connectionManager)
     {
         this.configuration = configuration;
         this.connectionManager = connectionManager;
@@ -23,7 +23,7 @@ public class UserApiController : ControllerBase
     [HttpPost]
     public ActionResult SignUp(CreateUserDto newUser)
     {
-        var adaptedRequest = new AdaptedRequest() {
+        var adaptedRequest = new WebRequestDto() {
             Body = newUser
         };
         var connection = this.connectionManager.GetConnection(this.configuration);
@@ -32,7 +32,7 @@ public class UserApiController : ControllerBase
         var signUpUseCase = new SignUpUseCase(userDataAccess, passwordService);
         try {
             this.connectionManager.OpenConnection(connection);
-            var response = new UsersController().SignUpUser(signUpUseCase, adaptedRequest);
+            var response = new UsersWebIO().SignUpUser(signUpUseCase, adaptedRequest);
             return new ObjectResult(response.Message) { StatusCode = response.Status };
         } catch (Exception e) {
             // This catch block should only catch unwanted exceptions
@@ -48,7 +48,7 @@ public class UserApiController : ControllerBase
     [HttpPost("signin")]
     public ActionResult SignIn(UserCredentialsDto credentials)
     {
-        // var adaptedRequest = new AdaptedRequest() {
+        // var adaptedRequest = new WebRequestDto() {
         //     Body = credentials
         // };
         // var controller = new UsersController();
@@ -68,7 +68,7 @@ public class UserApiController : ControllerBase
         // }        
         // // TODO: decode token to get authUserId
         // var authUserId = "userId1234";
-        // var adaptedRequest = new AdaptedRequest() {
+        // var adaptedRequest = new WebRequestDto() {
         //     AuthUserId = authUserId
         // };
         // var controller = new UsersController();

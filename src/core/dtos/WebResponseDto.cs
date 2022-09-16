@@ -1,6 +1,6 @@
 namespace Todos.Core.Dtos;
 
-public class ControllerResponseDto
+public class WebResponseDto
 {
     public object? Body { get; init; }
     public string Message { get; init; } = "";

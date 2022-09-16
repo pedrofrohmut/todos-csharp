@@ -1,6 +1,6 @@
 namespace Todos.Core.Dtos;
 
-public class AdaptedRequest
+public class WebRequestDto
 {
     public object? Body { get; init; }
     public string? AuthUserId { get; init; }

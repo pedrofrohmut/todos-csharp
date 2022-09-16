@@ -1,8 +1,9 @@
+using Todos.Api;
+
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddCors();
-builder.Services.AddControllers();
+AppBuilder.AddServices(builder);
 
 var app = builder.Build();
-app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-app.MapControllers();
+RequestPipeline.Configure(app);
+
 app.Run();

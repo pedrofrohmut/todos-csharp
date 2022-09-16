@@ -1,13 +1,14 @@
 using Todos.Core.Dtos;
+using Todos.Core.UseCases.Users;
 
 namespace Todos.Core.Controllers; 
 
 public class UsersController
 {
-    public ControllerResponseDto SignUpUser(AdaptedRequest req)
+    public ControllerResponseDto SignUpUser(ISignUpUseCase signUpUseCase, AdaptedRequest request)
     {
         return new ControllerResponseDto() {
-            Msg = "User created",
+            Message = "User created",
             Status = 201
         };
     }

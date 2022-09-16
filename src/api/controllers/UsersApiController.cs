@@ -10,7 +10,7 @@ public class UserApiController : ControllerBase
     [HttpPost]
     public ActionResult SignUp(CreateUserDto newUser)
     {
-        var adaptedRequest = new AdaptedRequest<CreateUserDto>() {
+        var adaptedRequest = new AdaptedRequest() {
             Body = newUser
         };
         var controller = new UsersController();
@@ -21,7 +21,7 @@ public class UserApiController : ControllerBase
     [HttpPost("signin")]
     public ActionResult SignIn(UserCredentialsDto credentials)
     {
-        var adaptedRequest = new AdaptedRequest<UserCredentialsDto>() {
+        var adaptedRequest = new AdaptedRequest() {
             Body = credentials
         };
         var controller = new UsersController();
@@ -39,7 +39,7 @@ public class UserApiController : ControllerBase
         }        
         // TODO: decode token to get authUserId
         var authUserId = "userId1234";
-        var adaptedRequest = new AdaptedRequest<object>() {
+        var adaptedRequest = new AdaptedRequest() {
             AuthUserId = authUserId
         };
         var controller = new UsersController();

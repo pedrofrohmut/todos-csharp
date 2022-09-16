@@ -4,25 +4,25 @@ namespace Todos.Core.Controllers;
 
 public class UsersController
 {
-    public ControllerResponseDto<string> SignUpUser(AdaptedRequest<CreateUserDto> req)
+    public ControllerResponseDto SignUpUser(AdaptedRequest req)
     {
-        return new ControllerResponseDto<string>() {
+        return new ControllerResponseDto() {
             Msg = "User created",
             Status = 201
         };
     }
 
-    public ControllerResponseDto<SignedUserDto> SignInUser(AdaptedRequest<UserCredentialsDto> req)
+    public ControllerResponseDto SignInUser(AdaptedRequest req)
     {
-        return new ControllerResponseDto<SignedUserDto>() {
+        return new ControllerResponseDto() {
             Body = new SignedUserDto(),
             Status = 200
         };
     }
 
-    public ControllerResponseDto<bool> Verify(AdaptedRequest<object> req)
+    public ControllerResponseDto Verify(AdaptedRequest req)
     {
-        return new ControllerResponseDto<bool>() {
+        return new ControllerResponseDto() {
             Body = true,
             Status = 200
         };

@@ -1,8 +1,8 @@
 namespace Todos.Core.Dtos;
 
-public class AdaptedRequest<T>
+public class AdaptedRequest
 {
-    public T? Body { get; init; }
+    public object? Body { get; init; }
     public string? AuthUserId { get; init; }
     public string? param { get; init; }
 }

@@ -1,8 +1,8 @@
 namespace Todos.Core.Dtos;
 
-public class ControllerResponseDto<T>
+public class ControllerResponseDto
 {
-    public T? Body { get; init; }
+    public object? Body { get; init; }
     public string Msg { get; init; } = "";
     public int Status { get; init; }
 }

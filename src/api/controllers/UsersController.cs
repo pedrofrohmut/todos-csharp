@@ -9,24 +9,22 @@ using Todos.Services;
 namespace Todos.Api.Controllers;
 
 [Route("api/users")]
-public class UserController : ControllerBase
+public class UserController
 {
-    private readonly IConfiguration configuration;
     private readonly IConnectionManager connectionManager;
 
-    public UserController(IConfiguration configuration, IConnectionManager connectionManager)
+    public UserController(IConnectionManager connectionManager)
     {
-        this.configuration = configuration;
         this.connectionManager = connectionManager;
     }
 
     [HttpPost]
-    public ActionResult SignUp(CreateUserDto newUser)
+    public ActionResult SignUp([FromBody] CreateUserDto newUser)
     {
         var adaptedRequest = new WebRequestDto() {
             Body = newUser
         };
-        var connection = this.connectionManager.GetConnection(this.configuration);
+        var connection = this.connectionManager.GetConnection();
         var userDataAccess = new UserDataAccess(connection);
         var passwordService = new PasswordService();
         var signUpUseCase = new SignUpUseCase(userDataAccess, passwordService);
@@ -36,7 +34,7 @@ public class UserController : ControllerBase
             return new ObjectResult(response.Message) { StatusCode = response.Status };
         } catch (Exception e) {
             // This catch block should only catch unwanted exceptions
-            Console.WriteLine("ERROR => UserApiController::SignUp " + e.Message);
+            Console.WriteLine("ERROR => UserApiController::SignUp: " + e.Message);
             Console.WriteLine(e.StackTrace);
             return new ObjectResult("Server Error") { StatusCode = 500 };
         } finally {
@@ -56,7 +54,7 @@ public class UserController : ControllerBase
         // return new ObjectResult(res.Message == "" ? res.Body : res.Msg) { 
         //     StatusCode = res.Status 
         // };
-        return Ok();
+        return new ObjectResult("") { StatusCode = 200 };
     }
 
     // TODO:
@@ -76,6 +74,6 @@ public class UserController : ControllerBase
         // return new ObjectResult(res.Message == "" ? res.Body : res.Msg) {
         //     StatusCode = res.Status
         // };
-        return Ok();
+        return new ObjectResult("") { StatusCode = 200 };
     }
 }

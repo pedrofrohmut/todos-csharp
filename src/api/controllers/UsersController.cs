@@ -11,26 +11,26 @@ namespace Todos.Api.Controllers;
 [Route("api/users")]
 public class UserController
 {
+    private readonly IConfiguration configuration;
     private readonly IConnectionManager connectionManager;
 
-    public UserController(IConnectionManager connectionManager)
+    public UserController(IConfiguration configuration, IConnectionManager connectionManager)
     {
+        this.configuration = configuration;
         this.connectionManager = connectionManager;
     }
 
     [HttpPost]
     public ActionResult SignUp([FromBody] CreateUserDto newUser)
     {
-        var adaptedRequest = new WebRequestDto() {
-            Body = newUser
-        };
-        var connection = this.connectionManager.GetConnection();
+        var webRequest = new WebRequestDto() { Body = newUser };
+        var connection = this.connectionManager.GetConnection(this.configuration);
         var userDataAccess = new UserDataAccess(connection);
         var passwordService = new PasswordService();
         var signUpUseCase = new SignUpUseCase(userDataAccess, passwordService);
         try {
             this.connectionManager.OpenConnection(connection);
-            var response = new UsersWebIO().SignUpUser(signUpUseCase, adaptedRequest);
+            var response = new UsersWebIO().SignUpUser(signUpUseCase, webRequest);
             return new ObjectResult(response.Message) { StatusCode = response.Status };
         } catch (Exception e) {
             // This catch block should only catch unwanted exceptions
@@ -42,19 +42,28 @@ public class UserController
         }
     }
 
-    // TODO:
     [HttpPost("signin")]
-    public ActionResult SignIn(UserCredentialsDto credentials)
+    public ActionResult SignIn([FromBody] UserCredentialsDto credentials)
     {
-        // var adaptedRequest = new WebRequestDto() {
-        //     Body = credentials
-        // };
-        // var controller = new UsersController();
-        // var res = controller.SignInUser(adaptedRequest);
-        // return new ObjectResult(res.Message == "" ? res.Body : res.Msg) { 
-        //     StatusCode = res.Status 
-        // };
-        return new ObjectResult("") { StatusCode = 200 };
+        var webRequest = new WebRequestDto() { Body = credentials };
+        var connection = this.connectionManager.GetConnection(this.configuration);
+        var userDataAccess = new UserDataAccess(connection);
+        var passwordService = new PasswordService();
+        var tokenService = new TokenService(this.configuration["jwtSecret"]);
+        var signInUseCase = new SignInUseCase(userDataAccess, passwordService, tokenService);
+        try {
+            this.connectionManager.OpenConnection(connection);
+            var response = new UsersWebIO().SignInUser(signInUseCase, webRequest);
+            var responseValue = response.Message != "" ? response.Message : response.Body;
+            return new ObjectResult(responseValue) { StatusCode = response.Status };
+        } catch (Exception e) {
+            // This catch block should only catch unwanted exceptions
+            Console.WriteLine("ERROR => UserApiController::SignIn: " + e.Message);
+            Console.WriteLine(e.StackTrace);
+            return new ObjectResult("Server Error") { StatusCode = 500 };
+        } finally {
+            this.connectionManager.CloseConnection(connection);
+        }
     }
 
     // TODO:

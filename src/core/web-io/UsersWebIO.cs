@@ -11,21 +11,31 @@ public class UsersWebIO
         try {
             signUpUseCase.Execute((CreateUserDto) request.Body!);
             return new WebResponseDto() { Message = "User created", Status = 201 };
-        } catch (InvalidUserException e) {
-            return new WebResponseDto() { Message = e.Message, Status = 400 };
-        } catch (EmailAlreadyTakenException e) {
-            return new WebResponseDto() { Message = e.Message, Status = 400 };
+        } catch (Exception e) {
+            if (e is InvalidUserException || e is EmailAlreadyTakenException) {
+                return new WebResponseDto() { Message = e.Message, Status = 400 };
+            }
+            throw;
         }
     }
 
-    public WebResponseDto SignInUser(WebRequestDto req)
+    public WebResponseDto SignInUser(ISignInUseCase signInUseCase, WebRequestDto req)
     {
-        return new WebResponseDto() {
-            Body = new SignedUserDto(),
-            Status = 200
-        };
+        try {
+            var signedUser = signInUseCase.Execute((UserCredentialsDto) req.Body!);
+            return new WebResponseDto() { Body = signedUser, Status = 200 };
+        } catch (Exception e) {
+            if (e is InvalidUserException || 
+                e is UserNotFoundException || 
+                e is PasswordAndHashNotMatchException) 
+            {
+                return new WebResponseDto() { Message = e.Message, Status = 400 };
+            }
+            throw;
+        }
     }
 
+    // TODO:
     public WebResponseDto Verify(WebRequestDto req)
     {
         return new WebResponseDto() {

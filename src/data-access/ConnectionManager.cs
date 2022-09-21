@@ -7,17 +7,10 @@ namespace Todos.DataAccess;
 
 public class ConnectionManager : IConnectionManager
 {
-    private readonly IConfiguration configuration;
-
-    public ConnectionManager(IConfiguration configuration)
+    public IDbConnection GetConnection(IConfiguration configuration)
     {
-        this.configuration = configuration;
-    }
-   
-    public IDbConnection GetConnection()
-    {
-        var username = this.configuration["username"];
-        var password = this.configuration["password"];
+        var username = configuration["username"];
+        var password = configuration["password"];
         var connection_string = $"Host=localhost; Username={username};" + 
                                 $"Password={password}; Database=todos_csharp";
         return new NpgsqlConnection(connection_string);

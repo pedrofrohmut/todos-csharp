@@ -35,12 +35,16 @@ public class UsersWebIO
         }
     }
 
-    // TODO:
-    public WebResponseDto Verify(WebRequestDto req)
+    public WebResponseDto VerifyUser(IVerifyUserUseCase verifyUserUseCase, WebRequestDto req)
     {
-        return new WebResponseDto() {
-            Body = true,
-            Status = 200
-        };
+        try {
+            verifyUserUseCase.Execute(req.AuthUserId!);
+            return new WebResponseDto() { Body = true, Status = 200 };
+        } catch (Exception e) {
+            if (e is InvalidUserException || e is UserNotFoundException) {
+                return new WebResponseDto() { Message = e.Message, Status = 400 };
+            }
+            throw;
+        }
     }
 }

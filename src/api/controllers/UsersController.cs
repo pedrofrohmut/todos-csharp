@@ -9,7 +9,7 @@ using Todos.Services;
 namespace Todos.Api.Controllers;
 
 [Route("api/users")]
-public class UserController
+public class UserController : ControllerBase
 {
     private readonly IConfiguration configuration;
     private readonly IConnectionManager connectionManager;
@@ -66,23 +66,32 @@ public class UserController
         }
     }
 
-    // TODO:
     [HttpGet("verify")]
     public ActionResult Verify()
     {
-        // if (Request.Headers.TryGetValue("Authorization", out var auth)) {
-        //     var token = auth.ToString().Split(" ")[1];
-        // }        
-        // // TODO: decode token to get authUserId
-        // var authUserId = "userId1234";
-        // var adaptedRequest = new WebRequestDto() {
-        //     AuthUserId = authUserId
-        // };
-        // var controller = new UsersController();
-        // var res = controller.Verify(adaptedRequest);
-        // return new ObjectResult(res.Message == "" ? res.Body : res.Msg) {
-        //     StatusCode = res.Status
-        // };
-        return new ObjectResult("") { StatusCode = 200 };
+        var tokenService = new TokenService(this.configuration["jwtSecret"]);
+        string authUserId = "";
+        try {
+            authUserId = ControllerUtils.GetUserIdFromToken(Request, tokenService);
+        } catch (ArgumentException) {
+            return new ObjectResult(false) { StatusCode = 200 };
+        }
+        var webRequest = new WebRequestDto() { AuthUserId = authUserId };
+        var connection = this.connectionManager.GetConnection(this.configuration);
+        var userDataAccess = new UserDataAccess(connection);
+        var verifyUserUseCase = new VerifyUserUseCase(userDataAccess);
+        try {
+            this.connectionManager.OpenConnection(connection);
+            var response = new UsersWebIO().VerifyUser(verifyUserUseCase, webRequest);
+            var responseValue = response.Message != "" ? response.Message : response.Body;
+            return new ObjectResult(responseValue) { StatusCode = response.Status };
+        } catch (Exception e) {
+            // This catch block should only catch unwanted exceptions
+            Console.WriteLine("ERROR => UserApiController::SignIn: " + e.Message);
+            Console.WriteLine(e.StackTrace);
+            return new ObjectResult("Server Error") { StatusCode = 500 };
+        } finally {
+            this.connectionManager.CloseConnection(connection);
+        }
     }
 }

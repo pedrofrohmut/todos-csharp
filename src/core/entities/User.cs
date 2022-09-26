@@ -6,6 +6,14 @@ namespace Todos.Core.Entities;
 
 public class User
 {
+    public static void ValidateId(string id)
+    {
+        var canBeParsed = Guid.TryParse(id, out var output);
+        if (! canBeParsed) {
+            throw new InvalidUserException("User id is not a valid Guid");
+        }
+    }
+    
     public static void ValidateName(string name)
     {
         if (String.IsNullOrWhiteSpace(name)) {

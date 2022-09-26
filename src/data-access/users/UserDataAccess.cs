@@ -38,4 +38,19 @@ public class UserDataAccess : IUserDataAccess
         };
         return user;
     }
+
+    public UserDbDto? FindUserById(string userId)
+    {
+        var sql = @"SELECT * FROM app.users WHERE id = @id";
+        var row = this.connection.Query(sql, new { id = Guid.Parse(userId) })
+                                 .SingleOrDefault();
+        if (row == null) return null;
+        var user = new UserDbDto() {
+            Id = row.id.ToString(),
+            Name = row.name,
+            Email = row.email,
+            PasswordHash = row.password_hash
+        };
+        return user;
+    }
 }

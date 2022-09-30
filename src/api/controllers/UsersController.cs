@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+
 using Todos.Core.WebIO;
 using Todos.Core.Dtos;
 using Todos.Core.DataAccess;
 using Todos.Core.UseCases.Users;
-using Todos.DataAccess.Users;
+using Todos.DataAccess;
 using Todos.Services;
 
 namespace Todos.Api.Controllers;
@@ -34,7 +35,7 @@ public class UserController : ControllerBase
             return new ObjectResult(response.Message) { StatusCode = response.Status };
         } catch (Exception e) {
             // This catch block should only catch unwanted exceptions
-            Console.WriteLine("ERROR => UserApiController::SignUp: " + e.Message);
+            Console.WriteLine("ERROR => UsersController::SignUp: " + e.Message);
             Console.WriteLine(e.StackTrace);
             return new ObjectResult("Server Error") { StatusCode = 500 };
         } finally {
@@ -58,7 +59,7 @@ public class UserController : ControllerBase
             return new ObjectResult(responseValue) { StatusCode = response.Status };
         } catch (Exception e) {
             // This catch block should only catch unwanted exceptions
-            Console.WriteLine("ERROR => UserApiController::SignIn: " + e.Message);
+            Console.WriteLine("ERROR => UsersController::SignIn: " + e.Message);
             Console.WriteLine(e.StackTrace);
             return new ObjectResult("Server Error") { StatusCode = 500 };
         } finally {
@@ -87,7 +88,7 @@ public class UserController : ControllerBase
             return new ObjectResult(responseValue) { StatusCode = response.Status };
         } catch (Exception e) {
             // This catch block should only catch unwanted exceptions
-            Console.WriteLine("ERROR => UserApiController::SignIn: " + e.Message);
+            Console.WriteLine("ERROR => UsersController::Verify: " + e.Message);
             Console.WriteLine(e.StackTrace);
             return new ObjectResult("Server Error") { StatusCode = 500 };
         } finally {

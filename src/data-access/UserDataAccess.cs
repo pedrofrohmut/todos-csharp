@@ -3,7 +3,7 @@ using Dapper;
 using Todos.Core.DataAccess;
 using Todos.Core.Dtos;
 
-namespace Todos.DataAccess.Users;
+namespace Todos.DataAccess;
 
 public class UserDataAccess : IUserDataAccess
 {

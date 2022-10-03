@@ -21,4 +21,20 @@ public class TasksWebIO
             throw;
         }
     }
+
+    public WebResponseDto Delete(IDeleteTaskUseCase deleteTaskUseCase, WebRequestDto request)
+    {
+        try {
+            deleteTaskUseCase.Execute(request.Param!, request.AuthUserId!);
+            return new WebResponseDto() { Message = "", Status = 204 };
+        } catch (Exception e) {
+            if (e is InvalidUserException ||
+                e is InvalidTaskException ||
+                e is UserNotFoundException)
+            {
+                return new WebResponseDto() { Message = e.Message, Status = 400 };
+            }
+            throw;
+        }
+    }
 }

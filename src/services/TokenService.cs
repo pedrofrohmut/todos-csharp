@@ -16,7 +16,6 @@ public class TokenService : ITokenService
         this.jwtSecret = jwtSecret;
     }
 
-
     public string GenerateToken(string userId)
     {
         var subject = new ClaimsIdentity(new Claim[] {

@@ -5,3 +5,6 @@
 # VIM
 *.swo
 *.swp
+
+# Emacs
+.cache/

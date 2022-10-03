@@ -24,4 +24,10 @@ public class TaskDataAccess : ITaskDataAccess
             @userId = Guid.Parse(userId)
         });
     }
+
+    public void Delete(string taskId)
+    {
+        var sql = "DELETE FROM app.tasks WHERE id = @taskId";
+        this.connection.Query(sql, new { @taskId = Guid.Parse(taskId) });
+    }
 }

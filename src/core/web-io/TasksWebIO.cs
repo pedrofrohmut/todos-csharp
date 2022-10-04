@@ -37,4 +37,20 @@ public class TasksWebIO
             throw;
         }
     }
+
+    public WebResponseDto FindById(IFindTaskByIdUseCase findTaskByIdUseCase, WebRequestDto request)
+    {
+        try {
+            var foundTask = findTaskByIdUseCase.Execute(request.Param!, request.AuthUserId!);
+            return new WebResponseDto() { Body = foundTask, Status = 200 };
+        } catch (Exception e) {
+            if (e is InvalidUserException ||
+                e is InvalidTaskException ||
+                e is UserNotFoundException)
+            {
+                return new WebResponseDto() { Message = e.Message, Status = 400 };
+            }
+            throw;
+        }
+    }
 }

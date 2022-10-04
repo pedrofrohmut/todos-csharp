@@ -30,4 +30,19 @@ public class TaskDataAccess : ITaskDataAccess
         var sql = "DELETE FROM app.tasks WHERE id = @taskId";
         this.connection.Query(sql, new { @taskId = Guid.Parse(taskId) });
     }
+
+    public TaskDbDto? FindById(string taskId)
+    {
+        var sql = "SELECT * FROM app.tasks WHERE id = @taskId";
+        var row = this.connection.Query(sql, new { @taskId = Guid.Parse(taskId) })
+                                 .SingleOrDefault();
+        if (row == null) return null;
+        var task = new TaskDbDto() {
+            Id = row.id.ToString(),
+            Name = row.name,
+            Description = row.description,
+            UserId = row.user_id.ToString()
+        };
+        return task;
+    }
 }

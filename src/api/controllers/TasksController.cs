@@ -93,7 +93,34 @@ public class TasksController : ControllerBase
             var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
             var response = new TasksWebIO().FindById(findTaskByIdUseCase, webRequest);
             var responseValue = response.Message != "" ? response.Message : response.Body;
-            return new ObjectResult(responseValue) { StatusCode = 200 };
+            return new ObjectResult(responseValue) { StatusCode = response.Status };
+        } catch (InvalidRequestAuthException e) {
+            return new ObjectResult(e.Message) { StatusCode = 401 };
+        } catch (Exception e) {
+            // This catch block should only catch unwanted exceptions
+            Console.WriteLine("ERROR => TasksController::Create: " + e.Message);
+            Console.WriteLine(e.StackTrace);
+            return new ObjectResult("Server Error") { StatusCode = 500 };
+        } finally {
+            this.connectionManager.CloseConnection(connection);
+        }
+    }
+
+    [HttpGet]
+    public ActionResult FindByUserId()
+    {
+        var tokenService = new TokenService(this.configuration["jwtSecret"]);
+        var connection = this.connectionManager.GetConnection(this.configuration);
+        var userDataAccess = new UserDataAccess(connection);
+        var taskDataAccess = new TaskDataAccess(connection);
+        var findTasksByUserIdUseCase = new FindTasksByUserIdUseCase(userDataAccess, taskDataAccess);
+        try {
+            this.connectionManager.OpenConnection(connection);
+            var authUserId = ControllerUtils.GetUserIdFromRequest(Request, tokenService);
+            var webRequest = new WebRequestDto() { AuthUserId = authUserId };
+            var response = new TasksWebIO().FindByUserId(findTasksByUserIdUseCase, webRequest);
+            var responseValue = response.Message != "" ? response.Message : response.Body;
+            return new ObjectResult(responseValue) { StatusCode = response.Status };
         } catch (InvalidRequestAuthException e) {
             return new ObjectResult(e.Message) { StatusCode = 401 };
         } catch (Exception e) {

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Todos.Core.Dtos;
 using Todos.Core.Exceptions;
 using Todos.Core.UseCases.Tasks;
@@ -38,11 +39,34 @@ public class TasksWebIO
         }
     }
 
+    // TODO: check what to do when task not found
     public WebResponseDto FindById(IFindTaskByIdUseCase findTaskByIdUseCase, WebRequestDto request)
     {
         try {
             var foundTask = findTaskByIdUseCase.Execute(request.Param!, request.AuthUserId!);
             return new WebResponseDto() { Body = foundTask, Status = 200 };
+        } catch (Exception e) {
+            if (e is InvalidUserException ||
+                e is InvalidTaskException ||
+                e is UserNotFoundException)
+            {
+                return new WebResponseDto() { Message = e.Message, Status = 400 };
+            }
+            if (e is TaskNotFoundException) {
+                return new WebResponseDto() { Message = "", Status = 204 };
+            }
+            throw;
+        }
+    }
+
+    public WebResponseDto FindByUserId(IFindTasksByUserIdUseCase findTasksByUserIdUseCase, WebRequestDto request)
+    {
+        try {
+            var tasks = findTasksByUserIdUseCase.Execute(request.AuthUserId!);
+            if (tasks.ToList().Count == 0) {
+                return new WebResponseDto() { Message = "",  Status = 204 };
+            }
+            return new WebResponseDto() { Body = tasks,  Status = 200 };
         } catch (Exception e) {
             if (e is InvalidUserException ||
                 e is InvalidTaskException ||

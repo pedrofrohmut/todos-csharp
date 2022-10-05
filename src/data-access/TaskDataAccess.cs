@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Data;
 using Dapper;
 using Todos.Core.DataAccess;
@@ -44,5 +45,20 @@ public class TaskDataAccess : ITaskDataAccess
             UserId = row.user_id.ToString()
         };
         return task;
+    }
+
+    public IEnumerable<TaskDbDto> FindByUserId(string userId)
+    {
+        var sql = "SELECT * FROM app.tasks WHERE user_id = @userId";
+        var rows = this.connection.Query(sql, new { @userId = Guid.Parse(userId) })
+                                  .ToList();
+        if (rows == null) return new List<TaskDbDto>();
+        var tasks = rows.Select(row => new TaskDbDto() {
+            Id = row.id.ToString(),
+            Name = row.name,
+            Description = row.description,
+            UserId = row.user_id.ToString()
+        });
+        return tasks;
     }
 }

@@ -63,7 +63,7 @@ public class TasksWebIO
     {
         try {
             var tasks = findTasksByUserIdUseCase.Execute(request.AuthUserId!);
-            if (tasks.ToList().Count == 0) {
+            if (tasks.Count == 0) {
                 return new WebResponseDto() { Message = "",  Status = 204 };
             }
             return new WebResponseDto() { Body = tasks,  Status = 200 };

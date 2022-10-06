@@ -47,7 +47,7 @@ public class TaskDataAccess : ITaskDataAccess
         return task;
     }
 
-    public IEnumerable<TaskDbDto> FindByUserId(string userId)
+    public List<TaskDbDto> FindByUserId(string userId)
     {
         var sql = "SELECT * FROM app.tasks WHERE user_id = @userId";
         var rows = this.connection.Query(sql, new { @userId = Guid.Parse(userId) })
@@ -59,6 +59,6 @@ public class TaskDataAccess : ITaskDataAccess
             Description = row.description,
             UserId = row.user_id.ToString()
         });
-        return tasks;
+        return tasks.ToList();
     }
 }

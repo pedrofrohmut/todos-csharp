@@ -16,7 +16,7 @@ public class FindTasksByUserIdUseCase : IFindTasksByUserIdUseCase
         this.taskDataAccess = taskDataAccess;
     }
 
-    public IEnumerable<TaskDto> Execute(string authUserId)
+    public List<TaskDto> Execute(string authUserId)
     {
         this.ValidateUserId(authUserId);
         this.CheckUserExists(authUserId);
@@ -38,20 +38,16 @@ public class FindTasksByUserIdUseCase : IFindTasksByUserIdUseCase
         }
     }
 
-    private IEnumerable<TaskDbDto> FindTasksByUserId(string authUserId)
-    {
-        var tasks = this.taskDataAccess.FindByUserId(authUserId);
-        return tasks;
-    }
+    private List<TaskDbDto> FindTasksByUserId(string authUserId) =>
+        this.taskDataAccess.FindByUserId(authUserId).ToList();
 
-    private IEnumerable<TaskDto> MapTasksDbToTasks(IEnumerable<TaskDbDto> tasksDb)
-    {
-        var tasks = tasksDb.Select(task => new TaskDto() {
-            Id = task.Id,
-            Name = task.Name,
-            Description = task.Description,
-            UserId = task.UserId
-        });
-        return tasks;
-    }
+    private List<TaskDto> MapTasksDbToTasks(List<TaskDbDto> tasksDb) =>
+        tasksDb
+            .Select(task => new TaskDto() {
+                Id = task.Id,
+                Name = task.Name,
+                Description = task.Description,
+                UserId = task.UserId
+            })
+            .ToList();
 }

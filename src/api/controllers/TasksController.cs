@@ -132,4 +132,34 @@ public class TasksController : ControllerBase
             this.connectionManager.CloseConnection(connection);
         }
     }
+
+    [HttpPut("{id}")]
+    public ActionResult UpdateTask(string id, [FromBody] UpdateTaskDto updatedTask)
+    {
+        var tokenService = new TokenService(this.configuration["jwtSecret"]);
+        var connection = this.connectionManager.GetConnection(this.configuration);
+        var userDataAccess = new UserDataAccess(connection);
+        var taskDataAccess = new TaskDataAccess(connection);
+        var updateTaskUseCase = new UpdateTaskUseCase(userDataAccess, taskDataAccess);
+        try {
+            this.connectionManager.OpenConnection(connection);
+            var authUserId = ControllerUtils.GetUserIdFromRequest(Request, tokenService);
+            var webRequest = new WebRequestDto() {
+                Param = id,
+                Body = updatedTask,
+                AuthUserId = authUserId
+            };
+            var response = new TasksWebIO().Update(updateTaskUseCase, webRequest);
+            return new ObjectResult(response.Message) { StatusCode = response.Status };
+        } catch (InvalidRequestAuthException e) {
+            return new ObjectResult(e.Message) { StatusCode = 401 };
+        } catch (Exception e) {
+            // This catch block should only catch unwanted exceptions
+            Console.WriteLine("ERROR => TasksController::Create: " + e.Message);
+            Console.WriteLine(e.StackTrace);
+            return new ObjectResult("Server Error") { StatusCode = 500 };
+        } finally {
+            this.connectionManager.CloseConnection(connection);
+        }
+    }
 }

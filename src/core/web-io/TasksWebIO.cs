@@ -77,4 +77,27 @@ public class TasksWebIO
             throw;
         }
     }
+
+    public WebResponseDto Update(IUpdateTaskUseCase updateTaskUseCase, WebRequestDto request)
+    {
+        try {
+            var body = (UpdateTaskDto) request.Body!;
+            var updatedTask = new UpdateTaskDto() {
+                Id = request.Param!,
+                Name = body.Name,
+                Description = body.Description
+            };
+            updateTaskUseCase.Execute(updatedTask, request.AuthUserId!);
+            return new WebResponseDto() { Message = "", Status = 204 };
+        } catch (Exception e) {
+            if (e is InvalidUserException ||
+                e is InvalidTaskException ||
+                e is UserNotFoundException ||
+                e is TaskNotFoundException)
+            {
+                return new WebResponseDto() { Message = e.Message, Status = 400 };
+            }
+            throw;
+        }
+    }
 }

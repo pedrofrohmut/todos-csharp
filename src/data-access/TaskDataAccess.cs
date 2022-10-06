@@ -61,4 +61,14 @@ public class TaskDataAccess : ITaskDataAccess
         });
         return tasks.ToList();
     }
+
+    public void Update(UpdateTaskDto updatedTask)
+    {
+        var sql = "UPDATE app.tasks SET name = @name, description = @description WHERE id = @id";
+        this.connection.Query(sql, new {
+            @name = updatedTask.Name,
+            @description = updatedTask.Description,
+            @id = Guid.Parse(updatedTask.Id)
+        });
+    }
 }

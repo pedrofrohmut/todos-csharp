@@ -8,4 +8,5 @@ public interface ITaskDataAccess
     void Delete(string taskId);
     TaskDbDto? FindById(string taskId);
     List<TaskDbDto> FindByUserId(string userId);
+    void Update(UpdateTaskDto updatedTask);
 }

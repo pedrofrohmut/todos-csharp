@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Todos.Core.Dtos;
 using Todos.Core.Exceptions;
 using Todos.Core.UseCases.Tasks;

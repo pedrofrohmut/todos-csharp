@@ -26,8 +26,8 @@ public class CreateTaskUseCase : ICreateTaskUseCase
 
     private void ValidateNewTask(CreateTaskDto newTask)
     {
-        Todos.Core.Entities.Task.ValidateName(newTask.Name);
-        Todos.Core.Entities.Task.ValidateDescription(newTask.Description);
+        Entities.Task.ValidateName(newTask.Name);
+        Entities.Task.ValidateDescription(newTask.Description);
     }
 
     private void ValidateAuthUserId(string authUserId)

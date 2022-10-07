@@ -27,9 +27,9 @@ public class UpdateTaskUseCase : IUpdateTaskUseCase
 
     private void ValidateTask(UpdateTaskDto updatedTask)
     {
-        Todos.Core.Entities.Task.ValidateId(updatedTask.Id);
-        Todos.Core.Entities.Task.ValidateName(updatedTask.Name);
-        Todos.Core.Entities.Task.ValidateDescription(updatedTask.Description);
+        Entities.Task.ValidateId(updatedTask.Id);
+        Entities.Task.ValidateName(updatedTask.Name);
+        Entities.Task.ValidateDescription(updatedTask.Description);
     }
 
     private void ValidateUserId(string authUserId)

@@ -28,7 +28,7 @@ public class FindTaskByIdUseCase : IFindTaskByIdUseCase
 
     private void ValidateTaskId(string taskId)
     {
-        Todos.Core.Entities.Task.ValidateId(taskId);
+        Entities.Task.ValidateId(taskId);
     }
 
     private void ValidateUserId(string authUserId)

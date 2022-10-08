@@ -26,4 +26,22 @@ public class TodoDataAccess : ITodoDataAccess
             @userId = Guid.Parse(userId)
         });
     }
+
+    public List<TodoDbDto> FindByTaskId(string taskId)
+    {
+        var sql = "SELECT * FROM app.todos WHERE task_id = @taskId";
+        var rows = this.connection.Query(sql, new { @taskId = Guid.Parse(taskId) });
+        if (rows == null) return new List<TodoDbDto>();
+        var todos = rows
+            .Select(row => new TodoDbDto() {
+                Id = row.id.ToString(),
+                Name = row.name,
+                Description = row.description,
+                IsDone = row.is_done,
+                TaskId = row.task_id.ToString(),
+                UserId = row.user_id.ToString()
+            })
+            .ToList();
+        return todos;
+    }
 }

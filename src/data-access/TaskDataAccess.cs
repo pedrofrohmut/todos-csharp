@@ -53,13 +53,14 @@ public class TaskDataAccess : ITaskDataAccess
         var rows = this.connection.Query(sql, new { @userId = Guid.Parse(userId) })
                                   .ToList();
         if (rows == null) return new List<TaskDbDto>();
-        var tasks = rows.Select(row => new TaskDbDto() {
-            Id = row.id.ToString(),
-            Name = row.name,
-            Description = row.description,
-            UserId = row.user_id.ToString()
-        });
-        return tasks.ToList();
+        var tasks = rows
+            .Select(row => new TaskDbDto() {
+                Id = row.id.ToString(),
+                Name = row.name,
+                Description = row.description,
+                UserId = row.user_id.ToString()
+            }).ToList();
+        return tasks;
     }
 
     public void Update(UpdateTaskDto updatedTask)

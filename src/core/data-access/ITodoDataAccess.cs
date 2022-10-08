@@ -5,4 +5,5 @@ namespace Todos.Core.DataAccess;
 public interface ITodoDataAccess
 {
     void Create(CreateTodoDto newTodo, string userId);
+    List<TodoDbDto> FindByTaskId(string taskId);
 }

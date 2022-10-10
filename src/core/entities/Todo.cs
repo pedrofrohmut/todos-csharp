@@ -4,6 +4,13 @@ namespace Todos.Core.Entities;
 
 public class Todo
 {
+    public static void ValidateId(string id)
+    {
+        var canBeParsed = Guid.TryParse(id, out var output);
+        if (! canBeParsed) {
+            throw new InvalidTodoException("Todo id is not a valid Guid");
+        }
+    }
     
     public static void ValidateName(string name)
     {

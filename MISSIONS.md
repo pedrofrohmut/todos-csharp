@@ -6,7 +6,7 @@
 - [x] (06/10/2022) Add feature for task update
 - [x] (07/10/2022) Feature for create todo
 - [x] (08/10/2022) Feature Find Todos By Task Id
-- [ ] (08/10/2022) Feature Find Todo By Id
+- [x] (08/10/2022) Feature Find Todo By Id
 
 
 ## Future Nice to Have:
@@ -16,3 +16,5 @@ resource's userId
 - [ ] (07/10/2022) [Refactor] Change the names in IUserDataAccess and UserDataAccess
 - [ ] (08/10/2022) [Fix] Discover how to make stupid csharp framework give 404 for route not found, 
 as any normal framework should, instead of 405 for some reason.
+- [ ] (10/10/2022) [Refactor] Change TodoDbDto, TaskDbDto and UserDbDto from string IDs to Guid so you
+can use it in Query and not use dynamic objects with dapper anymore.

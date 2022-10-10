@@ -44,4 +44,21 @@ public class TodoDataAccess : ITodoDataAccess
             .ToList();
         return todos;
     }
+
+    public TodoDbDto? FindById(string todoId)
+    {
+        var sql = "SELECT * FROM app.todos WHERE id = @todoId";
+        var row = this.connection.Query(sql, new { @todoId = Guid.Parse(todoId) })
+                                 .FirstOrDefault();
+        if (row == null) return null;
+        var todo = new TodoDbDto() {
+            Id = row.id.ToString(),
+            Name = row.name,
+            Description = row.description,
+            IsDone = row.is_done,
+            TaskId = row.task_id.ToString(),
+            UserId = row.user_id.ToString()
+        };
+        return todo;
+    }
 }

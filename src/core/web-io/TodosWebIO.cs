@@ -46,4 +46,24 @@ public class TodosWebIO
             throw;
         }
     }
+
+    public WebResponseDto FindById(IFindTodoByIdUseCase findTodoByIdUseCase, WebRequestDto request)
+    {
+        try {
+            var todo = findTodoByIdUseCase.Execute(request.Param!, request.AuthUserId!);
+            return new WebResponseDto() { Body = todo, Status = 200 };
+        } catch (Exception e) {
+            if (e is TodoNotFoundException) {
+                return new WebResponseDto() { Message = "", Status = 204 };
+            }
+            if (e is InvalidUserException ||
+                e is InvalidTaskException ||
+                e is InvalidTodoException ||
+                e is UserNotFoundException)
+            {
+                return new WebResponseDto() { Message = e.Message, Status = 400 };
+            }
+            throw;
+        }
+    }
 }

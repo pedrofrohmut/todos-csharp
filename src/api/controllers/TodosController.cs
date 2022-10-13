@@ -132,4 +132,30 @@ public class TodosController : ControllerBase
             this.connectionManager.CloseConnection(connection);
         }
     }
+
+    [HttpPatch("setnotdone/{id}")]
+    public ActionResult SetNotDone(string id)
+    {
+        var tokenService = new TokenService(this.configuration["jwtSecret"]);
+        var connection = this.connectionManager.GetConnection(this.configuration);
+        var userDataAccess = new UserDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var setTodoNotDoneUseCase = new SetTodoNotDoneUseCase(userDataAccess, todoDataAccess);
+        try {
+            this.connectionManager.OpenConnection(connection);
+            var authUserId = ControllerUtils.GetUserIdFromRequest(Request, tokenService);
+            var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
+            var response = new TodosWebIO().SetNotDone(setTodoNotDoneUseCase, webRequest);
+            return new ObjectResult(response.Message) { StatusCode = response.Status };
+        } catch (InvalidRequestAuthException e) {
+            return new ObjectResult(e.Message) { StatusCode = 401 };
+        } catch (Exception e) {
+            // This catch block should only catch unwanted exceptions
+            Console.WriteLine("ERROR => TasksController::Create: " + e.Message);
+            Console.WriteLine(e.StackTrace);
+            return new ObjectResult("Server Error") { StatusCode = 500 };
+        } finally {
+            this.connectionManager.CloseConnection(connection);
+        }
+    }
 }

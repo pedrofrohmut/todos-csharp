@@ -7,8 +7,8 @@
 - [x] (07/10/2022) Feature for create todo
 - [x] (08/10/2022) Feature Find Todos By Task Id
 - [x] (08/10/2022) Feature Find Todo By Id
-- [ ] (10/10/2022) Feature Set Todo As Done
-- [ ] (10/10/2022) Feature Set Todo As NOT Done
+- [x] (10/10/2022) Feature Set Todo As Done
+- [x] (10/10/2022) Feature Set Todo As NOT Done
 - [ ] (10/10/2022) Feature Update Todo
 - [ ] (10/10/2022) Feature Delete Todo
 - [ ] (10/10/2022) Feature Clear Done Todos

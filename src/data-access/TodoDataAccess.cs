@@ -61,4 +61,10 @@ public class TodoDataAccess : ITodoDataAccess
         };
         return todo;
     }
+
+    public void SetDone(string todoId)
+    {
+        var sql = "UPDATE app.todos SET is_done = true WHERE id = @todoId";
+        this.connection.Query(sql, new { @todoId = Guid.Parse(todoId) });
+    }
 }

@@ -1,3 +1,5 @@
+using System.Data;
+using Todos.DataAccess;
 using Todos.Services;
 
 namespace Todos.Api;
@@ -14,15 +16,14 @@ public static class RequestPipeline
     public static void ExecuteMiddlewares(WebApplication app)
     {
         app.Use(async (ctx, next) => {
-            var auth = ctx.Request.Headers.Authorization;
-            if (String.IsNullOrWhiteSpace(auth)) {
-                // Set authUserId to empty string if don't have Authorization Headers
-                ctx.Items.Add("authUserId", "");
-            } else {
-                var authUserId = GetUserIdFromToken(ctx, app);
-                ctx.Items.Add("authUserId", authUserId);
-            }
+            DoBeforeAuth(ctx, app);
             await next.Invoke(ctx);
+        });
+
+        app.Use(async (ctx, next) => {
+            DoBeforeConnect(ctx, app);
+            await next.Invoke(ctx);
+            DoAfterConnect(ctx);
         });
     }
 
@@ -32,5 +33,34 @@ public static class RequestPipeline
         var tokenService = new TokenService(app.Configuration["jwtSecret"]);
         var decodedToken = tokenService.DecodeToken(token);
         return decodedToken.UserId;
+    }
+
+    private static void DoBeforeAuth(HttpContext ctx, WebApplication app)
+    {
+        var auth = ctx.Request.Headers.Authorization;
+        if (String.IsNullOrWhiteSpace(auth)) {
+            // Set authUserId to empty string if don't have Authorization Headers
+            ctx.Items.Add("authUserId", "");
+        } else {
+            var authUserId = GetUserIdFromToken(ctx, app);
+            ctx.Items.Add("authUserId", authUserId);
+        }
+    }
+
+    private static void DoBeforeConnect(HttpContext ctx, WebApplication app)
+    {
+        var manager = new ConnectionManager();
+        var connection = manager.GetConnection(app.Configuration);
+        ctx.Items.Add("connection", connection);
+        manager.OpenConnection(connection);
+    }
+
+    private static void DoAfterConnect(HttpContext ctx)
+    {
+        var manager = new ConnectionManager();
+        var connection = ctx.Items["connection"];
+        if (connection != null) {
+            manager.CloseConnection((IDbConnection) connection);
+        }
     }
 }

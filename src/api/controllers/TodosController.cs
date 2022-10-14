@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Todos.Core.DataAccess;
 using Todos.Core.Dtos;
@@ -54,14 +55,13 @@ public class TodosController : Controller
     [HttpGet("task/{id}")]
     public ActionResult Find(string id)
     {
-        var connection = this.connectionManager.GetConnection(this.configuration);
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
         var userDataAccess = new UserDataAccess(connection);
         var taskDataAccess = new TaskDataAccess(connection);
         var todoDataAccess = new TodoDataAccess(connection);
         var findTodosByTaskIdUseCase =
             new FindTodosByTaskIdUseCase(userDataAccess, taskDataAccess, todoDataAccess);
         try {
-            this.connectionManager.OpenConnection(connection);
             var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
             var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
             var response = new TodosWebIO().FindByTaskId(findTodosByTaskIdUseCase, webRequest);
@@ -74,8 +74,6 @@ public class TodosController : Controller
             Console.WriteLine("ERROR => TasksController::Create: " + e.Message);
             Console.WriteLine(e.StackTrace);
             return new ObjectResult("Server Error") { StatusCode = 500 };
-        } finally {
-            this.connectionManager.CloseConnection(connection);
         }
     }
 

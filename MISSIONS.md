@@ -23,3 +23,5 @@ resource's userId
 as any normal framework should, instead of 405 for some reason.
 - [ ] (10/10/2022) [Refactor] Change TodoDbDto, TaskDbDto and UserDbDto from string IDs to Guid so you
 can use it in Query and not use dynamic objects with dapper anymore.
+- [ ] (13/10/2022) [Refactor] Use middleware to get authUserId
+- [ ] (13/10/2022) [Refactor] Use middleware to get db connection

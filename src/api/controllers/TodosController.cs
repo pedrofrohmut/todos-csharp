@@ -10,7 +10,7 @@ using Todos.Services;
 namespace Todos.Api.Controllers;
 
 [Route("api/todos")]
-public class TodosController : ControllerBase
+public class TodosController : Controller
 {
     private readonly IConfiguration configuration;
     private readonly IConnectionManager connectionManager;
@@ -54,7 +54,6 @@ public class TodosController : ControllerBase
     [HttpGet("task/{id}")]
     public ActionResult Find(string id)
     {
-        var tokenService = new TokenService(this.configuration["jwtSecret"]);
         var connection = this.connectionManager.GetConnection(this.configuration);
         var userDataAccess = new UserDataAccess(connection);
         var taskDataAccess = new TaskDataAccess(connection);
@@ -63,7 +62,7 @@ public class TodosController : ControllerBase
             new FindTodosByTaskIdUseCase(userDataAccess, taskDataAccess, todoDataAccess);
         try {
             this.connectionManager.OpenConnection(connection);
-            var authUserId = ControllerUtils.GetUserIdFromRequest(Request, tokenService);
+            var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
             var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
             var response = new TodosWebIO().FindByTaskId(findTodosByTaskIdUseCase, webRequest);
             var responseValue = response.Message != "" ? response.Message : response.Body;

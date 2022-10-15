@@ -23,5 +23,13 @@ resource's userId
 as any normal framework should, instead of 405 for some reason.
 - [ ] (10/10/2022) [Refactor] Change TodoDbDto, TaskDbDto and UserDbDto from string IDs to Guid so you
 can use it in Query and not use dynamic objects with dapper anymore.
-- [ ] (13/10/2022) [Refactor] Use middleware to get authUserId
-- [ ] (13/10/2022) [Refactor] Use middleware to get db connection
+- [ ] (13/10/2022) [Refactor] Use middleware to get authUserId.
+- [ ] (13/10/2022) [Refactor] Use middleware to get db connection.
+- [ ] (15/10/2022) [Refactor] Change the responseValue evaluations for response.Value method from the 
+DTO.
+- [ ] (15/10/2022) [TODO] Refactor the RequestPipeline class => replace comments with private methods 
+and remove extra private methods to center related code in the same place
+
+## DOCs
+
+- [ ] (15/10/2022) Review home readme after all (base) Features are done.

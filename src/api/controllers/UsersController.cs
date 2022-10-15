@@ -6,6 +6,7 @@ using Todos.Core.DataAccess;
 using Todos.Core.UseCases.Users;
 using Todos.DataAccess;
 using Todos.Services;
+using System.Data;
 
 namespace Todos.Api.Controllers;
 
@@ -71,28 +72,22 @@ public class UserController : ControllerBase
     public ActionResult Verify()
     {
         var tokenService = new TokenService(this.configuration["jwtSecret"]);
-        string authUserId = "";
+        var authUserId = "";
         try {
-            authUserId = ControllerUtils.GetUserIdFromToken(Request, tokenService);
-        } catch (ArgumentException) {
-            return new ObjectResult(false) { StatusCode = 200 };
+            var token = Request.Headers.Authorization.ToString().Split(" ")[1];
+            var decoded = tokenService.DecodeToken(token);
+            authUserId = decoded.UserId;
+        } catch (Exception e) {
+            if (e is ArgumentException) {
+                return new ObjectResult(false) { StatusCode = 200 };
+            }
+            throw;
         }
-        var webRequest = new WebRequestDto() { AuthUserId = authUserId };
-        var connection = this.connectionManager.GetConnection(this.configuration);
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
         var userDataAccess = new UserDataAccess(connection);
         var verifyUserUseCase = new VerifyUserUseCase(userDataAccess);
-        try {
-            this.connectionManager.OpenConnection(connection);
-            var response = new UsersWebIO().VerifyUser(verifyUserUseCase, webRequest);
-            var responseValue = response.Message != "" ? response.Message : response.Body;
-            return new ObjectResult(responseValue) { StatusCode = response.Status };
-        } catch (Exception e) {
-            // This catch block should only catch unwanted exceptions
-            Console.WriteLine("ERROR => UsersController::Verify: " + e.Message);
-            Console.WriteLine(e.StackTrace);
-            return new ObjectResult("Server Error") { StatusCode = 500 };
-        } finally {
-            this.connectionManager.CloseConnection(connection);
-        }
+        var webRequest = new WebRequestDto() { AuthUserId = authUserId };
+        var response = new UsersWebIO().VerifyUser(verifyUserUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 }

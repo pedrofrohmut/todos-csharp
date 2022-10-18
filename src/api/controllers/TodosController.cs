@@ -168,4 +168,17 @@ public class TodosController : Controller
         var response = new TodosWebIO().Update(updateTodoUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
+
+    [HttpDelete("{id}")]
+    public ActionResult Delete(string id)
+    {
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
+        var userDataAccess = new UserDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var deleteTodoUseCase = new DeleteTodoUseCase(userDataAccess, todoDataAccess);
+        var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
+        var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
+        var response = new TodosWebIO().Delete(deleteTodoUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
+    }
 }

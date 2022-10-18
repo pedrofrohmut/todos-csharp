@@ -87,4 +87,10 @@ public class TodoDataAccess : ITodoDataAccess
             @isDone = updatedTodo.IsDone
         });
     }
+
+    public void Delete(string todoId)
+    {
+        var sql = "DELETE FROM app.todos WHERE id = @todoId";
+        this.connection.Query(sql, new { @todoId = Guid.Parse(todoId) });
+    }
 }

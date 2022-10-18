@@ -134,4 +134,18 @@ public class TodosWebIO
             throw;
         }
     }
+
+    public WebResponseDto DeleteCompleted(IDeleteCompletedTodosUseCase deleteCompletedTodosUseCase,
+                                          WebRequestDto request)
+    {
+        try {
+            deleteCompletedTodosUseCase.Execute(request.AuthUserId);
+            return new WebResponseDto() { Message = "", Status = 204 };
+        } catch (Exception e) {
+            if (e is InvalidUserException || e is UserNotFoundException) {
+                return new WebResponseDto() { Message = e.Message, Status = 400 };
+            }
+            throw;
+        }
+    }
 }

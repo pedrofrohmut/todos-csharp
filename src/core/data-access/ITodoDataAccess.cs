@@ -11,4 +11,5 @@ public interface ITodoDataAccess
     void SetNotDone(string todoId);
     void Update(string todoId, UpdateTodoDto updatedTodo);
     void Delete(string todoId);
+    void DeleteCompleted(string userId);
 }

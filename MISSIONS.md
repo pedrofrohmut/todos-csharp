@@ -10,7 +10,7 @@
 - [x] (10/10/2022) Feature Set Todo As Done
 - [x] (10/10/2022) Feature Set Todo As NOT Done
 - [x] (10/10/2022) Feature Update Todo
-- [ ] (10/10/2022) Feature Delete Todo
+- [x] (10/10/2022) Feature Delete Todo
 - [ ] (10/10/2022) Feature Clear Done Todos
 
 - [ ] (17/10/2022) Refactor Exception handler to return a 401 response for auth exceptions

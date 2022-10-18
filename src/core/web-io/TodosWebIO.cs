@@ -100,4 +100,21 @@ public class TodosWebIO
             throw;
         }
     }
+
+    public WebResponseDto Update(IUpdateTodoUseCase updateTodoUseCase, WebRequestDto request)
+    {
+        try {
+            updateTodoUseCase.Execute(request.Param!, (UpdateTodoDto) request.Body!, request.AuthUserId!);
+            return new WebResponseDto() { Message = "", Status = 204 };
+        } catch (Exception e) {
+            if (e is InvalidUserException ||
+                e is InvalidTodoException ||
+                e is UserNotFoundException ||
+                e is TodoNotFoundException)
+            {
+                return new WebResponseDto() { Message = e.Message, Status = 400 };
+            }
+            throw;
+        }
+    }
 }

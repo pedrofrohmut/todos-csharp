@@ -155,4 +155,17 @@ public class TodosController : Controller
             this.connectionManager.CloseConnection(connection);
         }
     }
+
+    [HttpPut("{id}")]
+    public ActionResult Update(string id, [FromBody] UpdateTodoDto updatedTodo)
+    {
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
+        var userDataAccess = new UserDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var updateTodoUseCase = new UpdateTodoUseCase(userDataAccess, todoDataAccess);
+        var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
+        var webRequest = new WebRequestDto() { Param = id, Body = updatedTodo, AuthUserId = authUserId };
+        var response = new TodosWebIO().Update(updateTodoUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
+    }
 }

@@ -9,9 +9,11 @@
 - [x] (08/10/2022) Feature Find Todo By Id
 - [x] (10/10/2022) Feature Set Todo As Done
 - [x] (10/10/2022) Feature Set Todo As NOT Done
-- [ ] (10/10/2022) Feature Update Todo
+- [x] (10/10/2022) Feature Update Todo
 - [ ] (10/10/2022) Feature Delete Todo
 - [ ] (10/10/2022) Feature Clear Done Todos
+
+- [ ] (17/10/2022) Refactor Exception handler to return a 401 response for auth exceptions
 
 
 ## Future Nice to Have:
@@ -29,6 +31,7 @@ can use it in Query and not use dynamic objects with dapper anymore.
 DTO.
 - [ ] (15/10/2022) [TODO] Refactor the RequestPipeline class => replace comments with private methods 
 and remove extra private methods to center related code in the same place
+- [ ] (17/10/2022) [Refactor] Remove Id from UpdateTodoDto
 
 ## DOCs
 

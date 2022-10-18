@@ -1,9 +1,20 @@
-#! /usr/bin/env bash
+#! /usr/bin/env python
 
-case "$1" in
-    build) dotnet build ;;
-    run) dotnet run --project src/api ;;
-    wrun) dotnet watch run --project src/api ;;
-    *)
-        echo " Didn't match anything"
-esac
+import sys
+import subprocess
+
+inputs = sys.argv
+
+command = inputs[1]
+
+try:
+    if (command == "build"):
+        subprocess.run(["dotnet", "build"])
+    elif (command == "run"):
+        subprocess.run(["dotnet", "run", "--project", "src/api"])
+    elif (command == "wrun"):
+        subprocess.run(["dotnet", "watch", "run", "--project", "src/api"])
+    else:
+        print("[Python CMD]  Didn't Match Anything.")
+except KeyboardInterrupt:
+    print("[Python CMD] Program interrupted.")

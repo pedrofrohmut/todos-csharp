@@ -9,4 +9,5 @@ public interface ITodoDataAccess
     TodoDbDto? FindById(string todoId);
     void SetDone(string todoId);
     void SetNotDone(string todoId);
+    void Update(string todoId, UpdateTodoDto updatedTodo);
 }

@@ -23,7 +23,6 @@ public class ConnectionManager : IConnectionManager
         }
         try {
             connection.Open();
-            Console.WriteLine("Connection Opened");
         } catch (Exception e) {
             throw new Exception("Error to open database connection. " + e.Message);
         }
@@ -37,7 +36,6 @@ public class ConnectionManager : IConnectionManager
         try {
             if (connection.State == ConnectionState.Open) {
                 connection.Close();
-                Console.WriteLine("Connection Closed");
             }
         } catch (Exception e) {
             throw new Exception("Error to close database connection. " + e.Message);

@@ -1,6 +1,6 @@
 namespace Todos.Core.UseCases.Todos;
 
-public interface IDeleteCompletedTodosUseCase
+public interface IDeleteDoneTodosUseCase
 {
     void Execute(string? authUserId);
 }

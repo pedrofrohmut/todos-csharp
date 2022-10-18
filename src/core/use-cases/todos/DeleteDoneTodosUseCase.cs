@@ -4,12 +4,12 @@ using Todos.Core.Exceptions;
 
 namespace Todos.Core.UseCases.Todos;
 
-public class DeleteCompletedTodosUseCase : IDeleteCompletedTodosUseCase
+public class DeleteDoneTodosUseCase : IDeleteDoneTodosUseCase
 {
     private readonly IUserDataAccess userDataAccess;
     private readonly ITodoDataAccess todoDataAccess;
 
-    public DeleteCompletedTodosUseCase(IUserDataAccess userDataAccess, ITodoDataAccess todoDataAccess)
+    public DeleteDoneTodosUseCase(IUserDataAccess userDataAccess, ITodoDataAccess todoDataAccess)
     {
         this.userDataAccess = userDataAccess;
         this.todoDataAccess = todoDataAccess;
@@ -19,7 +19,7 @@ public class DeleteCompletedTodosUseCase : IDeleteCompletedTodosUseCase
     {
         string validUserId = this.ValidateUserId(authUserId);
         this.CheckUserExists(validUserId);
-        this.DeleteCompletedTodos(validUserId);
+        this.DeleteDoneTodos(validUserId);
     }
 
     private string ValidateUserId(string? authUserId)
@@ -36,8 +36,8 @@ public class DeleteCompletedTodosUseCase : IDeleteCompletedTodosUseCase
         }
     }
 
-    private void DeleteCompletedTodos(string authUserId)
+    private void DeleteDoneTodos(string authUserId)
     {
-        this.todoDataAccess.DeleteCompleted(authUserId);
+        this.todoDataAccess.DeleteDone(authUserId);
     }
 }

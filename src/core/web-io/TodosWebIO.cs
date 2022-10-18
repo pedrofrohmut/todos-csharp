@@ -135,11 +135,11 @@ public class TodosWebIO
         }
     }
 
-    public WebResponseDto DeleteCompleted(IDeleteCompletedTodosUseCase deleteCompletedTodosUseCase,
+    public WebResponseDto DeleteDone(IDeleteDoneTodosUseCase deleteDoneTodosUseCase,
                                           WebRequestDto request)
     {
         try {
-            deleteCompletedTodosUseCase.Execute(request.AuthUserId);
+            deleteDoneTodosUseCase.Execute(request.AuthUserId);
             return new WebResponseDto() { Message = "", Status = 204 };
         } catch (Exception e) {
             if (e is InvalidUserException || e is UserNotFoundException) {

@@ -1,12 +1,19 @@
 using System.Data;
 using Microsoft.AspNetCore.Diagnostics;
+using Todos.Core.Exceptions;
 using Todos.DataAccess;
 using Todos.Services;
 
 namespace Todos.Api;
 
+// - [ ] (17/10/2022) Refactor Exception handler to return a 401 response for auth exceptions
+
+// - [ ] (15/10/2022) [TODO] Refactor the RequestPipeline class => replace comments with private methods 
+// and remove extra private methods to center related code in the same place
+
 // TODO: Refactor replace comments with private methods and remove extra private methods to center
 // related code in the same place
+
 public static class RequestPipeline
 {
     public static void Configure(WebApplication app)
@@ -17,16 +24,8 @@ public static class RequestPipeline
 
     public static void ExecuteMiddlewares(WebApplication app)
     {
-        // Exception Middleware
-        app.UseExceptionHandler(app => {
-            app.Run(async ctx => {
-                var error = ctx.Features.Get<IExceptionHandlerPathFeature>()!.Error;
-                Console.WriteLine("\nError => " + error.Message);
-                Console.WriteLine("StackTrace => \n" + error.StackTrace + "\n");
-                ctx.Response.StatusCode = 500;
-                await ctx.Response.WriteAsync("Server Error !!!");
-            });
-        });
+        ExceptionMiddleware(app);
+
         // Authorization Headers
         app.Use(async (ctx, next) => {
             if (ctx.Request.Path != "/api/users/verify") {
@@ -39,6 +38,27 @@ public static class RequestPipeline
             Connect_DoBefore(ctx, app);
             await next.Invoke(ctx);
             Connect_DoAfter(ctx);
+        });
+    }
+
+    private static void ExceptionMiddleware(WebApplication app)
+    {
+        app.UseExceptionHandler(app => {
+            app.Run(async ctx => {
+                var exceptionFeature = ctx.Features.Get<IExceptionHandlerPathFeature>();
+                if (exceptionFeature != null) {
+                    var error = exceptionFeature.Error;
+                    if (error is InvalidRequestAuthException) {
+                        ctx.Response.StatusCode = 401;
+                        await ctx.Response.WriteAsync("Unauthorized: " + error.Message);
+                        return;
+                    }
+                    Console.WriteLine("\nError => " + error.Message);
+                    Console.WriteLine("StackTrace => \n" + error.StackTrace + "\n");
+                    ctx.Response.StatusCode = 500;
+                    await ctx.Response.WriteAsync("Server Error !!!");
+                }
+            });
         });
     }
 

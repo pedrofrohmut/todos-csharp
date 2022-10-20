@@ -3,18 +3,20 @@
 ## Code Missions (Features and Modifications to be made)
 
 - [x] (06/10/2022) Change IEnumerable to IList in Find Tasks By UserId
-- [x] (06/10/2022) Add feature for task update
-- [x] (07/10/2022) Feature for create todo
-- [x] (08/10/2022) Feature Find Todos By Task Id
-- [x] (08/10/2022) Feature Find Todo By Id
-- [x] (10/10/2022) Feature Set Todo As Done
-- [x] (10/10/2022) Feature Set Todo As NOT Done
-- [x] (10/10/2022) Feature Update Todo
-- [x] (10/10/2022) Feature Delete Todo
-- [x] (10/10/2022) Feature Delete Done Todos
-- [ ] (17/10/2022) Feature Delete Done Todos By TaskId
+- [x] (06/10/2022) [Feature] Task Update
+- [x] (07/10/2022) [Feature] Create Todo
+- [x] (08/10/2022) [Feature] Find Todos By Task Id
+- [x] (08/10/2022) [Feature] Find Todo By Id
+- [x] (10/10/2022) [Feature] Set Todo As Done
+- [x] (10/10/2022) [Feature] Set Todo As NOT Done
+- [x] (10/10/2022) [Feature] Update Todo
+- [x] (10/10/2022) [Feature] Delete Todo
+- [x] (10/10/2022) [Feature] Delete Done Todos
+- [ ] (17/10/2022) [Feature] Delete Done Todos By TaskId
+- [ ] (17/10/2022) [Feature] Delete Done Todos By TaskId
 
-- [ ] (17/10/2022) Refactor Exception handler to return a 401 response for auth exceptions
+- [ ] (17/10/2022) Refactor Exception handler to return a 401 response for auth exceptions and 
+AuthMiddleware to throw InvalidRequestAuthException on Errors for ExceptionMiddleware to get
 
 
 ## Future Nice to Have:
@@ -36,6 +38,7 @@ and remove extra private methods to center related code in the same place
 - [ ] (18/10/2022) [Refactor] Make the class and methods static for UsersWebIO, TasksWebIO and 
 TodosWebIO
 - [ ] (18/10/2022) [Refactor] Remove ! from WebIOs changing the useCases signatures
+
 
 ## DOCs
 

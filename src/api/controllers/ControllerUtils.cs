@@ -26,6 +26,7 @@ public static class ControllerUtils
         return decoded.UserId;
     }
 
+    [Obsolete("Get authUserId from HttpContext instead")]
     public static string GetUserIdFromRequest(HttpRequest req, ITokenService tokenService)
     {
         try {

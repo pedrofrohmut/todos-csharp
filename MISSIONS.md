@@ -13,9 +13,7 @@
 - [x] (10/10/2022) [Feature] Delete Todo
 - [x] (10/10/2022) [Feature] Delete Done Todos
 - [ ] (17/10/2022) [Feature] Delete Done Todos By TaskId
-- [ ] (17/10/2022) [Feature] Delete Done Todos By TaskId
-
-- [ ] (17/10/2022) Refactor Exception handler to return a 401 response for auth exceptions and 
+- [x] (17/10/2022) Refactor Exception handler to return a 401 response for auth exceptions and 
 AuthMiddleware to throw InvalidRequestAuthException on Errors for ExceptionMiddleware to get
 
 

@@ -30,7 +30,7 @@ can use it in Query and not use dynamic objects with dapper anymore.
 - [ ] (13/10/2022) [Refactor] Use middleware to get db connection.
 - [ ] (15/10/2022) [Refactor] Change the responseValue evaluations for response.Value method from the 
 DTO.
-- [ ] (15/10/2022) [TODO] Refactor the RequestPipeline class => replace comments with private methods 
+- [x] (15/10/2022) [TODO] Refactor the RequestPipeline class => replace comments with private methods 
 and remove extra private methods to center related code in the same place
 - [ ] (17/10/2022) [Refactor] Remove Id from UpdateTodoDto
 - [ ] (18/10/2022) [Refactor] Make the class and methods static for UsersWebIO, TasksWebIO and 

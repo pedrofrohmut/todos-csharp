@@ -7,14 +7,6 @@ using Todos.Services;
 
 namespace Todos.Api;
 
-// - [ ] (17/10/2022) Refactor Exception handler to return a 401 response for auth exceptions
-
-// - [ ] (15/10/2022) [TODO] Refactor the RequestPipeline class => replace comments with private methods 
-// and remove extra private methods to center related code in the same place
-
-// TODO: Refactor replace comments with private methods and remove extra private methods to center
-// related code in the same place
-
 public static class RequestPipeline
 {
     public static void Configure(WebApplication app)
@@ -27,12 +19,7 @@ public static class RequestPipeline
     {
         ExceptionMiddleware(app);
         AuthorizationMiddleware(app);
-        // Create, Open and Close Database Connection
-        app.Use(async (ctx, next) => {
-            Connect_DoBefore(ctx, app);
-            await next.Invoke(ctx);
-            Connect_DoAfter(ctx);
-        });
+        DatabaseConnectionMiddleware(app);
     }
 
     private static void ExceptionMiddleware(WebApplication app)
@@ -58,6 +45,7 @@ public static class RequestPipeline
 
     private static void AuthorizationMiddleware(WebApplication app)
     {
+        // hasAuthHeaders ? validAuthUserId : ""
         app.Use(async (ctx, next) => {
             if (ctx.Request.Path != "/api/users/verify") {
                 var auth = ctx.Request.Headers.Authorization;
@@ -88,20 +76,20 @@ public static class RequestPipeline
         }
     }
 
-    private static void Connect_DoBefore(HttpContext ctx, WebApplication app)
+    private static void DatabaseConnectionMiddleware(WebApplication app)
     {
-        var manager = new ConnectionManager();
-        var connection = manager.GetConnection(app.Configuration);
-        ctx.Items.Add("connection", connection);
-        manager.OpenConnection(connection);
-    }
-
-    private static void Connect_DoAfter(HttpContext ctx)
-    {
-        var manager = new ConnectionManager();
-        var connection = ctx.Items["connection"];
-        if (connection != null) {
-            manager.CloseConnection((IDbConnection) connection);
-        }
+        // Create, Open and Close Database Connection
+        app.Use(async (ctx, next) => {
+            //Before 
+            var manager = new ConnectionManager();
+            var connection = manager.GetConnection(app.Configuration);
+            manager.OpenConnection(connection);
+            ctx.Items.Add("connection", connection);
+            await next.Invoke(ctx);
+            // After
+            if (connection != null) {
+                manager.CloseConnection((IDbConnection) connection);
+            }
+        });
     }
 }

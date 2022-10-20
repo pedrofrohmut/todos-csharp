@@ -99,4 +99,10 @@ public class TodoDataAccess : ITodoDataAccess
         var sql = "DELETE FROM app.todos WHERE is_done = true AND user_id = @userId";
         this.connection.Query(sql, new { @userId = Guid.Parse(userId) });
     }
+
+    public void DeleteDoneByTaskId(string taskId)
+    {
+        var sql = "DELETE FROM app.todos WHERE is_done = true AND task_id = @taskId";
+        this.connection.Query(sql, new { @taskId = Guid.Parse(taskId) });
+    }
 }

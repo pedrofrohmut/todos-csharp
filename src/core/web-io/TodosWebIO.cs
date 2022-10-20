@@ -148,4 +148,23 @@ public class TodosWebIO
             throw;
         }
     }
+
+    public WebResponseDto DeleteDoneByTaskId(
+        IDeleteDoneTodosByTaskIdUseCase deleteDoneTodosByTaskIdUseCase,
+        WebRequestDto request)
+    {
+        try {
+            deleteDoneTodosByTaskIdUseCase.Execute(request.Param, request.AuthUserId);
+            return new WebResponseDto() { Message = "", Status = 204 };
+        } catch (Exception e) {
+            if (e is InvalidUserException ||
+                e is InvalidTaskException ||
+                e is UserNotFoundException ||
+                e is TaskNotFoundException)
+            {
+                return new WebResponseDto() { Message = e.Message, Status = 400 };
+            }
+            throw;
+        }
+    }
 }

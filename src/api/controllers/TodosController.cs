@@ -194,4 +194,20 @@ public class TodosController : Controller
         var response = new TodosWebIO().DeleteDone(deleteDoneTodosUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
+
+    [HttpDelete("done/task/{id}")]
+    public ActionResult DeleteDoneByTaskId(string id)
+    {
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
+        var userDataAccess = new UserDataAccess(connection);
+        var taskDataAccess = new TaskDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var deleteDoneTodosByTaskIdUseCase = new DeleteDoneTodosByTaskIdUseCase(userDataAccess,
+                                                                                taskDataAccess,
+                                                                                todoDataAccess);
+        var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
+        var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
+        var response = new TodosWebIO().DeleteDoneByTaskId(deleteDoneTodosByTaskIdUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
+    }
 }

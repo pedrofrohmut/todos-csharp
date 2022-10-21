@@ -1,4 +1,5 @@
 using Todos.Core.DataAccess;
+using Todos.Core.Dtos;
 using Todos.Core.Entities;
 using Todos.Core.Exceptions;
 
@@ -20,6 +21,8 @@ public class DeleteTaskUseCase : IDeleteTaskUseCase
         this.ValidateTaskId(taskId);
         this.ValidateUserId(authUserId);
         this.CheckUserExists(authUserId);
+        var taskDb = this.FindTask(taskId);
+        this.CheckResourceOwnership(taskDb, authUserId);
         this.DeleteTask(taskId);
     }
 
@@ -38,6 +41,22 @@ public class DeleteTaskUseCase : IDeleteTaskUseCase
         var user = this.userDataAccess.FindUserById(authUserId);
         if (user == null) {
             throw new UserNotFoundException();
+        }
+    }
+
+    private TaskDbDto FindTask(string taskId)
+    {
+        var task = this.taskDataAccess.FindById(taskId);
+        if (task == null) {
+            throw new TaskNotFoundException();
+        }
+        return task;
+    }
+
+    private void CheckResourceOwnership(TaskDbDto taskDb, string authUserId)
+    {
+        if (taskDb.UserId != authUserId) {
+            throw new NotResourceOwnerException();
         }
     }
 

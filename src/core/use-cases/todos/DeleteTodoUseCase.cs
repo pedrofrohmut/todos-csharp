@@ -1,4 +1,5 @@
 using Todos.Core.DataAccess;
+using Todos.Core.Dtos;
 using Todos.Core.Entities;
 using Todos.Core.Exceptions;
 
@@ -17,21 +18,24 @@ public class DeleteTodoUseCase : IDeleteTodoUseCase
 
     public void Execute(string? todoId, string? authUserId)
     {
-        this.ValidateTodoId(todoId);
-        this.ValidateUserId(authUserId);
-        this.CheckUserExists(authUserId!);
-        this.CheckTodoExists(todoId!);
-        this.DeleteTodo(todoId!);
+        var validTodoId = this.ValidateTodoId(todoId);
+        var validUserId = this.ValidateUserId(authUserId);
+        this.CheckUserExists(validUserId);
+        var todoDb = this.FindTodo(validTodoId);
+        this.CheckResourceOwnership(todoDb, validUserId);
+        this.DeleteTodo(validTodoId);
     }
 
-    private void ValidateTodoId(string? todoId)
+    private string ValidateTodoId(string? todoId)
     {
         Todo.ValidateId(todoId);
+        return todoId!;
     }
 
-    private void ValidateUserId(string? authUserId)
+    private string ValidateUserId(string? authUserId)
     {
         User.ValidateId(authUserId);
+        return authUserId!;
     }
 
     private void CheckUserExists(string authUserId)
@@ -42,11 +46,19 @@ public class DeleteTodoUseCase : IDeleteTodoUseCase
         }
     }
 
-    private void CheckTodoExists(string todoId)
+    private TodoDbDto FindTodo(string todoId)
     {
         var todo = this.todoDataAccess.FindById(todoId);
         if (todo == null) {
             throw new TodoNotFoundException();
+        }
+        return todo;
+    }
+
+    private void CheckResourceOwnership(TodoDbDto todoDb, string authUserId)
+    {
+        if (todoDb.UserId != authUserId) {
+            throw new NotResourceOwnerException();
         }
     }
 

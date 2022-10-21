@@ -25,6 +25,8 @@ public class FindTodosByTaskIdUseCase : IFindTodosByTaskIdUseCase
         this.ValidateTaskId(taskId);
         this.ValidateAuthUserId(authUserId);
         this.CheckUserExists(authUserId);
+        var taskDb = this.FindTask(taskId);
+        this.CheckResourceOwnership(taskDb, authUserId);
         var todosDb = this.FindTodosByTaskId(taskId);
         var todos = this.MapTodosDbToTodos(todosDb);
         return todos;
@@ -45,6 +47,22 @@ public class FindTodosByTaskIdUseCase : IFindTodosByTaskIdUseCase
         var user = this.userDataAccess.FindUserById(authUserId);
         if (user == null) {
             throw new UserNotFoundException();
+        }
+    }
+
+    private TaskDbDto FindTask(string taskId)
+    {
+        var task = this.taskDataAccess.FindById(taskId);
+        if (task == null) {
+            throw new TaskNotFoundException();
+        }
+        return task;
+    }
+
+    private void CheckResourceOwnership(TaskDbDto taskDb, string authUserId)
+    {
+        if (taskDb.UserId != authUserId) {
+            throw new NotResourceOwnerException();
         }
     }
 

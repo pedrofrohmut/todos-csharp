@@ -22,6 +22,7 @@ public class FindTodoByIdUseCase : IFindTodoByIdUseCase
         this.ValidateUserId(authUserId);
         this.CheckUserExists(authUserId);
         var todoDb = this.FindTodoById(todoId);
+        this.CheckResourceOwnership(todoDb, authUserId);
         var todo = this.MapTodoDbToTodo(todoDb);
         return todo;
     }
@@ -51,6 +52,13 @@ public class FindTodoByIdUseCase : IFindTodoByIdUseCase
             throw new TodoNotFoundException();
         }
         return todo;
+    }
+
+    private void CheckResourceOwnership(TodoDbDto todoDb, string authUserId)
+    {
+        if (todoDb.UserId != authUserId) {
+            throw new NotResourceOwnerException();
+        }
     }
 
     private TodoDto MapTodoDbToTodo(TodoDbDto todoDb) =>

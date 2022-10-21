@@ -18,17 +18,19 @@ public class UpdateTodoUseCase : IUpdateTodoUseCase
 
     public void Execute(string todoId, UpdateTodoDto updatedTodo, string authUserId)
     {
-        this.ValidateTodoId(todoId);
+        var validTodoId = this.ValidateTodoId(todoId);
         this.ValidateTodo(updatedTodo);
-        this.ValidateUserId(authUserId);
+        var validUserId = this.ValidateUserId(authUserId);
         this.CheckUserExists(authUserId);
-        this.CheckTodoExists(todoId);
+        var todoDb = this.FindTodo(todoId);
+        this.CheckResourceOwnership(todoDb, validUserId);
         this.UpdateTodo(todoId, updatedTodo);
     }
 
-    private void ValidateTodoId(string todoId)
+    private string ValidateTodoId(string? todoId)
     {
         Todo.ValidateId(todoId);
+        return todoId!;
     }
 
     private void ValidateTodo(UpdateTodoDto updatedTodo)
@@ -37,9 +39,10 @@ public class UpdateTodoUseCase : IUpdateTodoUseCase
         Todo.ValidateDescription(updatedTodo.Description);
     }
 
-    private void ValidateUserId(string authUserId)
+    private string ValidateUserId(string? authUserId)
     {
         User.ValidateId(authUserId);
+        return authUserId!;
     }
 
     private void CheckUserExists(string authUserId)
@@ -50,11 +53,19 @@ public class UpdateTodoUseCase : IUpdateTodoUseCase
         }
     }
 
-    private void CheckTodoExists(string todoId)
+    private TodoDbDto FindTodo(string todoId)
     {
         var todo = this.todoDataAccess.FindById(todoId);
         if (todo == null) {
             throw new TodoNotFoundException();
+        }
+        return todo;
+    }
+
+    private void CheckResourceOwnership(TodoDbDto todoDb, string authUserId)
+    {
+        if (todoDb.UserId != authUserId) {
+            throw new NotResourceOwnerException();
         }
     }
 

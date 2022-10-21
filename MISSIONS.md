@@ -12,14 +12,14 @@
 - [x] (10/10/2022) [Feature] Update Todo
 - [x] (10/10/2022) [Feature] Delete Todo
 - [x] (10/10/2022) [Feature] Delete Done Todos
-- [ ] (17/10/2022) [Feature] Delete Done Todos By TaskId
+- [x] (17/10/2022) [Feature] Delete Done Todos By TaskId
 - [x] (17/10/2022) Refactor Exception handler to return a 401 response for auth exceptions and 
 AuthMiddleware to throw InvalidRequestAuthException on Errors for ExceptionMiddleware to get
 
 
 ## Future Nice to Have:
 
-- [ ] (06/10/2022) NotResourceOwnerExceptions when the userId from authToken is not the same as the 
+- [x] (06/10/2022) NotResourceOwnerExceptions when the userId from authToken is not the same as the 
 resource's userId
 - [ ] (07/10/2022) [Refactor] Change the names in IUserDataAccess and UserDataAccess
 - [ ] (08/10/2022) [Fix] Discover how to make stupid csharp framework give 404 for route not found, 

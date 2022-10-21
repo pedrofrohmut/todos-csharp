@@ -21,7 +21,8 @@ public class UpdateTaskUseCase : IUpdateTaskUseCase
         this.ValidateTask(updatedTask);
         this.ValidateUserId(authUserId);
         this.CheckUserExists(authUserId);
-        this.CheckTaskExists(updatedTask.Id);
+        var taskDb = this.FindTask(updatedTask.Id);
+        this.CheckResourceOwnership(taskDb, authUserId);
         this.UpdateTask(updatedTask);
     }
 
@@ -45,11 +46,19 @@ public class UpdateTaskUseCase : IUpdateTaskUseCase
         }
     }
 
-    private void CheckTaskExists(string taskId)
+    private TaskDbDto FindTask(string taskId)
     {
         var task = this.taskDataAccess.FindById(taskId);
         if (task == null) {
             throw new TaskNotFoundException();
+        }
+        return task;
+    }
+
+    private void CheckResourceOwnership(TaskDbDto taskDb, string authUserId)
+    {
+        if (taskDb.UserId != authUserId) {
+            throw new NotResourceOwnerException();
         }
     }
 

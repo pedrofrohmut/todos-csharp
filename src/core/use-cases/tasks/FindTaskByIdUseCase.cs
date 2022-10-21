@@ -22,6 +22,7 @@ public class FindTaskByIdUseCase : IFindTaskByIdUseCase
         this.ValidateUserId(authUserId);
         this.CheckUserExists(authUserId);
         var taskDb = this.FindTask(taskId);
+        this.CheckResourceOwnership(taskDb, authUserId);
         var task = this.MapTaskDbToTask(taskDb);
         return task;
     }
@@ -51,6 +52,13 @@ public class FindTaskByIdUseCase : IFindTaskByIdUseCase
             throw new TaskNotFoundException();
         }
         return foundTask;
+    }
+
+    private void CheckResourceOwnership(TaskDbDto taskDb, string authUserId)
+    {
+        if (taskDb.UserId != authUserId) {
+            throw new NotResourceOwnerException();
+        }
     }
 
     private TaskDto MapTaskDbToTask(TaskDbDto task)

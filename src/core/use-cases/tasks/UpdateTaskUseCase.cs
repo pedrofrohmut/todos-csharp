@@ -40,7 +40,7 @@ public class UpdateTaskUseCase : IUpdateTaskUseCase
 
     private void CheckUserExists(string authUserId)
     {
-        var user = this.userDataAccess.FindUserById(authUserId);
+        var user = this.userDataAccess.FindById(authUserId);
         if (user == null) {
             throw new UserNotFoundException();
         }

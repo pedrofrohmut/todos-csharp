@@ -44,7 +44,7 @@ public class SignInUseCase : ISignInUseCase
 
     private UserDbDto GetUser(string email)
     {
-        var user = this.userDataAccess.FindUserByEmail(email);
+        var user = this.userDataAccess.FindByEmail(email);
         if (user == null) {
             throw new UserNotFoundException();
         }

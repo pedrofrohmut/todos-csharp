@@ -14,7 +14,7 @@ public class UserDataAccess : IUserDataAccess
         this.connection = connection;
     }
 
-    public void CreateUser(CreateUserDto newUser, string passwordHash)
+    public void Create(CreateUserDto newUser, string passwordHash)
     {
         var sql = @"INSERT INTO app.users (name, email, password_hash) 
                     VALUES (@name, @email, @passwordHash)";
@@ -25,7 +25,7 @@ public class UserDataAccess : IUserDataAccess
         });
     }
 
-    public UserDbDto? FindUserByEmail(string email)
+    public UserDbDto? FindByEmail(string email)
     {
         var sql = @"SELECT * FROM app.users WHERE email = @email";
         var row = this.connection.Query(sql, new { email }).SingleOrDefault();
@@ -39,7 +39,7 @@ public class UserDataAccess : IUserDataAccess
         return user;
     }
 
-    public UserDbDto? FindUserById(string userId)
+    public UserDbDto? FindById(string userId)
     {
         var sql = @"SELECT * FROM app.users WHERE id = @id";
         var row = this.connection.Query(sql, new { id = Guid.Parse(userId) })

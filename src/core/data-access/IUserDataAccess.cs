@@ -4,7 +4,7 @@ namespace Todos.Core.DataAccess;
 
 public interface IUserDataAccess
 {
-    void CreateUser(CreateUserDto newUser, string passwordHash);
-    UserDbDto? FindUserByEmail(string email);
-    UserDbDto? FindUserById(string userId);
+    void Create(CreateUserDto newUser, string passwordHash);
+    UserDbDto? FindByEmail(string email);
+    UserDbDto? FindById(string userId);
 }

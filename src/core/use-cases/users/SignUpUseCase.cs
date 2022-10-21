@@ -34,7 +34,7 @@ public class SignUpUseCase : ISignUpUseCase
 
     private void CheckEmailAlreadyTaken(string email)
     {
-        var user = this.userDataAccess.FindUserByEmail(email);
+        var user = this.userDataAccess.FindByEmail(email);
         if (user != null) {
             throw new EmailAlreadyTakenException();
         }
@@ -44,5 +44,5 @@ public class SignUpUseCase : ISignUpUseCase
         this.passwordService.HashPassword(password);
 
     private void CreateUser(CreateUserDto newUser, string passwordHash) => 
-        this.userDataAccess.CreateUser(newUser, passwordHash);
+        this.userDataAccess.Create(newUser, passwordHash);
 }

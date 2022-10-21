@@ -26,7 +26,7 @@ public class VerifyUserUseCase : IVerifyUserUseCase
 
     private void CheckUserExists(string id)
     {
-        var user = this.userDataAccess.FindUserById(id);
+        var user = this.userDataAccess.FindById(id);
         if (user == null) {
             throw new UserNotFoundException("User not found by id");
         }

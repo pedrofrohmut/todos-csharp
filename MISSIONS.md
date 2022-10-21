@@ -21,7 +21,7 @@ AuthMiddleware to throw InvalidRequestAuthException on Errors for ExceptionMiddl
 
 - [x] (06/10/2022) NotResourceOwnerExceptions when the userId from authToken is not the same as the 
 resource's userId
-- [ ] (07/10/2022) [Refactor] Change the names in IUserDataAccess and UserDataAccess
+- [x] (07/10/2022) [Refactor] Change the names in IUserDataAccess and UserDataAccess
 - [ ] (08/10/2022) [Fix] Discover how to make stupid csharp framework give 404 for route not found, 
 as any normal framework should, instead of 405 for some reason.
 - [ ] (10/10/2022) [Refactor] Change TodoDbDto, TaskDbDto and UserDbDto from string IDs to Guid so you

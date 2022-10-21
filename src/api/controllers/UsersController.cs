@@ -25,47 +25,26 @@ public class UserController : ControllerBase
     [HttpPost]
     public ActionResult SignUp([FromBody] CreateUserDto newUser)
     {
-        var webRequest = new WebRequestDto() { Body = newUser };
-        var connection = this.connectionManager.GetConnection(this.configuration);
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
         var userDataAccess = new UserDataAccess(connection);
         var passwordService = new PasswordService();
         var signUpUseCase = new SignUpUseCase(userDataAccess, passwordService);
-        try {
-            this.connectionManager.OpenConnection(connection);
-            var response = new UsersWebIO().SignUpUser(signUpUseCase, webRequest);
-            return new ObjectResult(response.Message) { StatusCode = response.Status };
-        } catch (Exception e) {
-            // This catch block should only catch unwanted exceptions
-            Console.WriteLine("ERROR => UsersController::SignUp: " + e.Message);
-            Console.WriteLine(e.StackTrace);
-            return new ObjectResult("Server Error") { StatusCode = 500 };
-        } finally {
-            this.connectionManager.CloseConnection(connection);
-        }
+        var webRequest = new WebRequestDto() { Body = newUser };
+        var response = new UsersWebIO().SignUpUser(signUpUseCase, webRequest);
+        return new ObjectResult(response.Message) { StatusCode = response.Status };
     }
 
     [HttpPost("signin")]
     public ActionResult SignIn([FromBody] UserCredentialsDto credentials)
     {
-        var webRequest = new WebRequestDto() { Body = credentials };
-        var connection = this.connectionManager.GetConnection(this.configuration);
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
         var userDataAccess = new UserDataAccess(connection);
         var passwordService = new PasswordService();
         var tokenService = new TokenService(this.configuration["jwtSecret"]);
         var signInUseCase = new SignInUseCase(userDataAccess, passwordService, tokenService);
-        try {
-            this.connectionManager.OpenConnection(connection);
-            var response = new UsersWebIO().SignInUser(signInUseCase, webRequest);
-            var responseValue = response.Message != "" ? response.Message : response.Body;
-            return new ObjectResult(responseValue) { StatusCode = response.Status };
-        } catch (Exception e) {
-            // This catch block should only catch unwanted exceptions
-            Console.WriteLine("ERROR => UsersController::SignIn: " + e.Message);
-            Console.WriteLine(e.StackTrace);
-            return new ObjectResult("Server Error") { StatusCode = 500 };
-        } finally {
-            this.connectionManager.CloseConnection(connection);
-        }
+        var webRequest = new WebRequestDto() { Body = credentials };
+        var response = new UsersWebIO().SignInUser(signInUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
     [HttpGet("verify")]

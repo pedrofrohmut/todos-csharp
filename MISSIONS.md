@@ -26,8 +26,8 @@ resource's userId
 as any normal framework should, instead of 405 for some reason.
 - [ ] (10/10/2022) [Refactor] Change TodoDbDto, TaskDbDto and UserDbDto from string IDs to Guid so you
 can use it in Query and not use dynamic objects with dapper anymore.
-- [ ] (13/10/2022) [Refactor] Use middleware to get authUserId.
-- [ ] (13/10/2022) [Refactor] Use middleware to get db connection.
+- [x] (13/10/2022) [Refactor] Use middleware to get authUserId.
+- [x] (13/10/2022) [Refactor] Use middleware to get db connection.
 - [ ] (15/10/2022) [Refactor] Change the responseValue evaluations for response.Value method from the 
 DTO.
 - [x] (15/10/2022) [TODO] Refactor the RequestPipeline class => replace comments with private methods 
@@ -36,6 +36,7 @@ and remove extra private methods to center related code in the same place
 - [ ] (18/10/2022) [Refactor] Make the class and methods static for UsersWebIO, TasksWebIO and 
 TodosWebIO
 - [ ] (18/10/2022) [Refactor] Remove ! from WebIOs changing the useCases signatures
+- [x] (21/10/2022) [Refactor] Use ExceptionHandler Middleware and remove try/catch from ApiControllers
 
 
 ## DOCs

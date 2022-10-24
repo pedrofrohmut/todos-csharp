@@ -48,7 +48,7 @@ public class TasksController : ControllerBase
         var deleteTaskUseCase = new DeleteTaskUseCase(userDataAccess, taskDataAccess);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
         var response = new TasksWebIO().Delete(deleteTaskUseCase, webRequest);
-        return new ObjectResult(response.Message) { StatusCode = response.Status };
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
     [HttpGet("{id}")]
@@ -89,6 +89,6 @@ public class TasksController : ControllerBase
                                                Body = updatedTask,
                                                AuthUserId = authUserId };
         var response = new TasksWebIO().Update(updateTaskUseCase, webRequest);
-        return new ObjectResult(response.Message) { StatusCode = response.Status };
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 }

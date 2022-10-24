@@ -31,7 +31,7 @@ public class UserController : ControllerBase
         var signUpUseCase = new SignUpUseCase(userDataAccess, passwordService);
         var webRequest = new WebRequestDto() { Body = newUser };
         var response = new UsersWebIO().SignUpUser(signUpUseCase, webRequest);
-        return new ObjectResult(response.Message) { StatusCode = response.Status };
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
     [HttpPost("signin")]

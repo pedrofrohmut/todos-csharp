@@ -30,7 +30,7 @@ public class UserController : ControllerBase
         var passwordService = new PasswordService();
         var signUpUseCase = new SignUpUseCase(userDataAccess, passwordService);
         var webRequest = new WebRequestDto() { Body = newUser };
-        var response = new UsersWebIO().SignUpUser(signUpUseCase, webRequest);
+        var response = UsersWebIO.SignUpUser(signUpUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -43,7 +43,7 @@ public class UserController : ControllerBase
         var tokenService = new TokenService(this.configuration["jwtSecret"]);
         var signInUseCase = new SignInUseCase(userDataAccess, passwordService, tokenService);
         var webRequest = new WebRequestDto() { Body = credentials };
-        var response = new UsersWebIO().SignInUser(signInUseCase, webRequest);
+        var response = UsersWebIO.SignInUser(signInUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -66,7 +66,7 @@ public class UserController : ControllerBase
         var userDataAccess = new UserDataAccess(connection);
         var verifyUserUseCase = new VerifyUserUseCase(userDataAccess);
         var webRequest = new WebRequestDto() { AuthUserId = authUserId };
-        var response = new UsersWebIO().VerifyUser(verifyUserUseCase, webRequest);
+        var response = UsersWebIO.VerifyUser(verifyUserUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 }

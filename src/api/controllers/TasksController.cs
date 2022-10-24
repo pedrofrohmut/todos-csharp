@@ -5,8 +5,6 @@ using Todos.Core.Dtos;
 using Todos.Core.DataAccess;
 using Todos.Core.UseCases.Tasks;
 using Todos.DataAccess;
-using Todos.Services;
-using Todos.Core.Exceptions;
 using System.Data;
 
 namespace Todos.Api.Controllers;
@@ -34,7 +32,7 @@ public class TasksController : ControllerBase
         var taskDataAccess = new TaskDataAccess(connection);
         var createTaskUseCase = new CreateTaskUseCase(userDataAccess, taskDataAccess);
         var webRequest = new WebRequestDto() { Body = newTask, AuthUserId = authUserId };
-        var response = new TasksWebIO().Create(createTaskUseCase, webRequest);
+        var response = TasksWebIO.Create(createTaskUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -47,7 +45,7 @@ public class TasksController : ControllerBase
         var taskDataAccess = new TaskDataAccess(connection);
         var deleteTaskUseCase = new DeleteTaskUseCase(userDataAccess, taskDataAccess);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
-        var response = new TasksWebIO().Delete(deleteTaskUseCase, webRequest);
+        var response = TasksWebIO.Delete(deleteTaskUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -60,7 +58,7 @@ public class TasksController : ControllerBase
         var taskDataAccess = new TaskDataAccess(connection);
         var findTaskByIdUseCase = new FindTaskByIdUseCase(userDataAccess, taskDataAccess);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
-        var response = new TasksWebIO().FindById(findTaskByIdUseCase, webRequest);
+        var response = TasksWebIO.FindById(findTaskByIdUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -73,7 +71,7 @@ public class TasksController : ControllerBase
         var taskDataAccess = new TaskDataAccess(connection);
         var findTasksByUserIdUseCase = new FindTasksByUserIdUseCase(userDataAccess, taskDataAccess);
         var webRequest = new WebRequestDto() { AuthUserId = authUserId };
-        var response = new TasksWebIO().FindByUserId(findTasksByUserIdUseCase, webRequest);
+        var response = TasksWebIO.FindByUserId(findTasksByUserIdUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -88,7 +86,7 @@ public class TasksController : ControllerBase
         var webRequest = new WebRequestDto() { Param = id,
                                                Body = updatedTask,
                                                AuthUserId = authUserId };
-        var response = new TasksWebIO().Update(updateTaskUseCase, webRequest);
+        var response = TasksWebIO.Update(updateTaskUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 }

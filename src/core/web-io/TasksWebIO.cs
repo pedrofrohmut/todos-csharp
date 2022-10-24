@@ -4,9 +4,9 @@ using Todos.Core.UseCases.Tasks;
 
 namespace Todos.Core.WebIO;
 
-public class TasksWebIO
+public static class TasksWebIO
 {
-    public WebResponseDto Create(ICreateTaskUseCase createTaskUseCase, WebRequestDto request)
+    public static WebResponseDto Create(ICreateTaskUseCase createTaskUseCase, WebRequestDto request)
     {
         try {
             createTaskUseCase.Execute((CreateTaskDto) request.Body!, request.AuthUserId!);
@@ -22,7 +22,7 @@ public class TasksWebIO
         }
     }
 
-    public WebResponseDto Delete(IDeleteTaskUseCase deleteTaskUseCase, WebRequestDto request)
+    public static WebResponseDto Delete(IDeleteTaskUseCase deleteTaskUseCase, WebRequestDto request)
     {
         try {
             deleteTaskUseCase.Execute(request.Param!, request.AuthUserId!);
@@ -39,7 +39,7 @@ public class TasksWebIO
     }
 
     // TODO: check what to do when task not found
-    public WebResponseDto FindById(IFindTaskByIdUseCase findTaskByIdUseCase, WebRequestDto request)
+    public static WebResponseDto FindById(IFindTaskByIdUseCase findTaskByIdUseCase, WebRequestDto request)
     {
         try {
             var foundTask = findTaskByIdUseCase.Execute(request.Param!, request.AuthUserId!);
@@ -58,7 +58,7 @@ public class TasksWebIO
         }
     }
 
-    public WebResponseDto FindByUserId(IFindTasksByUserIdUseCase findTasksByUserIdUseCase, WebRequestDto request)
+    public static WebResponseDto FindByUserId(IFindTasksByUserIdUseCase findTasksByUserIdUseCase, WebRequestDto request)
     {
         try {
             var tasks = findTasksByUserIdUseCase.Execute(request.AuthUserId!);
@@ -77,7 +77,7 @@ public class TasksWebIO
         }
     }
 
-    public WebResponseDto Update(IUpdateTaskUseCase updateTaskUseCase, WebRequestDto request)
+    public static WebResponseDto Update(IUpdateTaskUseCase updateTaskUseCase, WebRequestDto request)
     {
         try {
             updateTaskUseCase.Execute(request.Param,

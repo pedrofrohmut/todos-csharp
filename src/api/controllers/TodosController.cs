@@ -2,11 +2,9 @@ using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Todos.Core.DataAccess;
 using Todos.Core.Dtos;
-using Todos.Core.Exceptions;
 using Todos.Core.UseCases.Todos;
 using Todos.Core.WebIO;
 using Todos.DataAccess;
-using Todos.Services;
 
 namespace Todos.Api.Controllers;
 
@@ -34,7 +32,7 @@ public class TodosController : Controller
         var todoDataAccess = new TodoDataAccess(connection);
         var createTodoUseCase = new CreateTodoUseCase(userDataAccess, taskDataAccess, todoDataAccess);
         var webRequest = new WebRequestDto() { Body = newTodo, AuthUserId = authUserId };
-        var response = new TodosWebIO().Create(createTodoUseCase, webRequest);
+        var response = TodosWebIO.Create(createTodoUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -49,7 +47,7 @@ public class TodosController : Controller
         var findTodosByTaskIdUseCase =
             new FindTodosByTaskIdUseCase(userDataAccess, taskDataAccess, todoDataAccess);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
-        var response = new TodosWebIO().FindByTaskId(findTodosByTaskIdUseCase, webRequest);
+        var response = TodosWebIO.FindByTaskId(findTodosByTaskIdUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -62,7 +60,7 @@ public class TodosController : Controller
         var todoDataAccess = new TodoDataAccess(connection);
         var findTodoByIdUseCase = new FindTodoByIdUseCase(userDataAccess, todoDataAccess);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
-        var response = new TodosWebIO().FindById(findTodoByIdUseCase, webRequest);
+        var response = TodosWebIO.FindById(findTodoByIdUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -75,7 +73,7 @@ public class TodosController : Controller
         var todoDataAccess = new TodoDataAccess(connection);
         var setTodoDoneUseCase = new SetTodoDoneUseCase(userDataAccess, todoDataAccess);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
-        var response = new TodosWebIO().SetDone(setTodoDoneUseCase, webRequest);
+        var response = TodosWebIO.SetDone(setTodoDoneUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -88,7 +86,7 @@ public class TodosController : Controller
         var todoDataAccess = new TodoDataAccess(connection);
         var setTodoNotDoneUseCase = new SetTodoNotDoneUseCase(userDataAccess, todoDataAccess);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
-        var response = new TodosWebIO().SetNotDone(setTodoNotDoneUseCase, webRequest);
+        var response = TodosWebIO.SetNotDone(setTodoNotDoneUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -101,7 +99,7 @@ public class TodosController : Controller
         var todoDataAccess = new TodoDataAccess(connection);
         var updateTodoUseCase = new UpdateTodoUseCase(userDataAccess, todoDataAccess);
         var webRequest = new WebRequestDto() { Param = id, Body = updatedTodo, AuthUserId = authUserId };
-        var response = new TodosWebIO().Update(updateTodoUseCase, webRequest);
+        var response = TodosWebIO.Update(updateTodoUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -114,7 +112,7 @@ public class TodosController : Controller
         var todoDataAccess = new TodoDataAccess(connection);
         var deleteTodoUseCase = new DeleteTodoUseCase(userDataAccess, todoDataAccess);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
-        var response = new TodosWebIO().Delete(deleteTodoUseCase, webRequest);
+        var response = TodosWebIO.Delete(deleteTodoUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -127,7 +125,7 @@ public class TodosController : Controller
         var todoDataAccess = new TodoDataAccess(connection);
         var deleteDoneTodosUseCase = new DeleteDoneTodosUseCase(userDataAccess, todoDataAccess);
         var webRequest = new WebRequestDto() { AuthUserId = authUserId };
-        var response = new TodosWebIO().DeleteDone(deleteDoneTodosUseCase, webRequest);
+        var response = TodosWebIO.DeleteDone(deleteDoneTodosUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -142,7 +140,7 @@ public class TodosController : Controller
             new DeleteDoneTodosByTaskIdUseCase(userDataAccess, taskDataAccess, todoDataAccess);
         var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
-        var response = new TodosWebIO().DeleteDoneByTaskId(deleteDoneTodosByTaskIdUseCase, webRequest);
+        var response = TodosWebIO.DeleteDoneByTaskId(deleteDoneTodosByTaskIdUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 }

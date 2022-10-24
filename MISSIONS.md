@@ -33,7 +33,7 @@ DTO.
 - [x] (15/10/2022) [TODO] Refactor the RequestPipeline class => replace comments with private methods
 and remove extra private methods to center related code in the same place
 - [x] (17/10/2022) [Refactor] Remove Id from UpdateTodoDto
-- [ ] (18/10/2022) [Refactor] Make the class and methods static for UsersWebIO, TasksWebIO and
+- [x] (18/10/2022) [Refactor] Make the class and methods static for UsersWebIO, TasksWebIO and
 TodosWebIO
 - [ ] (18/10/2022) [Refactor] Remove ! from WebIOs changing the useCases signatures
 - [x] (21/10/2022) [Refactor] Use ExceptionHandler Middleware and remove try/catch from ApiControllers

@@ -2,11 +2,11 @@ using Todos.Core.Dtos;
 using Todos.Core.Exceptions;
 using Todos.Core.UseCases.Todos;
 
-namespace Todos.Core.WebIO; 
+namespace Todos.Core.WebIO;
 
-public class TodosWebIO
+public static class TodosWebIO
 {
-    public WebResponseDto Create(ICreateTodoUseCase createTodoUseCase, WebRequestDto request)
+    public static WebResponseDto Create(ICreateTodoUseCase createTodoUseCase, WebRequestDto request)
     {
         try {
             createTodoUseCase.Execute((CreateTodoDto) request.Body!, request.AuthUserId!);
@@ -25,7 +25,7 @@ public class TodosWebIO
     }
 
 
-    public WebResponseDto FindByTaskId(IFindTodosByTaskIdUseCase findTodosByTaskIdUseCase,
+    public static WebResponseDto FindByTaskId(IFindTodosByTaskIdUseCase findTodosByTaskIdUseCase,
                                        WebRequestDto request)
     {
         try {
@@ -47,7 +47,7 @@ public class TodosWebIO
         }
     }
 
-    public WebResponseDto FindById(IFindTodoByIdUseCase findTodoByIdUseCase, WebRequestDto request)
+    public static WebResponseDto FindById(IFindTodoByIdUseCase findTodoByIdUseCase, WebRequestDto request)
     {
         try {
             var todo = findTodoByIdUseCase.Execute(request.Param!, request.AuthUserId!);
@@ -67,7 +67,7 @@ public class TodosWebIO
         }
     }
 
-    public WebResponseDto SetDone(ISetTodoDoneUseCase setTodoDoneUseCase, WebRequestDto request)
+    public static WebResponseDto SetDone(ISetTodoDoneUseCase setTodoDoneUseCase, WebRequestDto request)
     {
         try {
             setTodoDoneUseCase.Execute(request.Param!, request.AuthUserId!);
@@ -84,7 +84,7 @@ public class TodosWebIO
         }
     }
 
-    public WebResponseDto SetNotDone(ISetTodoNotDoneUseCase setTodoNotDoneUseCase, WebRequestDto request)
+    public static WebResponseDto SetNotDone(ISetTodoNotDoneUseCase setTodoNotDoneUseCase, WebRequestDto request)
     {
         try {
             setTodoNotDoneUseCase.Execute(request.Param!, request.AuthUserId!);
@@ -101,7 +101,7 @@ public class TodosWebIO
         }
     }
 
-    public WebResponseDto Update(IUpdateTodoUseCase updateTodoUseCase, WebRequestDto request)
+    public static WebResponseDto Update(IUpdateTodoUseCase updateTodoUseCase, WebRequestDto request)
     {
         try {
             updateTodoUseCase.Execute(request.Param!, (UpdateTodoDto) request.Body!, request.AuthUserId!);
@@ -118,7 +118,7 @@ public class TodosWebIO
         }
     }
 
-    public WebResponseDto Delete(IDeleteTodoUseCase deleteTodoUseCase, WebRequestDto request)
+    public static WebResponseDto Delete(IDeleteTodoUseCase deleteTodoUseCase, WebRequestDto request)
     {
         try {
             deleteTodoUseCase.Execute(request.Param, request.AuthUserId);
@@ -135,7 +135,7 @@ public class TodosWebIO
         }
     }
 
-    public WebResponseDto DeleteDone(IDeleteDoneTodosUseCase deleteDoneTodosUseCase,
+    public static WebResponseDto DeleteDone(IDeleteDoneTodosUseCase deleteDoneTodosUseCase,
                                           WebRequestDto request)
     {
         try {
@@ -149,7 +149,7 @@ public class TodosWebIO
         }
     }
 
-    public WebResponseDto DeleteDoneByTaskId(
+    public static WebResponseDto DeleteDoneByTaskId(
         IDeleteDoneTodosByTaskIdUseCase deleteDoneTodosByTaskIdUseCase,
         WebRequestDto request)
     {

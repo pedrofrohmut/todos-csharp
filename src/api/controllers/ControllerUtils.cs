@@ -42,6 +42,6 @@ public static class ControllerUtils
             }
             throw new InvalidRequestAuthException(e.Message);
         }
-        
+
     }
 }

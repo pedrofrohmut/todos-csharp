@@ -16,26 +16,36 @@ public class UpdateTaskUseCase : IUpdateTaskUseCase
         this.taskDataAccess = taskDataAccess;
     }
 
-    public void Execute(UpdateTaskDto updatedTask, string authUserId)
+    public void Execute(string? taskId, UpdateTaskDto? updatedTask, string? authUserId)
     {
+        var validTaskId = this.ValidateTaskId(taskId);
         this.ValidateTask(updatedTask);
-        this.ValidateUserId(authUserId);
-        this.CheckUserExists(authUserId);
-        var taskDb = this.FindTask(updatedTask.Id);
-        this.CheckResourceOwnership(taskDb, authUserId);
-        this.UpdateTask(updatedTask);
+        var validUserId = this.ValidateUserId(authUserId);
+        this.CheckUserExists(validUserId);
+        var taskDb = this.FindTask(validTaskId);
+        this.CheckResourceOwnership(taskDb, validUserId);
+        this.UpdateTask(validTaskId, updatedTask!);
     }
 
-    private void ValidateTask(UpdateTaskDto updatedTask)
+    private string ValidateTaskId(string? taskId)
     {
-        Entities.Task.ValidateId(updatedTask.Id);
+        Entities.Task.ValidateId(taskId);
+        return taskId!;
+    }
+
+    private void ValidateTask(UpdateTaskDto? updatedTask)
+    {
+        if (updatedTask == null) {
+            throw new InvalidTaskException("Request Body is null");
+        }
         Entities.Task.ValidateName(updatedTask.Name);
         Entities.Task.ValidateDescription(updatedTask.Description);
     }
 
-    private void ValidateUserId(string authUserId)
+    private string ValidateUserId(string? authUserId)
     {
         User.ValidateId(authUserId);
+        return authUserId!;
     }
 
     private void CheckUserExists(string authUserId)
@@ -62,8 +72,8 @@ public class UpdateTaskUseCase : IUpdateTaskUseCase
         }
     }
 
-    private void UpdateTask(UpdateTaskDto updatedTask)
+    private void UpdateTask(string taskId, UpdateTaskDto updatedTask)
     {
-        this.taskDataAccess.Update(updatedTask);
+        this.taskDataAccess.Update(taskId, updatedTask);
     }
 }

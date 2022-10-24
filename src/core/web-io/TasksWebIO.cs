@@ -2,7 +2,7 @@ using Todos.Core.Dtos;
 using Todos.Core.Exceptions;
 using Todos.Core.UseCases.Tasks;
 
-namespace Todos.Core.WebIO; 
+namespace Todos.Core.WebIO;
 
 public class TasksWebIO
 {
@@ -80,13 +80,9 @@ public class TasksWebIO
     public WebResponseDto Update(IUpdateTaskUseCase updateTaskUseCase, WebRequestDto request)
     {
         try {
-            var body = (UpdateTaskDto) request.Body!;
-            var updatedTask = new UpdateTaskDto() {
-                Id = request.Param!,
-                Name = body.Name,
-                Description = body.Description
-            };
-            updateTaskUseCase.Execute(updatedTask, request.AuthUserId!);
+            updateTaskUseCase.Execute(request.Param,
+                                      (UpdateTaskDto?) request.Body,
+                                      request.AuthUserId);
             return new WebResponseDto() { Message = "", Status = 204 };
         } catch (Exception e) {
             if (e is InvalidUserException ||

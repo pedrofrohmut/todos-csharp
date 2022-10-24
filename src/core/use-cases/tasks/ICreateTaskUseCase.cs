@@ -4,5 +4,5 @@ namespace Todos.Core.UseCases.Tasks;
 
 public interface ICreateTaskUseCase
 {
-    void Execute(CreateTaskDto newTask, string authUserId);
+    void Execute(CreateTaskDto? newTask, string? authUserId);
 }

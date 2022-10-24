@@ -16,19 +16,20 @@ public class FindTasksByUserIdUseCase : IFindTasksByUserIdUseCase
         this.taskDataAccess = taskDataAccess;
     }
 
-    public List<TaskDto> Execute(string authUserId)
+    public List<TaskDto> Execute(string? authUserId)
     {
-        this.ValidateUserId(authUserId);
-        this.CheckUserExists(authUserId);
-        var tasksDb = this.FindTasksByUserId(authUserId);
-        this.CheckResourceOwnership(tasksDb, authUserId);
+        var validUserId = this.ValidateUserId(authUserId);
+        this.CheckUserExists(validUserId);
+        var tasksDb = this.FindTasksByUserId(validUserId);
+        this.CheckResourceOwnership(tasksDb, validUserId);
         var tasks = this.MapTasksDbToTasks(tasksDb);
         return tasks;
     }
 
-    private void ValidateUserId(string authUserId)
+    private string ValidateUserId(string? authUserId)
     {
         User.ValidateId(authUserId);
+        return authUserId!;
     }
 
     private void CheckUserExists(string authUserId)

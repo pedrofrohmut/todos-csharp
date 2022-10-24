@@ -2,5 +2,5 @@ namespace Todos.Core.UseCases.Users;
 
 public interface IVerifyUserUseCase
 {
-    void Execute(string authUserId);
+    void Execute(string? authUserId);
 }

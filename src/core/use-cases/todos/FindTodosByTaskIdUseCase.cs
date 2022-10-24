@@ -20,26 +20,28 @@ public class FindTodosByTaskIdUseCase : IFindTodosByTaskIdUseCase
         this.todoDataAccess = todoDataAccess;
     }
 
-    public List<TodoDto> Execute(string taskId, string authUserId)
+    public List<TodoDto> Execute(string? taskId, string? authUserId)
     {
-        this.ValidateTaskId(taskId);
-        this.ValidateAuthUserId(authUserId);
-        this.CheckUserExists(authUserId);
-        var taskDb = this.FindTask(taskId);
-        this.CheckResourceOwnership(taskDb, authUserId);
-        var todosDb = this.FindTodosByTaskId(taskId);
+        var validTaskId = this.ValidateTaskId(taskId);
+        var validUserId = this.ValidateAuthUserId(authUserId);
+        this.CheckUserExists(validUserId);
+        var taskDb = this.FindTask(validTaskId);
+        this.CheckResourceOwnership(taskDb, validUserId);
+        var todosDb = this.FindTodosByTaskId(validTaskId);
         var todos = this.MapTodosDbToTodos(todosDb);
         return todos;
     }
 
-    private void ValidateTaskId(string taskId)
+    private string ValidateTaskId(string? taskId)
     {
         Entities.Task.ValidateId(taskId);
+        return taskId!;
     }
 
-    private void ValidateAuthUserId(string authUserId)
+    private string ValidateAuthUserId(string? authUserId)
     {
         User.ValidateId(authUserId);
+        return authUserId!;
     }
 
     private void CheckUserExists(string authUserId)

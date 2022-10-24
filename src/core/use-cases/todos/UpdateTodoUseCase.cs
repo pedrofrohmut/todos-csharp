@@ -16,15 +16,15 @@ public class UpdateTodoUseCase : IUpdateTodoUseCase
         this.todoDataAccess = todoDataAccess;
     }
 
-    public void Execute(string todoId, UpdateTodoDto updatedTodo, string authUserId)
+    public void Execute(string? todoId, UpdateTodoDto? updatedTodo, string? authUserId)
     {
         var validTodoId = this.ValidateTodoId(todoId);
-        this.ValidateTodo(updatedTodo);
+        var validUpdatedTodo = this.ValidateTodo(updatedTodo);
         var validUserId = this.ValidateUserId(authUserId);
-        this.CheckUserExists(authUserId);
-        var todoDb = this.FindTodo(todoId);
+        this.CheckUserExists(validUserId);
+        var todoDb = this.FindTodo(validTodoId);
         this.CheckResourceOwnership(todoDb, validUserId);
-        this.UpdateTodo(todoId, updatedTodo);
+        this.UpdateTodo(validTodoId, validUpdatedTodo);
     }
 
     private string ValidateTodoId(string? todoId)
@@ -33,10 +33,14 @@ public class UpdateTodoUseCase : IUpdateTodoUseCase
         return todoId!;
     }
 
-    private void ValidateTodo(UpdateTodoDto updatedTodo)
+    private UpdateTodoDto ValidateTodo(UpdateTodoDto? updatedTodo)
     {
+        if (updatedTodo == null) {
+            throw new InvalidTodoException("Request Body is null");
+        }
         Todo.ValidateName(updatedTodo.Name);
         Todo.ValidateDescription(updatedTodo.Description);
+        return updatedTodo;
     }
 
     private string ValidateUserId(string? authUserId)

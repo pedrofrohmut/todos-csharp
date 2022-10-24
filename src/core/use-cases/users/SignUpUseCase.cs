@@ -17,16 +17,19 @@ public class SignUpUseCase : ISignUpUseCase
         this.passwordService = passwordService;
     }
 
-    public void Execute(CreateUserDto newUser)
+    public void Execute(CreateUserDto? newUser)
     {
         this.ValidateNewUser(newUser);
-        this.CheckEmailAlreadyTaken(newUser.Email);
+        this.CheckEmailAlreadyTaken(newUser!.Email);
         var passwordHash = this.GetPasswordHash(newUser.Password);
         this.CreateUser(newUser, passwordHash);
     }
 
-    private void ValidateNewUser(CreateUserDto newUser)
+    private void ValidateNewUser(CreateUserDto? newUser)
     {
+        if (newUser == null) {
+            throw new InvalidUserException("Request Body is null");
+        }
         User.ValidateName(newUser.Name);
         User.ValidateEmail(newUser.Email);
         User.ValidatePassword(newUser.Password);
@@ -40,9 +43,9 @@ public class SignUpUseCase : ISignUpUseCase
         }
     }
 
-    private string GetPasswordHash(string password) => 
+    private string GetPasswordHash(string password) =>
         this.passwordService.HashPassword(password);
 
-    private void CreateUser(CreateUserDto newUser, string passwordHash) => 
+    private void CreateUser(CreateUserDto newUser, string passwordHash) =>
         this.userDataAccess.Create(newUser, passwordHash);
 }

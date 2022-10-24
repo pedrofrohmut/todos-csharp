@@ -4,5 +4,5 @@ namespace Todos.Core.UseCases.Users;
 
 public interface ISignInUseCase
 {
-    SignedUserDto Execute(UserCredentialsDto credentials);
+    SignedUserDto Execute(UserCredentialsDto? credentials);
 }

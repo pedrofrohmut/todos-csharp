@@ -9,7 +9,7 @@ public static class TasksWebIO
     public static WebResponseDto Create(ICreateTaskUseCase createTaskUseCase, WebRequestDto request)
     {
         try {
-            createTaskUseCase.Execute((CreateTaskDto) request.Body!, request.AuthUserId!);
+            createTaskUseCase.Execute((CreateTaskDto?) request.Body, request.AuthUserId);
             return new WebResponseDto() { Message = "Task Created", Status = 201 };
         } catch (Exception e) {
             if (e is InvalidUserException ||
@@ -25,7 +25,7 @@ public static class TasksWebIO
     public static WebResponseDto Delete(IDeleteTaskUseCase deleteTaskUseCase, WebRequestDto request)
     {
         try {
-            deleteTaskUseCase.Execute(request.Param!, request.AuthUserId!);
+            deleteTaskUseCase.Execute(request.Param, request.AuthUserId);
             return new WebResponseDto() { Message = "", Status = 204 };
         } catch (Exception e) {
             if (e is InvalidUserException ||
@@ -42,7 +42,7 @@ public static class TasksWebIO
     public static WebResponseDto FindById(IFindTaskByIdUseCase findTaskByIdUseCase, WebRequestDto request)
     {
         try {
-            var foundTask = findTaskByIdUseCase.Execute(request.Param!, request.AuthUserId!);
+            var foundTask = findTaskByIdUseCase.Execute(request.Param, request.AuthUserId);
             return new WebResponseDto() { Body = foundTask, Status = 200 };
         } catch (Exception e) {
             if (e is InvalidUserException ||
@@ -61,7 +61,7 @@ public static class TasksWebIO
     public static WebResponseDto FindByUserId(IFindTasksByUserIdUseCase findTasksByUserIdUseCase, WebRequestDto request)
     {
         try {
-            var tasks = findTasksByUserIdUseCase.Execute(request.AuthUserId!);
+            var tasks = findTasksByUserIdUseCase.Execute(request.AuthUserId);
             if (tasks.Count == 0) {
                 return new WebResponseDto() { Message = "",  Status = 204 };
             }

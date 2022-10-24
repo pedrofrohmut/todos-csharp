@@ -5,7 +5,8 @@ using Todos.Core.DataAccess;
 
 namespace Todos.Core.UseCases.Tasks;
 
-public class CreateTaskUseCase : ICreateTaskUseCase
+public class
+    CreateTaskUseCase : ICreateTaskUseCase
 {
     private readonly IUserDataAccess userDataAccess;
     private readonly ITaskDataAccess taskDataAccess;
@@ -16,23 +17,28 @@ public class CreateTaskUseCase : ICreateTaskUseCase
         this.taskDataAccess = taskDataAccess;
     }
 
-    public void Execute(CreateTaskDto newTask, string authUserId)
+    public void Execute(CreateTaskDto? newTask, string? authUserId)
     {
-        this.ValidateNewTask(newTask);
-        this.ValidateAuthUserId(authUserId);
-        this.CheckUserExists(authUserId);
-        this.CreateTask(newTask, authUserId);
+        var validTask = this.ValidateNewTask(newTask);
+        var validUserId = this.ValidateAuthUserId(authUserId);
+        this.CheckUserExists(validUserId);
+        this.CreateTask(validTask, validUserId);
     }
 
-    private void ValidateNewTask(CreateTaskDto newTask)
+    private CreateTaskDto ValidateNewTask(CreateTaskDto? newTask)
     {
+        if (newTask == null) {
+            throw new InvalidTaskException("Request Body is null");
+        }
         Entities.Task.ValidateName(newTask.Name);
         Entities.Task.ValidateDescription(newTask.Description);
+        return newTask!;
     }
 
-    private void ValidateAuthUserId(string authUserId)
+    private string ValidateAuthUserId(string? authUserId)
     {
         User.ValidateId(authUserId);
+        return authUserId!;
     }
 
     private void CheckUserExists(string authUserId)

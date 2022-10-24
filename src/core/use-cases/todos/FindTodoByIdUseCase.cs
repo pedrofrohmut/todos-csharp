@@ -16,25 +16,27 @@ public class FindTodoByIdUseCase : IFindTodoByIdUseCase
         this.todoDataAccess = todoDataAccess;
     }
 
-    public TodoDto Execute(string todoId, string authUserId)
+    public TodoDto Execute(string? todoId, string? authUserId)
     {
-        this.ValidateTodoId(todoId);
-        this.ValidateUserId(authUserId);
-        this.CheckUserExists(authUserId);
-        var todoDb = this.FindTodoById(todoId);
-        this.CheckResourceOwnership(todoDb, authUserId);
+        var validTodoId = this.ValidateTodoId(todoId);
+        var validUserId = this.ValidateUserId(authUserId);
+        this.CheckUserExists(validUserId);
+        var todoDb = this.FindTodoById(validTodoId);
+        this.CheckResourceOwnership(todoDb, validUserId);
         var todo = this.MapTodoDbToTodo(todoDb);
         return todo;
     }
 
-    private void ValidateTodoId(string todoId)
+    private string ValidateTodoId(string? todoId)
     {
         Todo.ValidateId(todoId);
+        return todoId!;
     }
 
-    private void ValidateUserId(string authUserId)
+    private string ValidateUserId(string? authUserId)
     {
         User.ValidateId(authUserId);
+        return authUserId!;
     }
 
     private void CheckUserExists(string authUserId)
@@ -72,4 +74,3 @@ public class FindTodoByIdUseCase : IFindTodoByIdUseCase
         };
 
 }
-

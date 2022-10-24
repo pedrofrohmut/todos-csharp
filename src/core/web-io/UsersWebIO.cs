@@ -9,7 +9,7 @@ public static class UsersWebIO
     public static WebResponseDto SignUpUser(ISignUpUseCase signUpUseCase, WebRequestDto request)
     {
         try {
-            signUpUseCase.Execute((CreateUserDto) request.Body!);
+            signUpUseCase.Execute((CreateUserDto?) request.Body);
             return new WebResponseDto() { Message = "User created", Status = 201 };
         } catch (Exception e) {
             if (e is InvalidUserException || e is EmailAlreadyTakenException) {
@@ -22,7 +22,7 @@ public static class UsersWebIO
     public static WebResponseDto SignInUser(ISignInUseCase signInUseCase, WebRequestDto req)
     {
         try {
-            var signedUser = signInUseCase.Execute((UserCredentialsDto) req.Body!);
+            var signedUser = signInUseCase.Execute((UserCredentialsDto?) req.Body);
             return new WebResponseDto() { Body = signedUser, Status = 200 };
         } catch (Exception e) {
             if (e is InvalidUserException ||
@@ -38,7 +38,7 @@ public static class UsersWebIO
     public static WebResponseDto VerifyUser(IVerifyUserUseCase verifyUserUseCase, WebRequestDto req)
     {
         try {
-            verifyUserUseCase.Execute(req.AuthUserId!);
+            verifyUserUseCase.Execute(req.AuthUserId);
             return new WebResponseDto() { Body = true, Status = 200 };
         } catch (Exception e) {
             if (e is InvalidUserException || e is UserNotFoundException) {

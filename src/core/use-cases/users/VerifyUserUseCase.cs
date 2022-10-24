@@ -13,20 +13,21 @@ public class VerifyUserUseCase : IVerifyUserUseCase
         this.userDataAccess = userDataAccess;
     }
 
-    public void Execute(string authUserId)
+    public void Execute(string? authUserId)
     {
-        this.ValidateId(authUserId);
-        this.CheckUserExists(authUserId);
+        var validUserId = this.ValidateId(authUserId);
+        this.CheckUserExists(validUserId);
     }
 
-    private void ValidateId(string id)
+    private string ValidateId(string? authUserId)
     {
-        User.ValidateId(id);
+        User.ValidateId(authUserId);
+        return authUserId!;
     }
 
-    private void CheckUserExists(string id)
+    private void CheckUserExists(string authUserId)
     {
-        var user = this.userDataAccess.FindById(id);
+        var user = this.userDataAccess.FindById(authUserId);
         if (user == null) {
             throw new UserNotFoundException("User not found by id");
         }

@@ -13,8 +13,8 @@ public class SignInUseCase : ISignInUseCase
     private readonly ITokenService tokenService;
 
     public SignInUseCase(
-            IUserDataAccess userDataAccess, 
-            IPasswordService passwordService, 
+            IUserDataAccess userDataAccess,
+            IPasswordService passwordService,
             ITokenService tokenService)
     {
         this.userDataAccess = userDataAccess;
@@ -22,11 +22,11 @@ public class SignInUseCase : ISignInUseCase
         this.tokenService = tokenService;
     }
 
-    public SignedUserDto Execute(UserCredentialsDto credentials)
+    public SignedUserDto Execute(UserCredentialsDto? credentials)
     {
         this.ValidateCredentials(credentials);
-        var user = this.GetUser(credentials.Email);
-        this.VerifyPasswordMatch(credentials.Password, user.PasswordHash);
+        var user = this.GetUser(credentials!.Email);
+        this.VerifyPasswordMatch(credentials!.Password, user.PasswordHash);
         var token = this.GenerateToken(user.Id);
         return new SignedUserDto() {
             UserId = user.Id,
@@ -36,8 +36,11 @@ public class SignInUseCase : ISignInUseCase
         };
     }
 
-    private void ValidateCredentials(UserCredentialsDto credentials)
+    private void ValidateCredentials(UserCredentialsDto? credentials)
     {
+        if (credentials == null) {
+            throw new InvalidUserException("Request Body is null");
+        }
         User.ValidateEmail(credentials.Email);
         User.ValidatePassword(credentials.Password);
     }

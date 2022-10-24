@@ -4,5 +4,5 @@ namespace Todos.Core.UseCases.Todos;
 
 public interface ICreateTodoUseCase
 {
-    void Execute(CreateTodoDto newTodo, string authUserId);
+    void Execute(CreateTodoDto? newTodo, string? authUserId);
 }

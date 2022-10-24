@@ -4,5 +4,5 @@ namespace Todos.Core.UseCases.Todos;
 
 public interface IFindTodosByTaskIdUseCase
 {
-    List<TodoDto> Execute(string taskId, string authUserId);
+    List<TodoDto> Execute(string? taskId, string? authUserId);
 }

@@ -67,7 +67,7 @@ public class UpdateTaskUseCase : IUpdateTaskUseCase
 
     private void CheckResourceOwnership(TaskDbDto taskDb, string authUserId)
     {
-        if (taskDb.UserId != authUserId) {
+        if (taskDb.UserId.ToString() != authUserId) {
             throw new NotResourceOwnerException();
         }
     }

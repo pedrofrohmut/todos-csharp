@@ -57,7 +57,7 @@ public class DeleteTodoUseCase : IDeleteTodoUseCase
 
     private void CheckResourceOwnership(TodoDbDto todoDb, string authUserId)
     {
-        if (todoDb.UserId != authUserId) {
+        if (todoDb.UserId.ToString() != authUserId) {
             throw new NotResourceOwnerException();
         }
     }

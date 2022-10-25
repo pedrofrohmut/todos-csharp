@@ -46,7 +46,7 @@ public class FindTasksByUserIdUseCase : IFindTasksByUserIdUseCase
     private void CheckResourceOwnership(List<TaskDbDto> tasksDb, string authUserId)
     {
         tasksDb.ForEach(taskDb => {
-            if (taskDb.UserId != authUserId) {
+            if (taskDb.UserId.ToString() != authUserId) {
                 throw new NotResourceOwnerException();
             }
         });
@@ -55,10 +55,10 @@ public class FindTasksByUserIdUseCase : IFindTasksByUserIdUseCase
     private List<TaskDto> MapTasksDbToTasks(List<TaskDbDto> tasksDb) =>
         tasksDb
             .Select(task => new TaskDto() {
-                Id = task.Id,
+                Id = task.Id.ToString(),
                 Name = task.Name,
                 Description = task.Description,
-                UserId = task.UserId
+                UserId = task.UserId.ToString()
             })
             .ToList();
 }

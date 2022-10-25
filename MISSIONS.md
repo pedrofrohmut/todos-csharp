@@ -37,7 +37,9 @@ and remove extra private methods to center related code in the same place
 TodosWebIO
 - [x] (18/10/2022) [Refactor] Remove ! from WebIOs changing the useCases signatures
 - [x] (21/10/2022) [Refactor] Use ExceptionHandler Middleware and remove try/catch from ApiControllers
+- [ ] (24/10/2022) [Fix] Change the 204 to 404 where cannot find for get
 
+- [ ] (25/10/2022) [Change] Async all pipe up and down
 
 ## DOCs
 

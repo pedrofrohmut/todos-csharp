@@ -16,7 +16,7 @@ public class UserDataAccess : IUserDataAccess
 
     public void Create(CreateUserDto newUser, string passwordHash)
     {
-        var sql = @"INSERT INTO app.users (name, email, password_hash) 
+        var sql = @"INSERT INTO app.users (name, email, password_hash)
                     VALUES (@name, @email, @passwordHash)";
         this.connection.Query(sql, new {
             @name = newUser.Name,
@@ -27,30 +27,20 @@ public class UserDataAccess : IUserDataAccess
 
     public UserDbDto? FindByEmail(string email)
     {
-        var sql = @"SELECT * FROM app.users WHERE email = @email";
-        var row = this.connection.Query(sql, new { email }).SingleOrDefault();
-        if (row == null) return null;
-        var user = new UserDbDto() {
-            Id = row.id.ToString(),
-            Name = row.name,
-            Email = row.email,
-            PasswordHash = row.password_hash
-        };
+        var sql = @"SELECT id, name, email, password_hash as passwordHash
+                    FROM app.users
+                    WHERE email = @email";
+        var user = this.connection.Query<UserDbDto>(sql, new { email }).SingleOrDefault();
         return user;
     }
 
     public UserDbDto? FindById(string userId)
     {
-        var sql = @"SELECT * FROM app.users WHERE id = @id";
-        var row = this.connection.Query(sql, new { id = Guid.Parse(userId) })
-                                 .SingleOrDefault();
-        if (row == null) return null;
-        var user = new UserDbDto() {
-            Id = row.id.ToString(),
-            Name = row.name,
-            Email = row.email,
-            PasswordHash = row.password_hash
-        };
+        var sql = @"SELECT id, name, email, password_hash as passwordHash
+                    FROM app.users
+                    WHERE id = @userId";
+        var user = this.connection.Query<UserDbDto>(sql, new { @userId = Guid.Parse(userId) })
+                                  .SingleOrDefault();
         return user;
     }
 }

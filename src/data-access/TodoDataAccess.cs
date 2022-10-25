@@ -27,38 +27,23 @@ public class TodoDataAccess : ITodoDataAccess
         });
     }
 
-    public List<TodoDbDto> FindByTaskId(string taskId)
+    public List<TodoDbDto>? FindByTaskId(string taskId)
     {
-        var sql = "SELECT * FROM app.todos WHERE task_id = @taskId";
-        var rows = this.connection.Query(sql, new { @taskId = Guid.Parse(taskId) });
-        if (rows == null) return new List<TodoDbDto>();
-        var todos = rows
-            .Select(row => new TodoDbDto() {
-                Id = row.id.ToString(),
-                Name = row.name,
-                Description = row.description,
-                IsDone = row.is_done,
-                TaskId = row.task_id.ToString(),
-                UserId = row.user_id.ToString()
-            })
-            .ToList();
+        var sql = @"SELECT id, name, description, is_done as isDone, task_id as taskId, user_id as userId
+                    FROM app.todos
+                    WHERE task_id = @taskId";
+        var todos = this.connection.Query<TodoDbDto>(sql, new { @taskId = Guid.Parse(taskId) })
+                                   .ToList();
         return todos;
     }
 
     public TodoDbDto? FindById(string todoId)
     {
-        var sql = "SELECT * FROM app.todos WHERE id = @todoId";
-        var row = this.connection.Query(sql, new { @todoId = Guid.Parse(todoId) })
-                                 .FirstOrDefault();
-        if (row == null) return null;
-        var todo = new TodoDbDto() {
-            Id = row.id.ToString(),
-            Name = row.name,
-            Description = row.description,
-            IsDone = row.is_done,
-            TaskId = row.task_id.ToString(),
-            UserId = row.user_id.ToString()
-        };
+        var sql = @"SELECT id, name, description, is_done as isDone, task_id as taskId, user_id as userId
+                    FROM app.todos
+                    WHERE id = @todoId";
+        var todo = this.connection.Query<TodoDbDto>(sql, new { @todoId = Guid.Parse(todoId) })
+                                  .FirstOrDefault();
         return todo;
     }
 

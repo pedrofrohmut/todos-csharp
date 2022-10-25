@@ -68,7 +68,7 @@ public class UpdateTodoUseCase : IUpdateTodoUseCase
 
     private void CheckResourceOwnership(TodoDbDto todoDb, string authUserId)
     {
-        if (todoDb.UserId != authUserId) {
+        if (todoDb.UserId.ToString() != authUserId) {
             throw new NotResourceOwnerException();
         }
     }

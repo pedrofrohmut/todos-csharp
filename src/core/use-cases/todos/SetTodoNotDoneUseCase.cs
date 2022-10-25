@@ -57,7 +57,7 @@ public class SetTodoNotDoneUseCase : ISetTodoNotDoneUseCase
 
     private void CheckResourceOwnership(TodoDbDto todoDb, string authUserId)
     {
-        if (todoDb.UserId != authUserId) {
+        if (todoDb.UserId.ToString() != authUserId) {
             throw new NotResourceOwnerException();
         }
     }
@@ -67,4 +67,3 @@ public class SetTodoNotDoneUseCase : ISetTodoNotDoneUseCase
         this.todoDataAccess.SetNotDone(todoId);
     }
 }
-

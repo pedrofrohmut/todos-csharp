@@ -58,7 +58,7 @@ public class FindTaskByIdUseCase : IFindTaskByIdUseCase
 
     private void CheckResourceOwnership(TaskDbDto taskDb, string authUserId)
     {
-        if (taskDb.UserId != authUserId) {
+        if (taskDb.UserId.ToString() != authUserId) {
             throw new NotResourceOwnerException();
         }
     }
@@ -66,10 +66,10 @@ public class FindTaskByIdUseCase : IFindTaskByIdUseCase
     private TaskDto MapTaskDbToTask(TaskDbDto task)
     {
         return new TaskDto() {
-            Id = task.Id,
+            Id = task.Id.ToString(),
             Name = task.Name,
             Description = task.Description,
-            UserId = task.UserId
+            UserId = task.UserId.ToString()
         };
     }
 }

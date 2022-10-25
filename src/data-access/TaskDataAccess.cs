@@ -33,32 +33,21 @@ public class TaskDataAccess : ITaskDataAccess
 
     public TaskDbDto? FindById(string taskId)
     {
-        var sql = "SELECT * FROM app.tasks WHERE id = @taskId";
-        var row = this.connection.Query(sql, new { @taskId = Guid.Parse(taskId) })
-                                 .SingleOrDefault();
-        if (row == null) return null;
-        var task = new TaskDbDto() {
-            Id = row.id.ToString(),
-            Name = row.name,
-            Description = row.description,
-            UserId = row.user_id.ToString()
-        };
+        var sql = @"SELECT id, name, description, user_id as userId
+                    FROM app.tasks
+                    WHERE id = @taskId";
+        var task = this.connection.Query<TaskDbDto>(sql, new { @taskId = Guid.Parse(taskId) })
+                                  .SingleOrDefault();
         return task;
     }
 
     public List<TaskDbDto> FindByUserId(string userId)
     {
-        var sql = "SELECT * FROM app.tasks WHERE user_id = @userId";
-        var rows = this.connection.Query(sql, new { @userId = Guid.Parse(userId) })
-                                  .ToList();
-        if (rows == null) return new List<TaskDbDto>();
-        var tasks = rows
-            .Select(row => new TaskDbDto() {
-                Id = row.id.ToString(),
-                Name = row.name,
-                Description = row.description,
-                UserId = row.user_id.ToString()
-            }).ToList();
+        var sql = @"SELECT id, name, description, user_id as userId
+                    FROM app.tasks
+                    WHERE user_id = @userId";
+        var tasks = this.connection.Query<TaskDbDto>(sql, new { @userId = Guid.Parse(userId) })
+                                   .ToList();
         return tasks;
     }
 

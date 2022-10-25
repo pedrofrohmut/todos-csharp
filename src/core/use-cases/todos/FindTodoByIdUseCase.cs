@@ -58,19 +58,19 @@ public class FindTodoByIdUseCase : IFindTodoByIdUseCase
 
     private void CheckResourceOwnership(TodoDbDto todoDb, string authUserId)
     {
-        if (todoDb.UserId != authUserId) {
+        if (todoDb.UserId.ToString() != authUserId) {
             throw new NotResourceOwnerException();
         }
     }
 
     private TodoDto MapTodoDbToTodo(TodoDbDto todoDb) =>
         new TodoDto() {
-            Id = todoDb.Id,
+            Id = todoDb.Id.ToString(),
             Name = todoDb.Name,
             Description = todoDb.Description,
             IsDone = todoDb.IsDone,
-            UserId = todoDb.UserId,
-            TaskId = todoDb.TaskId
+            UserId = todoDb.UserId.ToString(),
+            TaskId = todoDb.TaskId.ToString()
         };
 
 }

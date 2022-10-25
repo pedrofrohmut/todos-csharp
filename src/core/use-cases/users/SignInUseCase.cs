@@ -25,11 +25,11 @@ public class SignInUseCase : ISignInUseCase
     public SignedUserDto Execute(UserCredentialsDto? credentials)
     {
         this.ValidateCredentials(credentials);
-        var user = this.GetUser(credentials!.Email);
+        var user = this.FindUser(credentials!.Email);
         this.VerifyPasswordMatch(credentials!.Password, user.PasswordHash);
-        var token = this.GenerateToken(user.Id);
+        var token = this.GenerateToken(user.Id.ToString());
         return new SignedUserDto() {
-            UserId = user.Id,
+            UserId = user.Id.ToString(),
             Name   = user.Name,
             Email  = user.Email,
             Token  = token
@@ -45,7 +45,7 @@ public class SignInUseCase : ISignInUseCase
         User.ValidatePassword(credentials.Password);
     }
 
-    private UserDbDto GetUser(string email)
+    private UserDbDto FindUser(string email)
     {
         var user = this.userDataAccess.FindByEmail(email);
         if (user == null) {

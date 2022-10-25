@@ -19,7 +19,7 @@ public class DeleteDoneTodosByTaskIdUseCase : IDeleteDoneTodosByTaskIdUseCase
         this.taskDataAccess = taskDataAccess;
         this.todoDataAccess = todoDataAccess;
     }
-    
+
     public void Execute(string? taskId, string? authUserId)
     {
         var validTaskId = this.ValidateTaskId(taskId);
@@ -61,7 +61,7 @@ public class DeleteDoneTodosByTaskIdUseCase : IDeleteDoneTodosByTaskIdUseCase
 
     private void CheckResourceOwnership(TaskDbDto taskDb, string authUserId)
     {
-        if (taskDb.UserId != authUserId) {
+        if (taskDb.UserId.ToString() != authUserId) {
             throw new NotResourceOwnerException();
         }
     }

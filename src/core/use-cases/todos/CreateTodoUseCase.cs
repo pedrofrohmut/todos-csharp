@@ -24,7 +24,7 @@ public class CreateTodoUseCase : ICreateTodoUseCase
     {
         var validUserId = this.ValidateUserId(authUserId);
         var validNewTodo = this.ValidateTodo(newTodo);
-        var validTaskId = this.ValidateTaskId(validNewTodo.taskId);
+        var validTaskId = this.ValidateTaskId(validNewTodo.TaskId);
         this.CheckUserExists(validUserId);
         this.CheckTaskExists(validTaskId);
         this.CreateTodo(validNewTodo, validUserId);

@@ -1,6 +1,7 @@
 using Todos.Core.DataAccess;
 using Todos.Core.Entities;
 using Todos.Core.Exceptions;
+using Task = System.Threading.Tasks.Task;
 
 namespace Todos.Core.UseCases.Users;
 
@@ -31,5 +32,19 @@ public class VerifyUserUseCase : IVerifyUserUseCase
         if (user == null) {
             throw new UserNotFoundException("User not found by id");
         }
+    }
+
+    private async Task CheckUserExistsAsync(string authUserId)
+    {
+        var user = await this.userDataAccess.FindByIdAsync(authUserId);
+        if (user == null) {
+            throw new UserNotFoundException("User not found by id");
+        }
+    }
+
+    public async Task ExecuteAsync(string? authUserId)
+    {
+        var validUserId = this.ValidateId(authUserId);
+        await this.CheckUserExistsAsync(validUserId);
     }
 }

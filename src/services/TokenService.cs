@@ -36,7 +36,7 @@ public class TokenService : ITokenService
         var token = handler.WriteToken(securityToken);
         return token;
     }
-    
+
     public DecodedTokenDto DecodeToken(string token)
     {
         var handler = new JwtSecurityTokenHandler();
@@ -60,7 +60,7 @@ public class TokenService : ITokenService
         }
         var decoded = securityToken as JwtSecurityToken;
         // Keys: userId, nbf, exp, iat
-        var claims = decoded!.Claims .ToDictionary(claim => claim.Type, 
+        var claims = decoded!.Claims .ToDictionary(claim => claim.Type,
                                                    claim => claim.Value);
         if (!claims.ContainsKey("userId") || !claims.ContainsKey("exp")) {
             throw new ArgumentException("Invalid token. Missing required fields");

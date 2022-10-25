@@ -54,6 +54,15 @@ public class SignInUseCase : ISignInUseCase
         return user;
     }
 
+    private async Task<UserDbDto> FindUserAsync(string email)
+    {
+        var user = await this.userDataAccess.FindByEmailAsync(email);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        return user;
+    }
+
     private void VerifyPasswordMatch(string password, string hash)
     {
         var isMatch = this.passwordService.MatchPasswordAndHash(password, hash);
@@ -63,4 +72,18 @@ public class SignInUseCase : ISignInUseCase
     }
 
     private string GenerateToken(string userId) => this.tokenService.GenerateToken(userId);
+
+    public async Task<SignedUserDto> ExecuteAsync(UserCredentialsDto? credentials)
+    {
+        this.ValidateCredentials(credentials);
+        var user = await this.FindUserAsync(credentials!.Email);
+        this.VerifyPasswordMatch(credentials!.Password, user.PasswordHash);
+        var token = this.GenerateToken(user.Id.ToString());
+        return new SignedUserDto() {
+            UserId = user.Id.ToString(),
+            Name   = user.Name,
+            Email  = user.Email,
+            Token  = token
+        };
+    }
 }

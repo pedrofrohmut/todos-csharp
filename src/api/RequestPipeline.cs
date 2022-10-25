@@ -17,9 +17,20 @@ public static class RequestPipeline
 
     public static void ExecuteMiddlewares(WebApplication app)
     {
+        TimeItMiddleware(app);
         ExceptionMiddleware(app);
         AuthorizationMiddleware(app);
         DatabaseConnectionMiddleware(app);
+    }
+
+    private static void TimeItMiddleware(WebApplication app)
+    {
+        app.Use(async (ctx, next) => {
+            var start = DateTime.UtcNow;
+            await next.Invoke(ctx);
+            var total = (DateTime.UtcNow - start).TotalMilliseconds;
+            Console.WriteLine($"Time on request '{ctx.Request.Path}' is {total}");
+        });
     }
 
     private static void ExceptionMiddleware(WebApplication app)
@@ -80,7 +91,7 @@ public static class RequestPipeline
     {
         // Create, Open and Close Database Connection
         app.Use(async (ctx, next) => {
-            //Before 
+            //Before
             var manager = new ConnectionManager();
             var connection = manager.GetConnection(app.Configuration);
             manager.OpenConnection(connection);

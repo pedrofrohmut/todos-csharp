@@ -25,12 +25,33 @@ public class UserDataAccess : IUserDataAccess
         });
     }
 
+    public Task CreateAsync(CreateUserDto newUser, string passwordHash)
+    {
+        var sql = @"INSERT INTO app.users (name, email, password_hash)
+                    VALUES (@name, @email, @passwordHash)";
+        return this.connection.QueryAsync(sql, new {
+            @name = newUser.Name,
+            @email = newUser.Email,
+            @passwordHash = passwordHash
+        });
+    }
+
     public UserDbDto? FindByEmail(string email)
     {
         var sql = @"SELECT id, name, email, password_hash as passwordHash
                     FROM app.users
                     WHERE email = @email";
         var user = this.connection.Query<UserDbDto>(sql, new { email }).SingleOrDefault();
+        return user;
+    }
+
+    public async Task<UserDbDto?> FindByEmailAsync(string email)
+    {
+        var sql = @"SELECT id, name, email, password_hash as passwordHash
+                    FROM app.users
+                    WHERE email = @email";
+        var result = await this.connection.QueryAsync<UserDbDto>(sql, new { email });
+        var user = result.SingleOrDefault();
         return user;
     }
 
@@ -41,6 +62,16 @@ public class UserDataAccess : IUserDataAccess
                     WHERE id = @userId";
         var user = this.connection.Query<UserDbDto>(sql, new { @userId = Guid.Parse(userId) })
                                   .SingleOrDefault();
+        return user;
+    }
+
+    public async Task<UserDbDto?> FindByIdAsync(string userId)
+    {
+        var sql = @"SELECT id, name, email, password_hash as passwordHash
+                    FROM app.users
+                    WHERE id = @userId";
+        var row = await this.connection.QueryAsync<UserDbDto>(sql, new { @userId = Guid.Parse(userId) });
+        var user = row.SingleOrDefault();
         return user;
     }
 }

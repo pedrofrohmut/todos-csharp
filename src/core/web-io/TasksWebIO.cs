@@ -52,7 +52,7 @@ public static class TasksWebIO
                 return new WebResponseDto() { Message = e.Message, Status = 400 };
             }
             if (e is TaskNotFoundException) {
-                return new WebResponseDto() { Message = "", Status = 204 };
+                return new WebResponseDto() { Message = "Task Not Found", Status = 404 };
             }
             throw;
         }
@@ -62,9 +62,6 @@ public static class TasksWebIO
     {
         try {
             var tasks = findTasksByUserIdUseCase.Execute(request.AuthUserId);
-            if (tasks.Count == 0) {
-                return new WebResponseDto() { Message = "",  Status = 204 };
-            }
             return new WebResponseDto() { Body = tasks,  Status = 200 };
         } catch (Exception e) {
             if (e is InvalidUserException ||

@@ -30,9 +30,6 @@ public static class TodosWebIO
     {
         try {
             var todos = findTodosByTaskIdUseCase.Execute(request.Param, request.AuthUserId);
-            if (todos.Count == 0) {
-                return new WebResponseDto() { Message = "", Status = 204 };
-            }
             return new WebResponseDto() { Body = todos, Status = 200 };
         } catch (Exception e) {
             if (e is InvalidUserException ||
@@ -54,7 +51,7 @@ public static class TodosWebIO
             return new WebResponseDto() { Body = todo, Status = 200 };
         } catch (Exception e) {
             if (e is TodoNotFoundException) {
-                return new WebResponseDto() { Message = "", Status = 204 };
+                return new WebResponseDto() { Message = "Todo Not Found", Status = 404 };
             }
             if (e is InvalidUserException ||
                 e is InvalidTaskException ||

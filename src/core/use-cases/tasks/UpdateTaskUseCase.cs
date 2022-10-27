@@ -2,6 +2,7 @@ using Todos.Core.DataAccess;
 using Todos.Core.Dtos;
 using Todos.Core.Entities;
 using Todos.Core.Exceptions;
+using Task = System.Threading.Tasks.Task;
 
 namespace Todos.Core.UseCases.Tasks;
 
@@ -56,9 +57,26 @@ public class UpdateTaskUseCase : IUpdateTaskUseCase
         }
     }
 
+    private async Task CheckUserExistsAsync(string authUserId)
+    {
+        var user = await this.userDataAccess.FindByIdAsync(authUserId);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+    }
+
     private TaskDbDto FindTask(string taskId)
     {
         var task = this.taskDataAccess.FindById(taskId);
+        if (task == null) {
+            throw new TaskNotFoundException();
+        }
+        return task;
+    }
+
+    private async Task<TaskDbDto> FindTaskAsync(string taskId)
+    {
+        var task = await this.taskDataAccess.FindByIdAsync(taskId);
         if (task == null) {
             throw new TaskNotFoundException();
         }
@@ -75,5 +93,21 @@ public class UpdateTaskUseCase : IUpdateTaskUseCase
     private void UpdateTask(string taskId, UpdateTaskDto updatedTask)
     {
         this.taskDataAccess.Update(taskId, updatedTask);
+    }
+
+    private Task UpdateTaskAsync(string taskId, UpdateTaskDto updatedTask)
+    {
+        return this.taskDataAccess.UpdateAsync(taskId, updatedTask);
+    }
+
+    public async Task ExecuteAsync(string? taskId, UpdateTaskDto? updatedTask, string? authUserId)
+    {
+        var validTaskId = this.ValidateTaskId(taskId);
+        this.ValidateTask(updatedTask);
+        var validUserId = this.ValidateUserId(authUserId);
+        await this.CheckUserExistsAsync(validUserId);
+        var taskDb = await this.FindTaskAsync(validTaskId);
+        this.CheckResourceOwnership(taskDb, validUserId);
+        await this.UpdateTaskAsync(validTaskId, updatedTask!);
     }
 }

@@ -2,6 +2,7 @@ using Todos.Core.Dtos;
 using Todos.Core.Entities;
 using Todos.Core.Exceptions;
 using Todos.Core.DataAccess;
+using Task = System.Threading.Tasks.Task;
 
 namespace Todos.Core.UseCases.Tasks;
 
@@ -49,8 +50,29 @@ public class
         }
     }
 
+    private async Task CheckUserExistsAsync(string authUserId)
+    {
+        var user = await this.userDataAccess.FindByIdAsync(authUserId);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+    }
+
     private void CreateTask(CreateTaskDto newTask, string authUserId)
     {
         this.taskDataAccess.Create(newTask, authUserId);
+    }
+
+    private Task CreateTaskAsync(CreateTaskDto newTask, string authUserId)
+    {
+        return this.taskDataAccess.CreateAsync(newTask, authUserId);
+    }
+
+    public async Task ExecuteAsync(CreateTaskDto? newTask, string? authUserId)
+    {
+        var validTask = this.ValidateNewTask(newTask);
+        var validUserId = this.ValidateAuthUserId(authUserId);
+        await this.CheckUserExistsAsync(validUserId);
+        await this.CreateTaskAsync(validTask, validUserId);
     }
 }

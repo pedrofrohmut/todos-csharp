@@ -1,6 +1,7 @@
 using Todos.Core.DataAccess;
 using Todos.Core.Entities;
 using Todos.Core.Exceptions;
+using Task = System.Threading.Tasks.Task;
 
 namespace Todos.Core.UseCases.Todos;
 
@@ -36,8 +37,28 @@ public class DeleteDoneTodosUseCase : IDeleteDoneTodosUseCase
         }
     }
 
+    private async Task CheckUserExistsAsync(string authUserId)
+    {
+        var user = await this.userDataAccess.FindByIdAsync(authUserId);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+    }
+
     private void DeleteDoneTodos(string authUserId)
     {
         this.todoDataAccess.DeleteDone(authUserId);
+    }
+
+    private Task DeleteDoneTodosAsync(string authUserId)
+    {
+        return this.todoDataAccess.DeleteDoneAsync(authUserId);
+    }
+
+    public async Task ExecuteAsync(string? authUserId)
+    {
+        string validUserId = this.ValidateUserId(authUserId);
+        await this.CheckUserExistsAsync(validUserId);
+        await this.DeleteDoneTodosAsync(validUserId);
     }
 }

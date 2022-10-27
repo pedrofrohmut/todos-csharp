@@ -2,6 +2,7 @@ using Todos.Core.DataAccess;
 using Todos.Core.Dtos;
 using Todos.Core.Entities;
 using Todos.Core.Exceptions;
+using Task = System.Threading.Tasks.Task;
 
 namespace Todos.Core.UseCases.Todos;
 
@@ -47,9 +48,26 @@ public class FindTodoByIdUseCase : IFindTodoByIdUseCase
         }
     }
 
+    private async Task CheckUserExistsAsync(string authUserId)
+    {
+        var user = await this.userDataAccess.FindByIdAsync(authUserId);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+    }
+
     private TodoDbDto FindTodoById(string todoId)
     {
         var todo = this.todoDataAccess.FindById(todoId);
+        if (todo == null) {
+            throw new TodoNotFoundException();
+        }
+        return todo;
+    }
+
+    private async Task<TodoDbDto> FindTodoByIdAsync(string todoId)
+    {
+        var todo = await this.todoDataAccess.FindByIdAsync(todoId);
         if (todo == null) {
             throw new TodoNotFoundException();
         }
@@ -73,4 +91,14 @@ public class FindTodoByIdUseCase : IFindTodoByIdUseCase
             TaskId = todoDb.TaskId.ToString()
         };
 
+    public async Task<TodoDto> ExecuteAsync(string? todoId, string? authUserId)
+    {
+        var validTodoId = this.ValidateTodoId(todoId);
+        var validUserId = this.ValidateUserId(authUserId);
+        await this.CheckUserExistsAsync(validUserId);
+        var todoDb = await this.FindTodoByIdAsync(validTodoId);
+        this.CheckResourceOwnership(todoDb, validUserId);
+        var todo = this.MapTodoDbToTodo(todoDb);
+        return todo;
+    }
 }

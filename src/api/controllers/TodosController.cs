@@ -22,7 +22,7 @@ public class TodosController : Controller
         this.connectionManager = connectionManager;
     }
 
-    [HttpPost]
+    [HttpPost("")]
     public ActionResult Create([FromBody] CreateTodoDto newTodo)
     {
         var connection = (IDbConnection) HttpContext.Items["connection"]!;
@@ -35,6 +35,21 @@ public class TodosController : Controller
         var response = TodosWebIO.Create(createTodoUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
+
+    [HttpPost("async")]
+    public async Task<ActionResult> CreateAsync([FromBody] CreateTodoDto newTodo)
+    {
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
+        var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
+        var userDataAccess = new UserDataAccess(connection);
+        var taskDataAccess = new TaskDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var createTodoUseCase = new CreateTodoUseCase(userDataAccess, taskDataAccess, todoDataAccess);
+        var webRequest = new WebRequestDto() { Body = newTodo, AuthUserId = authUserId };
+        var response = await TodosWebIO.CreateAsync(createTodoUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
+    }
+
 
     [HttpGet("task/{id}")]
     public ActionResult Find(string id)
@@ -51,6 +66,21 @@ public class TodosController : Controller
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
+    [HttpGet("task/{id}/async")]
+    public async Task<ActionResult> FindAsync(string id)
+    {
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
+        var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
+        var userDataAccess = new UserDataAccess(connection);
+        var taskDataAccess = new TaskDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var findTodosByTaskIdUseCase =
+            new FindTodosByTaskIdUseCase(userDataAccess, taskDataAccess, todoDataAccess);
+        var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
+        var response = await TodosWebIO.FindByTaskIdAsync(findTodosByTaskIdUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
+    }
+
     [HttpGet("{id}")]
     public ActionResult FindById(string id)
     {
@@ -61,6 +91,19 @@ public class TodosController : Controller
         var findTodoByIdUseCase = new FindTodoByIdUseCase(userDataAccess, todoDataAccess);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
         var response = TodosWebIO.FindById(findTodoByIdUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
+    }
+
+    [HttpGet("{id}/async")]
+    public async Task<ActionResult> FindByIdAsync(string id)
+    {
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
+        var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
+        var userDataAccess = new UserDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var findTodoByIdUseCase = new FindTodoByIdUseCase(userDataAccess, todoDataAccess);
+        var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
+        var response = await TodosWebIO.FindByIdAsync(findTodoByIdUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -77,6 +120,19 @@ public class TodosController : Controller
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
+    [HttpPatch("setdone/{id}/async")]
+    public async Task<ActionResult> SetDoneAsync(string id)
+    {
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
+        var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
+        var userDataAccess = new UserDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var setTodoDoneUseCase = new SetTodoDoneUseCase(userDataAccess, todoDataAccess);
+        var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
+        var response = await TodosWebIO.SetDoneAsync(setTodoDoneUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
+    }
+
     [HttpPatch("setnotdone/{id}")]
     public ActionResult SetNotDone(string id)
     {
@@ -87,6 +143,19 @@ public class TodosController : Controller
         var setTodoNotDoneUseCase = new SetTodoNotDoneUseCase(userDataAccess, todoDataAccess);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
         var response = TodosWebIO.SetNotDone(setTodoNotDoneUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
+    }
+
+    [HttpPatch("setnotdone/{id}/async")]
+    public async Task<ActionResult> SetNotDoneAsync(string id)
+    {
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
+        var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
+        var userDataAccess = new UserDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var setTodoNotDoneUseCase = new SetTodoNotDoneUseCase(userDataAccess, todoDataAccess);
+        var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
+        var response = await TodosWebIO.SetNotDoneAsync(setTodoNotDoneUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -103,6 +172,19 @@ public class TodosController : Controller
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
+    [HttpPut("{id}/async")]
+    public async Task<ActionResult> UpdateAsync(string id, [FromBody] UpdateTodoDto updatedTodo)
+    {
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
+        var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
+        var userDataAccess = new UserDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var updateTodoUseCase = new UpdateTodoUseCase(userDataAccess, todoDataAccess);
+        var webRequest = new WebRequestDto() { Param = id, Body = updatedTodo, AuthUserId = authUserId };
+        var response = await TodosWebIO.UpdateAsync(updateTodoUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
+    }
+
     [HttpDelete("{id}")]
     public ActionResult Delete(string id)
     {
@@ -113,6 +195,19 @@ public class TodosController : Controller
         var deleteTodoUseCase = new DeleteTodoUseCase(userDataAccess, todoDataAccess);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
         var response = TodosWebIO.Delete(deleteTodoUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
+    }
+
+    [HttpDelete("{id}/async")]
+    public async Task<ActionResult> DeleteAsync(string id)
+    {
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
+        var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
+        var userDataAccess = new UserDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var deleteTodoUseCase = new DeleteTodoUseCase(userDataAccess, todoDataAccess);
+        var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
+        var response = await TodosWebIO.DeleteAsync(deleteTodoUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
@@ -129,6 +224,19 @@ public class TodosController : Controller
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 
+    [HttpDelete("done/async")]
+    public async Task<ActionResult> DeleteDoneAsync()
+    {
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
+        var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
+        var userDataAccess = new UserDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var deleteDoneTodosUseCase = new DeleteDoneTodosUseCase(userDataAccess, todoDataAccess);
+        var webRequest = new WebRequestDto() { AuthUserId = authUserId };
+        var response = await TodosWebIO.DeleteDoneAsync(deleteDoneTodosUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
+    }
+
     [HttpDelete("done/task/{id}")]
     public ActionResult DeleteDoneByTaskId(string id)
     {
@@ -141,6 +249,21 @@ public class TodosController : Controller
         var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
         var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
         var response = TodosWebIO.DeleteDoneByTaskId(deleteDoneTodosByTaskIdUseCase, webRequest);
+        return new ObjectResult(response.Value) { StatusCode = response.Status };
+    }
+
+    [HttpDelete("done/task/{id}/async")]
+    public async Task<ActionResult> DeleteDoneByTaskIdAsync(string id)
+    {
+        var connection = (IDbConnection) HttpContext.Items["connection"]!;
+        var userDataAccess = new UserDataAccess(connection);
+        var taskDataAccess = new TaskDataAccess(connection);
+        var todoDataAccess = new TodoDataAccess(connection);
+        var deleteDoneTodosByTaskIdUseCase =
+            new DeleteDoneTodosByTaskIdUseCase(userDataAccess, taskDataAccess, todoDataAccess);
+        var authUserId = Convert.ToString(HttpContext.Items["authUserId"]);
+        var webRequest = new WebRequestDto() { Param = id, AuthUserId = authUserId };
+        var response = await TodosWebIO.DeleteDoneByTaskIdAsync(deleteDoneTodosByTaskIdUseCase, webRequest);
         return new ObjectResult(response.Value) { StatusCode = response.Status };
     }
 }

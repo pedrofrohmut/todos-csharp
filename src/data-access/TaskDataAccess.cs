@@ -53,8 +53,8 @@ public class TaskDataAccess : ITaskDataAccess
         var sql = @"SELECT id, name, description, user_id as userId
                     FROM app.tasks
                     WHERE id = @taskId";
-        var task = this.connection.Query<TaskDbDto>(sql, new { @taskId = Guid.Parse(taskId) })
-                                  .SingleOrDefault();
+        var task = this.connection
+            .QueryFirstOrDefault<TaskDbDto>(sql, new { @taskId = Guid.Parse(taskId) });
         return task;
     }
 
@@ -63,8 +63,8 @@ public class TaskDataAccess : ITaskDataAccess
         var sql = @"SELECT id, name, description, user_id as userId
                     FROM app.tasks
                     WHERE id = @taskId";
-        var query = await this.connection.QueryAsync<TaskDbDto>(sql, new { @taskId = Guid.Parse(taskId) });
-        var task = query.SingleOrDefault();
+        var task = await this.connection
+            .QueryFirstOrDefaultAsync<TaskDbDto>(sql, new { @taskId = Guid.Parse(taskId) });
         return task;
     }
 

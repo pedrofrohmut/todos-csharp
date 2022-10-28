@@ -66,8 +66,8 @@ public class TodoDataAccess : ITodoDataAccess
         var sql = @"SELECT id, name, description, is_done as isDone, task_id as taskId, user_id as userId
                     FROM app.todos
                     WHERE id = @todoId";
-        var todo = this.connection.Query<TodoDbDto>(sql, new { @todoId = Guid.Parse(todoId) })
-                                  .FirstOrDefault();
+        var todo = this.connection
+            .QueryFirstOrDefault<TodoDbDto>(sql, new { @todoId = Guid.Parse(todoId) });
         return todo;
     }
 
@@ -76,8 +76,8 @@ public class TodoDataAccess : ITodoDataAccess
         var sql = @"SELECT id, name, description, is_done as isDone, task_id as taskId, user_id as userId
                     FROM app.todos
                     WHERE id = @todoId";
-        var query = await this.connection.QueryAsync<TodoDbDto>(sql, new { @todoId = Guid.Parse(todoId) });
-        var todo = query.FirstOrDefault();
+        var todo = await this.connection
+            .QueryFirstOrDefaultAsync<TodoDbDto>(sql, new { @todoId = Guid.Parse(todoId) });
         return todo;
     }
 

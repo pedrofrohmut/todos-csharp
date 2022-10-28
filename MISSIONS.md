@@ -16,8 +16,8 @@
 - [x] (17/10/2022) Refactor Exception handler to return a 401 response for auth exceptions and
 AuthMiddleware to throw InvalidRequestAuthException on Errors for ExceptionMiddleware to get
 - [x] (25/10/2022) [Change] Async all pipe up and down (Users)
-- [ ] (25/10/2022) [Change] Async all pipe up and down (Tasks)
-- [ ] (25/10/2022) [Change] Async all pipe up and down (Todos)
+- [x] (25/10/2022) [Change] Async all pipe up and down (Tasks)
+- [x] (25/10/2022) [Change] Async all pipe up and down (Todos)
 - [ ] (25/10/2022) [Auth] Create exeception AuthUserNotFoundException and replace UserNotFoundException
 where the user not found is the one from authUserId (Auth related)
 
@@ -50,7 +50,7 @@ TodosWebIO
 - [x] (18/10/2022) [Refactor] Remove ! from WebIOs changing the useCases signatures
 - [x] (21/10/2022) [Refactor] Use ExceptionHandler Middleware and remove try/catch from ApiControllers
 - [x] (24/10/2022) [Fix] Change the 204 to 404 where cannot find for get
-- [ ] (25/10/2022) [Change] Use QueryFirstOrDefault and QueryMultiple in DataAccess classes
+- [x] (25/10/2022) [Change] Use QueryFirstOrDefault and QueryMultiple in DataAccess classes
 
 
 ## DOCs

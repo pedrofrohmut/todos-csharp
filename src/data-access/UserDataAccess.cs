@@ -41,7 +41,7 @@ public class UserDataAccess : IUserDataAccess
         var sql = @"SELECT id, name, email, password_hash as passwordHash
                     FROM app.users
                     WHERE email = @email";
-        var user = this.connection.Query<UserDbDto>(sql, new { email }).SingleOrDefault();
+        var user = this.connection.QueryFirstOrDefault<UserDbDto>(sql, new { email });
         return user;
     }
 
@@ -50,8 +50,7 @@ public class UserDataAccess : IUserDataAccess
         var sql = @"SELECT id, name, email, password_hash as passwordHash
                     FROM app.users
                     WHERE email = @email";
-        var result = await this.connection.QueryAsync<UserDbDto>(sql, new { email });
-        var user = result.SingleOrDefault();
+        var user = await this.connection.QueryFirstOrDefaultAsync<UserDbDto>(sql, new { email });
         return user;
     }
 
@@ -60,8 +59,8 @@ public class UserDataAccess : IUserDataAccess
         var sql = @"SELECT id, name, email, password_hash as passwordHash
                     FROM app.users
                     WHERE id = @userId";
-        var user = this.connection.Query<UserDbDto>(sql, new { @userId = Guid.Parse(userId) })
-                                  .SingleOrDefault();
+        var user = this.connection
+            .QueryFirstOrDefault<UserDbDto>(sql, new { @userId = Guid.Parse(userId) });
         return user;
     }
 
@@ -70,8 +69,8 @@ public class UserDataAccess : IUserDataAccess
         var sql = @"SELECT id, name, email, password_hash as passwordHash
                     FROM app.users
                     WHERE id = @userId";
-        var row = await this.connection.QueryAsync<UserDbDto>(sql, new { @userId = Guid.Parse(userId) });
-        var user = row.SingleOrDefault();
+        var user = await this.connection
+            .QueryFirstOrDefaultAsync<UserDbDto>(sql, new { @userId = Guid.Parse(userId) });
         return user;
     }
 }

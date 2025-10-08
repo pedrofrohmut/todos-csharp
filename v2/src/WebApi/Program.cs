@@ -1,6 +1,8 @@
 var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+// Add Dbconnection, cors and controllers
 
-app.MapGet("/", () => "Hello World!");
+var app = builder.Build();
+// Configure: UseCors and MapControllers
+// Middlewares: TimeIt, ExceptionHandler, Authorization, DatabaseConnection
 
 app.Run();

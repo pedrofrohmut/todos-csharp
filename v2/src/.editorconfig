@@ -1,0 +1,12 @@
+root = true
+
+[*]
+end_of_line = crlf
+charset = utf-8
+
+[*.{cs,csproj,json}]
+indent_size = 4
+indent_style = space
+
+[*.sh]
+end_of_line = lf

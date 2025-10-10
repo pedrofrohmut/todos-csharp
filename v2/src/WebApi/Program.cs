@@ -5,10 +5,6 @@ var app = builder.Build();
 AppConfigure(app);
 AppUseMiddlewares(app);
 
-app.MapGet("/", () => {
-    return "Hello World!";
-});
-
 app.Run();
 
 static void BuilderAddServices(WebApplicationBuilder builder)

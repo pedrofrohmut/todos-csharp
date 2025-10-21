@@ -1,5 +1,6 @@
 using Todos.Core.UseCases.Users;
-using Todos.Infra.DataAccess;
+using Todos.Infra.Handlers.Commands;
+using Todos.Infra.Handlers.Queries;
 using Todos.Infra.Services;
 
 namespace Todos.Infra;
@@ -8,9 +9,10 @@ public static class UseCasesFactory
 {
     public static UserSignUpUseCase GetUserSignUpUseCase()
     {
-        // TODO: add the write and read dbConnections, add the userDataAccess and the passwordService
-        var userDataAccess = new UserDataAccess();
+        // TODO: add the write and read dbConnections
+        var userQueryHandler = new UserQueryHandler();
+        var userCommandHandler = new UserCommandHandler();
         var passwordService = new PasswordService();
-        return new UserSignUpUseCase(userDataAccess, passwordService);
+        return new UserSignUpUseCase(userQueryHandler, userCommandHandler, passwordService);
     }
 }

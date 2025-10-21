@@ -12,6 +12,12 @@ public readonly struct SignUpBody
     public string Password { get; init; }
 }
 
+public readonly struct SignInBody
+{
+    public string Email { get; init; }
+    public string Password { get; init; }
+}
+
 [Route("api/v2/users")]
 public class UsersController : ControllerBase
 {
@@ -39,18 +45,35 @@ public class UsersController : ControllerBase
                 return;
             }
 
-            HttpContext.Response.StatusCode = 500;
-            await HttpContext.Response.WriteAsync("Server Error: Result Error returned is not mapped.");
+            await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
         } catch (Exception e) {
             await ControllerUtils.WriteExceptionResponse(HttpContext, e);
         }
     }
 
     [HttpPost("signin")]
-    public async Task SignIn()
+    public async Task SignIn(SignInBody body)
     {
-        HttpContext.Response.StatusCode = 200;
-        await HttpContext.Response.WriteAsync("Sign In");
+        try {
+            var useCase = UseCasesFactory.GetUserSignInUseCase();
+            var input = new UserSignInInput {
+                Email = body.Email,
+                Password = body.Password,
+            };
+            var result = await useCase.Execute(input);
+
+            if (result.IsSuccess) {
+                HttpContext.Response.StatusCode = 200;
+                await HttpContext.Response.WriteAsJsonAsync(result.Payload);
+                return;
+            }
+
+            // TODO: Check for business errors
+
+            await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
+        } catch (Exception e) {
+            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+        }
     }
 
     [HttpGet("verify")]

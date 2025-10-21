@@ -7,4 +7,10 @@ public class ControllerUtils
         httpContext.Response.StatusCode = 500;
         await httpContext.Response.WriteAsync($"Server Error: {e.Message}" );
     }
+
+    public static async Task WriteErrorNotMappedResponse(HttpContext httpContext)
+    {
+        httpContext.Response.StatusCode = 500;
+        await httpContext.Response.WriteAsync("Server Error: Result Error returned is not mapped.");
+    }
 }

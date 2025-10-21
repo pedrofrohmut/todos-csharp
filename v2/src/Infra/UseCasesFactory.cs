@@ -15,4 +15,12 @@ public static class UseCasesFactory
         var passwordService = new PasswordService();
         return new UserSignUpUseCase(userQueryHandler, userCommandHandler, passwordService);
     }
+
+    public static UserSignInUseCase GetUserSignInUseCase()
+    {
+        // TODO: add the read dbConnections
+        var userQueryHandler = new UserQueryHandler();
+        var passwordService = new PasswordService();
+        return new UserSignInUseCase(userQueryHandler, passwordService);
+    }
 }

@@ -36,7 +36,7 @@ public class UserSignUpUseCase
     {
         Result<UserSignUpOutput> result;
 
-        // Validate user
+        // Validate input
         result = (Result<UserSignUpOutput>) UserEntity.ValidateName(input.Name);
         if (!result.IsSuccess) return result;
         result = (Result<UserSignUpOutput>) UserEntity.ValidateEmail(input.Email);
@@ -63,6 +63,6 @@ public class UserSignUpUseCase
         };
         result = (Result<UserSignUpOutput>) await UserEntity.CreateUser(command, this.userCommandHandler);
 
-        return Result<UserSignUpOutput>.Successed();
+        return Result<UserSignUpOutput>.Successed(new UserSignUpOutput {});
     }
 }

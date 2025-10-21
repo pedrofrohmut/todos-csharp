@@ -4,11 +4,14 @@ using Todos.Core.Commands;
 using Todos.Core.Commands.Handlers;
 using Todos.Core.Queries;
 using Todos.Core.Queries.Handlers;
+using Todos.Core.Db;
+using Todos.Core.Errors;
 
 namespace Todos.Core.Entities;
 
 public static class UserEntity
 {
+    // TODO: Change Errors to be InvalidUserError
     public static Result ValidateName(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) {
@@ -23,6 +26,7 @@ public static class UserEntity
         return Result.Successed();
     }
 
+    // TODO: Change Errors to be InvalidUserError
     public static Result ValidateEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email)) {
@@ -37,6 +41,7 @@ public static class UserEntity
         return Result.Successed();
     }
 
+    // TODO: Change Errors to be InvalidUserError
     public static Result ValidatePassword(string password)
     {
         if (string.IsNullOrWhiteSpace(password)) {
@@ -56,7 +61,8 @@ public static class UserEntity
         try {
             var userFound = await handler.FindUserByEmail(query);
             if (userFound != null) {
-                return Result.Failed("User.EmailUnavailable", "This e-mail is already in use. E-mails must be unique.");
+                // return Result.Failed("User.EmailUnavailable", "This e-mail is already in use. E-mails must be unique.");
+                return Result.Failed(new EmailAlreadyTakenError());
             }
             return Result.Successed();
         } catch (Exception e) {
@@ -81,6 +87,34 @@ public static class UserEntity
             return Result.Successed();
         } catch (Exception e) {
             return Result.Failed("User.Create", "Error to create user: " + e.Message);
+        }
+    }
+
+    public static async Task<Result<UserDb>> FindUserByEmail(UserFindByEmailQuery query, IUserQueryHandler handler)
+    {
+        try {
+            UserDb? user = await handler.FindUserByEmail(query);
+            if (user == null) {
+                // TODO: Make it a UserError on UserErrors
+                return Result<UserDb>.Failed("User.FindByEmail", "User not found by e-mail");
+            }
+            return Result<UserDb>.Successed(user.Value);
+        } catch (Exception e) {
+            return Result<UserDb>.Failed("User.FindByEmail", "Error to find user by email: " + e.Message);
+        }
+    }
+
+    public static Result MatchPasswordAndHash(string password, string hash, IPasswordService passwordService)
+    {
+        try {
+            bool isMatch = passwordService.CheckPassword(password, hash);
+            if (!isMatch) {
+                // TODO: Make it a UserError on UserErrors
+                return Result.Failed("User.MatchPassword", "User password and password hash do not match");
+            }
+            return Result.Successed();
+        } catch (Exception e) {
+            return Result.Failed("User.MatchPassword", "Error to match password: " + e.Message);
         }
     }
 }

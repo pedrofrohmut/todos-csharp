@@ -68,7 +68,17 @@ public class UsersController : ControllerBase
                 return;
             }
 
-            // TODO: Check for business errors
+            if (result.Error is InvalidUserError || result.Error is PasswordMatchError) {
+                HttpContext.Response.StatusCode = 400;
+                await HttpContext.Response.WriteAsync(result.Error.Message);
+                return;
+            }
+
+            if (result.Error is UserNotFoundError) {
+                HttpContext.Response.StatusCode = 404;
+                await HttpContext.Response.WriteAsync(result.Error.Message);
+                return;
+            }
 
             await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
         } catch (Exception e) {
@@ -76,6 +86,7 @@ public class UsersController : ControllerBase
         }
     }
 
+    /* Just to check if the Authentication token is valid or not */
     [HttpGet("verify")]
     public async Task Verify()
     {

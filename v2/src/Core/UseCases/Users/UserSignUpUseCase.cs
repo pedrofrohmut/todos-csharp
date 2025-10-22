@@ -62,6 +62,7 @@ public class UserSignUpUseCase
             PasswordHash = resultHash.Payload
         };
         result = (Result<UserSignUpOutput>) await UserEntity.CreateUser(command, this.userCommandHandler);
+        if (!result.IsSuccess) return result;
 
         return Result<UserSignUpOutput>.Successed(new UserSignUpOutput {});
     }

@@ -1,0 +1,900 @@
+
+.editorconfig,0
+
+.projectile,0
+
+src/Core/Queries/Handlers/IUserQueryHandler.cs,143
+public interface IUserQueryHandlerIUserQueryHandler5,66
+    Task<UserDb?> FindUserByEmail(UserFindByEmailQuery query);FindUserByEmail7,105
+
+src/Core/Queries/UserQueries.cs,120
+public readonly struct UserFindByEmailQueryUserFindByEmailQuery3,33
+    public string Email { get; init; }Email5,81
+
+src/Core/Errors/UserErrors.cs,944
+public class InvalidUserError : ResultErrorInvalidUserError3,32
+    public InvalidUserError(string message) : base("User:InvalidUser", message) {}InvalidUserError5,80
+public class EmailAlreadyTakenError : ResultErrorEmailAlreadyTakenError8,169
+    public EmailAlreadyTakenError() :EmailAlreadyTakenError10,223
+public class UserNotFoundError : ResultErrorUserNotFoundError14,366
+    public UserNotFoundError() : base("User:NotFound", "User not found") {}UserNotFoundError16,415
+    public UserNotFoundError(string message) : base("User:NotFound", message) {}UserNotFoundError17,492
+public class PasswordMatchError : ResultErrorPasswordMatchError20,579
+    const string code = "User:PasswordMatch";code22,629
+    public PasswordMatchError() : base(code, "User password and password hash do not match") {}PasswordMatchError23,676
+    public PasswordMatchError(string message) : base(code, message) {}PasswordMatchError24,773
+
+src/Core/Errors/ResultError.cs,215
+public class ResultErrorResultError3,32
+    public string Code { get; init; }Code5,61
+    public string Message { get; init; }Message6,100
+    public ResultError(string code, string message)ResultError8,144
+
+src/Core/obj/Core.csproj.nuget.g.props,0
+
+src/Core/obj/project.assets.json,2386
+  "version": 3,version2,2
+    "net8.0": {}net8.04,33
+  "targets": {targets3,18
+  "libraries": {},libraries6,55
+    "net8.0": []net8.08,109
+  "projectFileDependencyGroups": {projectFileDependencyGroups7,74
+    "/home/pedro/.nuget/packages/": {}/home/pedro/.nuget/packages/11,153
+  "packageFolders": {packageFolders10,131
+    "version": "1.0.0",version14,212
+      "projectUniqueName": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj"projectUniqueName16,253
+      "projectName": "Core",projectName17,351
+      "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj",projectPath18,380
+      "packagesPath": "/home/pedro/.nuget/packages/",packagesPath19,472
+      "outputPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/obj/",outputPath20,526
+      "projectStyle": "PackageReference",projectStyle21,610
+        "/home/pedro/.nuget/NuGet/NuGet.Config"023,679
+      "configFilePaths": [configFilePaths22,652
+        "net8.0"026,772
+      "originalTargetFrameworks": [originalTargetFrameworks25,736
+        "https://api.nuget.org/v3/index.json": {}https://api.nuget.org/v3/index.json29,817
+      "sources": {sources28,798
+          "targetAlias": "net8.0",targetAlias33,918
+          "projectReferences": {}projectReferences34,953
+        "net8.0": {net8.032,898
+      "frameworks": {frameworks31,876
+          "NU1605"039,1060
+        "warnAsError": [warnAsError38,1035
+      "warningProperties": {warningProperties37,1006
+    "restore": {restore15,236
+        "targetAlias": "net8.0",targetAlias45,1142
+          "net461",047,1196
+          "net462",148,1216
+          "net47",249,1236
+          "net471",350,1255
+          "net472",451,1275
+          "net48",552,1295
+          "net481"653,1314
+        "imports": [imports46,1175
+        "assetTargetFallback": true,assetTargetFallback55,1344
+        "warn": true,warn56,1381
+            "privateAssets": "all"privateAssets59,1473
+          "Microsoft.NETCore.App": {Microsoft.NETCore.App58,1436
+        "frameworkReferences": {frameworkReferences57,1403
+        "runtimeIdentifierGraphPath": "/home/pedro/.asdf/installs/dotnet-core/8.0.120/sdk/8.0.12runtimeIdentifierGraphPath62,1531
+      "net8.0": {net8.044,1124
+    "frameworks": {frameworks43,1104
+  "project": {project13,197
+
+src/Core/obj/project.nuget.cache,0
+
+src/Core/obj/Core.csproj.nuget.g.targets,0
+
+src/Core/obj/Core.csproj.nuget.dgspec.json,2477
+  "format": 1,format2,2
+    "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj": {}/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj4,32
+  "restore": {restore3,17
+      "version": "1.0.0",version8,208
+        "projectUniqueName": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproprojectUniqueName10,253
+        "projectName": "Core",projectName11,353
+        "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj",projectPath12,384
+        "packagesPath": "/home/pedro/.nuget/packages/",packagesPath13,478
+        "outputPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/obj/",outputPath14,534
+        "projectStyle": "PackageReference",projectStyle15,620
+          "/home/pedro/.nuget/NuGet/NuGet.Config"017,693
+        "configFilePaths": [configFilePaths16,664
+          "net8.0"020,792
+        "originalTargetFrameworks": [originalTargetFrameworks19,754
+          "https://api.nuget.org/v3/index.json": {}https://api.nuget.org/v3/index.json23,843
+        "sources": {sources22,822
+            "targetAlias": "net8.0",targetAlias27,952
+            "projectReferences": {}projectReferences28,989
+          "net8.0": {net8.026,930
+        "frameworks": {frameworks25,906
+            "NU1605"033,1106
+          "warnAsError": [warnAsError32,1079
+        "warningProperties": {warningProperties31,1048
+      "restore": {restore9,234
+          "targetAlias": "net8.0",targetAlias39,1200
+            "net461",041,1258
+            "net462",142,1280
+            "net47",243,1302
+            "net471",344,1323
+            "net472",445,1345
+            "net48",546,1367
+            "net481"647,1388
+          "imports": [imports40,1235
+          "assetTargetFallback": true,assetTargetFallback49,1422
+          "warn": true,warn50,1461
+              "privateAssets": "all"privateAssets53,1559
+            "Microsoft.NETCore.App": {Microsoft.NETCore.App52,1520
+          "frameworkReferences": {frameworkReferences51,1485
+          "runtimeIdentifierGraphPath": "/home/pedro/.asdf/installs/dotnet-core/8.0.120/sdk/8.0.runtimeIdentifierGraphPath56,1623
+        "net8.0": {net8.038,1180
+      "frameworks": {frameworks37,1158
+    "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj7,131
+  "projects": {projects6,115
+
+src/Core/obj/Debug/net8.0/Core.csproj.CoreCompileInputs.cache,0
+
+src/Core/obj/Debug/net8.0/Core.csproj.FileListAbsolute.txt,0
+
+src/Core/obj/Debug/net8.0/Core.AssemblyInfoInputs.cache,0
+
+src/Core/obj/Debug/net8.0/Core.AssemblyInfo.cs,0
+
+src/Core/obj/Debug/net8.0/Core.sourcelink.json,258
+{"documents":{"/home/pedro/programming/mycode/todos-csharp/*":"https://raw.githubusercontent.com/home/pedro/programming/mycode/todos-csharp/*1,0
+{"documents":{"/home/pedro/programming/mycode/todos-csharp/*":"https://raw.githubusercontent.comdocuments1,0
+
+src/Core/obj/Debug/net8.0/Core.GlobalUsings.g.cs,0
+
+src/Core/obj/Debug/net8.0/Core.pdb,0
+
+src/Core/obj/Debug/net8.0/Core.GeneratedMSBuildEditorConfig.editorconfig,0
+
+src/Core/obj/Debug/net8.0/Core.assets.cache,0
+
+src/Core/obj/Debug/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs,0
+
+src/Core/Entities/UserEntity.cs,887
+public static class UserEntityUserEntity12,265
+    public static Result ValidateName(string name)ValidateName14,300
+    public static Result ValidateEmail(string email)ValidateEmail28,910
+    public static Result ValidatePassword(string password)ValidatePassword42,1591
+    public static async Task<Result> CheckEmailIsAvailable(UserFindByEmailQuery query, IUserQuerCheckEmailIsAvailable56,2239
+    public static Result<string> HashPassword(string password, IPasswordService passwordService)HashPassword70,2906
+    public static async Task<Result> CreateUser(CreateUserCommand command, IUserCommandHandler hCreateUser80,3322
+    public static async Task<Result<UserDb>> FindUserByEmail(UserFindByEmailQuery query, IUserQuFindUserByEmail90,3693
+    public static Result MatchPasswordAndHash(string password, string hash, IPasswordService pasMatchPasswordAndHash103,4278
+
+src/Core/bin/Debug/net8.0/Core.pdb,0
+
+src/Core/bin/Debug/net8.0/Core.deps.json,575
+    "name": ".NETCoreApp,Version=v8.0",name3,23
+    "signature": ""signature4,63
+  "runtimeTarget": {runtimeTarget2,2
+  "compilationOptions": {},compilationOptions6,88
+          "Core.dll": {}Core.dll11,208
+        "runtime": {runtime10,187
+      "Core/1.0.0": {Core/1.0.09,165
+    ".NETCoreApp,Version=v8.0": {.NETCoreApp,Version=v8.08,131
+  "targets": {targets7,116
+      "type": "project",type18,299
+      "serviceable": false,serviceable19,324
+      "sha512": ""sha51220,352
+    "Core/1.0.0": {Core/1.0.017,279
+  "libraries": {libraries16,262
+
+src/Core/Services/IPasswordService.cs,212
+public interface IPasswordServiceIPasswordService3,34
+    public string HashPassword(string password);HashPassword5,72
+    public bool CheckPassword(string password, string passwordHash);CheckPassword6,122
+
+src/Core/Utils/Result.cs,795
+public class ResultResult5,59
+    public bool IsSuccess { get; set; }IsSuccess7,83
+    public ResultError? Error { get; set; }Error8,124
+    protected Result() {}Result10,171
+    public static Result Successed()Successed12,200
+    public static Result Failed(ResultError error)Failed17,317
+    public static Result Failed(string code, string message)Failed22,450
+public class Result<T> : ResultResult29,649
+    public T? Payload { get; set; }Payload31,685
+    private Result() {}Result33,724
+    public new static Result<T> Successed()Successed35,751
+    public static Result<T> Successed(T payload)Successed40,897
+    public new static Result<T> Failed(ResultError error)Failed45,1048
+    public new static Result<T> Failed(string code, string message)Failed50,1210
+
+src/Core/DB/UserDb.cs,247
+public readonly struct UserDbUserDb3,28
+    public int Id { get; init; }Id5,62
+    public string Name { get; init; }Name6,96
+    public string Email { get; init; }Email7,135
+    public string PasswordHash { get; init; }PasswordHash8,175
+
+src/Core/Commands/Handlers/IUserCommandHandler.cs,126
+public interface IUserCommandHandlerIUserCommandHandler3,43
+    Task CreateUser(CreateUserCommand command);CreateUser5,84
+
+src/Core/Commands/UserCommands.cs,228
+public readonly struct CreateUserCommandCreateUserCommand3,34
+    public string Name { get; init; }Name5,79
+    public string Email { get; init; }Email6,118
+    public string PasswordHash { get; init; }PasswordHash7,158
+
+src/Core/UseCases/Users/UserSignInUseCase.cs,812
+public readonly struct UserSignInInputUserSignInInput10,208
+    public string Email { get; init; }Email12,251
+    public string Password { get; init; }Password13,291
+public readonly struct UserSignInOutputUserSignInOutput16,339
+    public int Id { get; init; }Id18,383
+    public string Name { get; init; }Name19,417
+    public string Email { get; init; }Email20,456
+public class UserSignInUseCaseUserSignInUseCase23,501
+    private readonly IUserQueryHandler userQueryHandler;userQueryHandler25,536
+    private readonly IPasswordService passwordService;passwordService26,594
+    public UserSignInUseCase(IUserQueryHandler userQueryHandler, IPasswordService passwordServicUserSignInUseCase28,652
+    public async Task<Result<UserSignInOutput>> Execute(UserSignInInput input)Execute34,868
+
+src/Core/UseCases/Users/UserSignUpUseCase.cs,776
+public readonly struct UserSignUpInputUserSignUpInput11,251
+    public string Name { get; init; }Name13,294
+    public string Email { get; init; }Email14,333
+    public string Password { get; init; }Password15,373
+public readonly struct UserSignUpOutput {}UserSignUpOutput18,421
+public class UserSignUpUseCaseUserSignUpUseCase20,467
+    private readonly IUserQueryHandler userQueryHandler;userQueryHandler22,502
+    private readonly IUserCommandHandler userCommandHandler;userCommandHandler23,560
+    private readonly IPasswordService passwordService;passwordService24,622
+    public UserSignUpUseCase(IUserQueryHandler userQueryHandler,UserSignUpUseCase26,680
+    public async Task<Result<UserSignUpOutput>> Execute(UserSignUpInput input)Execute35,1051
+
+src/Core/Core.csproj,0
+
+src/WebApi/appsettings.Development.json,170
+      "Default": "Information",Default4,38
+      "Microsoft.AspNetCore": "Warning"Microsoft.AspNetCore5,71
+    "LogLevel": {LogLevel3,19
+  "Logging": {Logging2,3
+
+src/WebApi/obj/WebApi.csproj.nuget.dgspec.json,8067
+  "format": 1,format2,2
+    "/home/pedro/programming/mycode/todos-csharp/v2/src/WebApi/WebApi.csproj": {}/home/pedro/programming/mycode/todos-csharp/v2/src/WebApi/WebApi.csproj4,32
+  "restore": {restore3,17
+      "version": "1.0.0",version8,212
+        "projectUniqueName": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproprojectUniqueName10,257
+        "projectName": "Core",projectName11,357
+        "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj",projectPath12,388
+        "packagesPath": "/home/pedro/.nuget/packages/",packagesPath13,482
+        "outputPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/obj/",outputPath14,538
+        "projectStyle": "PackageReference",projectStyle15,624
+          "/home/pedro/.nuget/NuGet/NuGet.Config"017,697
+        "configFilePaths": [configFilePaths16,668
+          "net8.0"020,796
+        "originalTargetFrameworks": [originalTargetFrameworks19,758
+          "https://api.nuget.org/v3/index.json": {}https://api.nuget.org/v3/index.json23,847
+        "sources": {sources22,826
+            "targetAlias": "net8.0",targetAlias27,956
+            "projectReferences": {}projectReferences28,993
+          "net8.0": {net8.026,934
+        "frameworks": {frameworks25,910
+            "NU1605"033,1110
+          "warnAsError": [warnAsError32,1083
+        "warningProperties": {warningProperties31,1052
+      "restore": {restore9,238
+          "targetAlias": "net8.0",targetAlias39,1204
+            "net461",041,1262
+            "net462",142,1284
+            "net47",243,1306
+            "net471",344,1327
+            "net472",445,1349
+            "net48",546,1371
+            "net481"647,1392
+          "imports": [imports40,1239
+          "assetTargetFallback": true,assetTargetFallback49,1426
+          "warn": true,warn50,1465
+              "privateAssets": "all"privateAssets53,1563
+            "Microsoft.NETCore.App": {Microsoft.NETCore.App52,1524
+          "frameworkReferences": {frameworkReferences51,1489
+          "runtimeIdentifierGraphPath": "/home/pedro/.asdf/installs/dotnet-core/8.0.120/sdk/8.0.runtimeIdentifierGraphPath56,1627
+        "net8.0": {net8.038,1184
+      "frameworks": {frameworks37,1162
+    "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj7,135
+      "version": "1.0.0",version61,1868
+        "projectUniqueName": "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.cspprojectUniqueName63,1913
+        "projectName": "Infra",projectName64,2015
+        "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj",projectPath65,2047
+        "packagesPath": "/home/pedro/.nuget/packages/",packagesPath66,2143
+        "outputPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/obj/",outputPath67,2199
+        "projectStyle": "PackageReference",projectStyle68,2286
+          "/home/pedro/.nuget/NuGet/NuGet.Config"070,2359
+        "configFilePaths": [configFilePaths69,2330
+          "net8.0"073,2458
+        "originalTargetFrameworks": [originalTargetFrameworks72,2420
+          "https://api.nuget.org/v3/index.json": {}https://api.nuget.org/v3/index.json76,2509
+        "sources": {sources75,2488
+            "targetAlias": "net8.0",targetAlias80,2618
+                "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.cspprojectPath83,2777
+              "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj82,2690
+            "projectReferences": {projectReferences81,2655
+          "net8.0": {net8.079,2596
+        "frameworks": {frameworks78,2572
+            "NU1605"090,2989
+          "warnAsError": [warnAsError89,2962
+        "warningProperties": {warningProperties88,2931
+      "restore": {restore62,1894
+          "targetAlias": "net8.0",targetAlias96,3083
+            "net461",098,3141
+            "net462",199,3163
+            "net47",2100,3185
+            "net471",3101,3206
+            "net472",4102,3228
+            "net48",5103,3250
+            "net481"6104,3271
+          "imports": [imports97,3118
+          "assetTargetFallback": true,assetTargetFallback106,3305
+          "warn": true,warn107,3344
+              "privateAssets": "all"privateAssets110,3442
+            "Microsoft.NETCore.App": {Microsoft.NETCore.App109,3403
+          "frameworkReferences": {frameworkReferences108,3368
+          "runtimeIdentifierGraphPath": "/home/pedro/.asdf/installs/dotnet-core/8.0.120/sdk/8.0.runtimeIdentifierGraphPath113,3506
+        "net8.0": {net8.095,3063
+      "frameworks": {frameworks94,3041
+    "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj60,1789
+      "version": "1.0.0",version118,3749
+        "projectUniqueName": "/home/pedro/programming/mycode/todos-csharp/v2/src/WebApi/WebApi.cprojectUniqueName120,3794
+        "projectName": "WebApi",projectName121,3898
+        "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/WebApi/WebApi.csproj"projectPath122,3931
+        "packagesPath": "/home/pedro/.nuget/packages/",packagesPath123,4029
+        "outputPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/WebApi/obj/",outputPath124,4085
+        "projectStyle": "PackageReference",projectStyle125,4173
+          "/home/pedro/.nuget/NuGet/NuGet.Config"0127,4246
+        "configFilePaths": [configFilePaths126,4217
+          "net8.0"0130,4345
+        "originalTargetFrameworks": [originalTargetFrameworks129,4307
+          "https://api.nuget.org/v3/index.json": {}https://api.nuget.org/v3/index.json133,4396
+        "sources": {sources132,4375
+            "targetAlias": "net8.0",targetAlias137,4505
+                "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.cspprojectPath140,4664
+              "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj139,4577
+                "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.cprojectPath143,4871
+              "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj142,4782
+            "projectReferences": {projectReferences138,4542
+          "net8.0": {net8.0136,4483
+        "frameworks": {frameworks135,4459
+            "NU1605"0150,5085
+          "warnAsError": [warnAsError149,5058
+        "warningProperties": {warningProperties148,5027
+      "restore": {restore119,3775
+          "targetAlias": "net8.0",targetAlias156,5179
+            "net461",0158,5237
+            "net462",1159,5259
+            "net47",2160,5281
+            "net471",3161,5302
+            "net472",4162,5324
+            "net48",5163,5346
+            "net481"6164,5367
+          "imports": [imports157,5214
+          "assetTargetFallback": true,assetTargetFallback166,5401
+          "warn": true,warn167,5440
+              "privateAssets": "none"privateAssets170,5541
+            "Microsoft.AspNetCore.App": {Microsoft.AspNetCore.App169,5499
+              "privateAssets": "all"privateAssets173,5633
+            "Microsoft.NETCore.App": {Microsoft.NETCore.App172,5594
+          "frameworkReferences": {frameworkReferences168,5464
+          "runtimeIdentifierGraphPath": "/home/pedro/.asdf/installs/dotnet-core/8.0.120/sdk/8.0.runtimeIdentifierGraphPath176,5697
+        "net8.0": {net8.0155,5159
+      "frameworks": {frameworks154,5137
+    "/home/pedro/programming/mycode/todos-csharp/v2/src/WebApi/WebApi.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/WebApi/WebApi.csproj117,3668
+  "projects": {projects6,119
+
+src/WebApi/obj/project.assets.json,4376
+  "version": 3,version2,2
+        "type": "project",type6,71
+        "framework": ".NETCoreApp,Version=v8.0",framework7,98
+          "bin/placeholder/Core.dll": {}bin/placeholder/Core.dll9,168
+        "compile": {compile8,147
+          "bin/placeholder/Core.dll": {}bin/placeholder/Core.dll12,241
+        "runtime": {runtime11,220
+      "Core/1.0.0": {Core/1.0.05,49
+        "type": "project",type16,324
+        "framework": ".NETCoreApp,Version=v8.0",framework17,351
+          "Core": "1.0.0"Core19,426
+        "dependencies": {dependencies18,400
+          "bin/placeholder/Infra.dll": {}bin/placeholder/Infra.dll22,484
+        "compile": {compile21,463
+          "bin/placeholder/Infra.dll": {}bin/placeholder/Infra.dll25,558
+        "runtime": {runtime24,537
+      "Infra/1.0.0": {Infra/1.0.015,301
+    "net8.0": {net8.04,33
+  "targets": {targets3,18
+      "type": "project",type32,666
+      "path": "../Core/Core.csproj",path33,691
+      "msbuildProject": "../Core/Core.csproj"msbuildProject34,728
+    "Core/1.0.0": {Core/1.0.031,646
+      "type": "project",type37,802
+      "path": "../Infra/Infra.csproj",path38,827
+      "msbuildProject": "../Infra/Infra.csproj"msbuildProject39,866
+    "Infra/1.0.0": {Infra/1.0.036,781
+  "libraries": {libraries30,629
+      "Core >= 1.0.0",044,976
+      "Infra >= 1.0.0"145,999
+    "net8.0": [net8.043,960
+  "projectFileDependencyGroups": {projectFileDependencyGroups42,925
+    "/home/pedro/.nuget/packages/": {}/home/pedro/.nuget/packages/49,1055
+  "packageFolders": {packageFolders48,1033
+    "version": "1.0.0",version52,1114
+      "projectUniqueName": "/home/pedro/programming/mycode/todos-csharp/v2/src/WebApi/WebApi.cspprojectUniqueName54,1155
+      "projectName": "WebApi",projectName55,1257
+      "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/WebApi/WebApi.csproj",projectPath56,1288
+      "packagesPath": "/home/pedro/.nuget/packages/",packagesPath57,1384
+      "outputPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/WebApi/obj/",outputPath58,1438
+      "projectStyle": "PackageReference",projectStyle59,1524
+        "/home/pedro/.nuget/NuGet/NuGet.Config"061,1593
+      "configFilePaths": [configFilePaths60,1566
+        "net8.0"064,1686
+      "originalTargetFrameworks": [originalTargetFrameworks63,1650
+        "https://api.nuget.org/v3/index.json": {}https://api.nuget.org/v3/index.json67,1731
+      "sources": {sources66,1712
+          "targetAlias": "net8.0",targetAlias71,1832
+              "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproprojectPath74,1985
+            "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj73,1900
+              "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.cspprojectPath77,2186
+            "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj76,2099
+          "projectReferences": {projectReferences72,1867
+        "net8.0": {net8.070,1812
+      "frameworks": {frameworks69,1790
+          "NU1605"084,2386
+        "warnAsError": [warnAsError83,2361
+      "warningProperties": {warningProperties82,2332
+    "restore": {restore53,1138
+        "targetAlias": "net8.0",targetAlias90,2468
+          "net461",092,2522
+          "net462",193,2542
+          "net47",294,2562
+          "net471",395,2581
+          "net472",496,2601
+          "net48",597,2621
+          "net481"698,2640
+        "imports": [imports91,2501
+        "assetTargetFallback": true,assetTargetFallback100,2670
+        "warn": true,warn101,2707
+            "privateAssets": "none"privateAssets104,2802
+          "Microsoft.AspNetCore.App": {Microsoft.AspNetCore.App103,2762
+            "privateAssets": "all"privateAssets107,2888
+          "Microsoft.NETCore.App": {Microsoft.NETCore.App106,2851
+        "frameworkReferences": {frameworkReferences102,2729
+        "runtimeIdentifierGraphPath": "/home/pedro/.asdf/installs/dotnet-core/8.0.120/sdk/8.0.12runtimeIdentifierGraphPath110,2946
+      "net8.0": {net8.089,2450
+    "frameworks": {frameworks88,2430
+  "project": {project51,1099
+
+src/WebApi/obj/project.nuget.cache,0
+
+src/WebApi/obj/WebApi.csproj.nuget.g.props,0
+
+src/WebApi/obj/WebApi.csproj.nuget.g.targets,0
+
+src/WebApi/obj/Debug/net8.0/WebApi.csproj.AssemblyReference.cache,0
+
+src/WebApi/obj/Debug/net8.0/WebApi.assets.cache,0
+
+src/WebApi/obj/Debug/net8.0/WebApi.AssemblyInfoInputs.cache,0
+
+src/WebApi/obj/Debug/net8.0/WebApi.GlobalUsings.g.cs,0
+
+src/WebApi/obj/Debug/net8.0/WebApi.genruntimeconfig.cache,0
+
+src/WebApi/obj/Debug/net8.0/WebApi.csproj.CopyComplete,0
+
+src/WebApi/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.WebApi.props,0
+
+src/WebApi/obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.WebApi.props,0
+
+src/WebApi/obj/Debug/net8.0/staticwebassets/msbuild.build.WebApi.props,0
+
+src/WebApi/obj/Debug/net8.0/WebApi.sourcelink.json,258
+{"documents":{"/home/pedro/programming/mycode/todos-csharp/*":"https://raw.githubusercontent.com/home/pedro/programming/mycode/todos-csharp/*1,0
+{"documents":{"/home/pedro/programming/mycode/todos-csharp/*":"https://raw.githubusercontent.comdocuments1,0
+
+src/WebApi/obj/Debug/net8.0/staticwebassets.build.json,414
+  "Version": 1,Version2,2
+  "Hash": "lAVsf4/XP8OL4a3UKcpKodesbBfBaGYqErDYy8hI7Xs=",Hash3,18
+  "Source": "WebApi",Source4,76
+  "BasePath": "_content/WebApi",BasePath5,98
+  "Mode": "Default",Mode6,131
+  "ManifestType": "Build",ManifestType7,152
+  "ReferencedProjectsConfiguration": [],ReferencedProjectsConfiguration8,179
+  "DiscoveryPatterns": [],DiscoveryPatterns9,220
+  "Assets": []Assets10,247
+
+src/WebApi/obj/Debug/net8.0/WebApi.pdb,0
+
+src/WebApi/obj/Debug/net8.0/apphost,0
+
+src/WebApi/obj/Debug/net8.0/WebApi.csproj.FileListAbsolute.txt,0
+
+src/WebApi/obj/Debug/net8.0/WebApi.AssemblyInfo.cs,0
+
+src/WebApi/obj/Debug/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs,0
+
+src/WebApi/obj/Debug/net8.0/WebApi.MvcApplicationPartsAssemblyInfo.cache,0
+
+src/WebApi/obj/Debug/net8.0/WebApi.csproj.CoreCompileInputs.cache,0
+
+src/WebApi/obj/Debug/net8.0/WebApi.GeneratedMSBuildEditorConfig.editorconfig,0
+
+src/WebApi/bin/Debug/net8.0/appsettings.Development.json,170
+      "Default": "Information",Default4,38
+      "Microsoft.AspNetCore": "Warning"Microsoft.AspNetCore5,71
+    "LogLevel": {LogLevel3,19
+  "Logging": {Logging2,3
+
+src/WebApi/bin/Debug/net8.0/WebApi.runtimeconfig.json,596
+    "tfm": "net8.0",tfm3,24
+        "name": "Microsoft.NETCore.App",name6,73
+        "version": "8.0.0"version7,114
+      {05,65
+        "name": "Microsoft.AspNetCore.App",name10,158
+        "version": "8.0.0"version11,202
+      {19,150
+    "frameworks": [frameworks4,45
+      "System.GC.Server": true,System.GC.Server15,270
+      "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": falseSystem.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization16,302
+    "configProperties": {configProperties14,244
+  "runtimeOptions": {runtimeOptions2,2
+
+src/WebApi/bin/Debug/net8.0/Infra.pdb,0
+
+src/WebApi/bin/Debug/net8.0/WebApi,0
+
+src/WebApi/bin/Debug/net8.0/Core.pdb,0
+
+src/WebApi/bin/Debug/net8.0/WebApi.pdb,0
+
+src/WebApi/bin/Debug/net8.0/WebApi.deps.json,1346
+    "name": ".NETCoreApp,Version=v8.0",name3,23
+    "signature": ""signature4,63
+  "runtimeTarget": {runtimeTarget2,2
+  "compilationOptions": {},compilationOptions6,88
+          "Core": "1.0.0",Core11,215
+          "Infra": "1.0.0"Infra12,242
+        "dependencies": {dependencies10,189
+          "WebApi.dll": {}WebApi.dll15,301
+        "runtime": {runtime14,280
+      "WebApi/1.0.0": {WebApi/1.0.09,165
+          "Core.dll": {}Core.dll20,390
+        "runtime": {runtime19,369
+      "Core/1.0.0": {Core/1.0.018,347
+          "Core": "1.0.0"Core25,483
+        "dependencies": {dependencies24,457
+          "Infra.dll": {}Infra.dll28,541
+        "runtime": {runtime27,520
+      "Infra/1.0.0": {Infra/1.0.023,434
+    ".NETCoreApp,Version=v8.0": {.NETCoreApp,Version=v8.08,131
+  "targets": {targets7,116
+      "type": "project",type35,635
+      "serviceable": false,serviceable36,660
+      "sha512": ""sha51237,688
+    "WebApi/1.0.0": {WebApi/1.0.034,613
+      "type": "project",type40,734
+      "serviceable": false,serviceable41,759
+      "sha512": ""sha51242,787
+    "Core/1.0.0": {Core/1.0.039,714
+      "type": "project",type45,834
+      "serviceable": false,serviceable46,859
+      "sha512": ""sha51247,887
+    "Infra/1.0.0": {Infra/1.0.044,813
+  "libraries": {libraries33,596
+
+src/WebApi/bin/Debug/net8.0/appsettings.json,211
+      "Default": "Information",Default4,38
+      "Microsoft.AspNetCore": "Warning"Microsoft.AspNetCore5,71
+    "LogLevel": {LogLevel3,19
+  "Logging": {Logging2,3
+  "AllowedHosts": "*"AllowedHosts8,125
+
+src/WebApi/Properties/launchSettings.json,829
+    "$schema": "http://json.schemastore.org/launchsettings.json",$schema2,6
+        "windowsAuthentication": false,windowsAuthentication4,95
+        "anonymousAuthentication": true,anonymousAuthentication5,136
+            "applicationUrl": "http://localhost:59560",applicationUrl7,203
+            "sslPort": 44312sslPort8,260
+        "iisExpress": {iisExpress6,178
+    "iisSettings": {iisSettings3,73
+            "commandName": "Project",commandName13,347
+            "dotnetRunMessages": true,dotnetRunMessages14,386
+            "applicationUrl": "http://localhost:5000",applicationUrl15,426
+                "ASPNETCORE_ENVIRONMENT": "Development"ASPNETCORE_ENVIRONMENT17,521
+            "environmentVariables": {environmentVariables16,482
+        "http": {http12,328
+    "profiles": {profiles11,309
+
+src/WebApi/WebApi.csproj,0
+
+src/WebApi/Program.cs,326
+app.Run();app.Run8,158
+static void BuilderAddServices(WebApplicationBuilder builder)BuilderAddServices10,172
+static void AppConfigure(WebApplication app)AppConfigure16,316
+static void AppUseMiddlewares(WebApplication app)AppUseMiddlewares22,486
+static void TimeItMiddleware(WebApplication app)TimeItMiddleware27,573
+
+src/WebApi/appsettings.json,211
+      "Default": "Information",Default4,38
+      "Microsoft.AspNetCore": "Warning"Microsoft.AspNetCore5,71
+    "LogLevel": {LogLevel3,19
+  "Logging": {Logging2,3
+  "AllowedHosts": "*"AllowedHosts8,125
+
+src/WebApi/Controllers/ItemsController.cs,683
+public class ItemsController : ControllerBaseItemsController6,99
+    public async Task CreateItem()CreateItem9,169
+    public async Task FindAllItemsByTodoId(int todoId)FindAllItemsByTodoId14,253
+    public async Task FindItemById(int itemId)FindItemById19,352
+    public async Task SetItemDone(int itemId)SetItemDone24,453
+    public async Task SetItemNotDone(int itemId)SetItemNotDone29,556
+    public async Task UpdateItem(int itemId)UpdateItem34,649
+    public async Task DeleteItem(int itemId)DeleteItem39,741
+    public async Task DeleteDoneItems()DeleteDoneItems44,829
+    public async Task DeleteDoneItemsByTodoId(int todoId)DeleteDoneItemsByTodoId49,926
+
+src/WebApi/Controllers/ControllerUtils.cs,285
+public class ControllerUtilsControllerUtils3,39
+    public static async Task WriteExceptionResponse(HttpContext httpContext, Exception e)WriteExceptionResponse5,72
+    public static async Task WriteErrorNotMappedResponse(HttpContext httpContext)WriteErrorNotMappedResponse11,306
+
+src/WebApi/Controllers/TodosController.cs,369
+public class TodosController : ControllerBaseTodosController6,99
+    public async Task CreateTodo()CreateTodo9,169
+    public async Task DeleteTodo(int todoId)DeleteTodo14,251
+    public async Task FindTodoById(int todoId)FindTodoById19,340
+    public async Task FindAllTodos()FindAllTodos24,423
+    public async Task UpdateTodo(int todoId)UpdateTodo29,504
+
+src/WebApi/Controllers/UsersController.cs,609
+public readonly struct SignUpBodySignUpBody8,154
+    public string Name { get; init; }Name10,192
+    public string Email { get; init; }Email11,231
+    public string Password { get; init; }Password12,271
+public readonly struct SignInBodySignInBody15,319
+    public string Email { get; init; }Email17,357
+    public string Password { get; init; }Password18,397
+public class UsersController : ControllerBaseUsersController22,470
+    public async Task SignUp(SignUpBody body)SignUp25,546
+    public async Task SignIn(SignInBody body)SignIn55,1650
+    public async Task Verify()Verify91,2996
+
+src/WebApi/Controllers/BaseController.cs,113
+public class BaseController : ControllerBaseBaseController6,94
+    public async Task CatchAll()CatchAll9,172
+
+src/Infra/Handlers/Queries/UserQueryHandler.cs,164
+public class UserQueryHandler : IUserQueryHandlerUserQueryHandler7,130
+    public Task<UserDb?> FindUserByEmail(UserFindByEmailQuery query)FindUserByEmail9,184
+
+src/Infra/Handlers/Commands/UserCommandHandler.cs,150
+public class UserCommandHandler : IUserCommandHandlerUserCommandHandler6,111
+    public Task CreateUser(CreateUserCommand command)CreateUser8,169
+
+src/Infra/Infra.csproj,0
+
+src/Infra/obj/Infra.csproj.nuget.g.props,0
+
+src/Infra/obj/project.assets.json,3257
+  "version": 3,version2,2
+        "type": "project",type6,71
+        "framework": ".NETCoreApp,Version=v8.0",framework7,98
+          "bin/placeholder/Core.dll": {}bin/placeholder/Core.dll9,168
+        "compile": {compile8,147
+          "bin/placeholder/Core.dll": {}bin/placeholder/Core.dll12,241
+        "runtime": {runtime11,220
+      "Core/1.0.0": {Core/1.0.05,49
+    "net8.0": {net8.04,33
+  "targets": {targets3,18
+      "type": "project",type19,348
+      "path": "../Core/Core.csproj",path20,373
+      "msbuildProject": "../Core/Core.csproj"msbuildProject21,410
+    "Core/1.0.0": {Core/1.0.018,328
+  "libraries": {libraries17,311
+      "Core >= 1.0.0"026,518
+    "net8.0": [net8.025,502
+  "projectFileDependencyGroups": {projectFileDependencyGroups24,467
+    "/home/pedro/.nuget/packages/": {}/home/pedro/.nuget/packages/30,573
+  "packageFolders": {packageFolders29,551
+    "version": "1.0.0",version33,632
+      "projectUniqueName": "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproprojectUniqueName35,673
+      "projectName": "Infra",projectName36,773
+      "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj",projectPath37,803
+      "packagesPath": "/home/pedro/.nuget/packages/",packagesPath38,897
+      "outputPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/obj/",outputPath39,951
+      "projectStyle": "PackageReference",projectStyle40,1036
+        "/home/pedro/.nuget/NuGet/NuGet.Config"042,1105
+      "configFilePaths": [configFilePaths41,1078
+        "net8.0"045,1198
+      "originalTargetFrameworks": [originalTargetFrameworks44,1162
+        "https://api.nuget.org/v3/index.json": {}https://api.nuget.org/v3/index.json48,1243
+      "sources": {sources47,1224
+          "targetAlias": "net8.0",targetAlias52,1344
+              "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproprojectPath55,1497
+            "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj54,1412
+          "projectReferences": {projectReferences53,1379
+        "net8.0": {net8.051,1324
+      "frameworks": {frameworks50,1302
+          "NU1605"062,1695
+        "warnAsError": [warnAsError61,1670
+      "warningProperties": {warningProperties60,1641
+    "restore": {restore34,656
+        "targetAlias": "net8.0",targetAlias68,1777
+          "net461",070,1831
+          "net462",171,1851
+          "net47",272,1871
+          "net471",373,1890
+          "net472",474,1910
+          "net48",575,1930
+          "net481"676,1949
+        "imports": [imports69,1810
+        "assetTargetFallback": true,assetTargetFallback78,1979
+        "warn": true,warn79,2016
+            "privateAssets": "all"privateAssets82,2108
+          "Microsoft.NETCore.App": {Microsoft.NETCore.App81,2071
+        "frameworkReferences": {frameworkReferences80,2038
+        "runtimeIdentifierGraphPath": "/home/pedro/.asdf/installs/dotnet-core/8.0.120/sdk/8.0.12runtimeIdentifierGraphPath85,2166
+      "net8.0": {net8.067,1759
+    "frameworks": {frameworks66,1739
+  "project": {project32,617
+
+src/Infra/obj/Infra.csproj.nuget.dgspec.json,5042
+  "format": 1,format2,2
+    "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj": {}/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj4,32
+  "restore": {restore3,17
+      "version": "1.0.0",version8,210
+        "projectUniqueName": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproprojectUniqueName10,255
+        "projectName": "Core",projectName11,355
+        "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj",projectPath12,386
+        "packagesPath": "/home/pedro/.nuget/packages/",packagesPath13,480
+        "outputPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/obj/",outputPath14,536
+        "projectStyle": "PackageReference",projectStyle15,622
+          "/home/pedro/.nuget/NuGet/NuGet.Config"017,695
+        "configFilePaths": [configFilePaths16,666
+          "net8.0"020,794
+        "originalTargetFrameworks": [originalTargetFrameworks19,756
+          "https://api.nuget.org/v3/index.json": {}https://api.nuget.org/v3/index.json23,845
+        "sources": {sources22,824
+            "targetAlias": "net8.0",targetAlias27,954
+            "projectReferences": {}projectReferences28,991
+          "net8.0": {net8.026,932
+        "frameworks": {frameworks25,908
+            "NU1605"033,1108
+          "warnAsError": [warnAsError32,1081
+        "warningProperties": {warningProperties31,1050
+      "restore": {restore9,236
+          "targetAlias": "net8.0",targetAlias39,1202
+            "net461",041,1260
+            "net462",142,1282
+            "net47",243,1304
+            "net471",344,1325
+            "net472",445,1347
+            "net48",546,1369
+            "net481"647,1390
+          "imports": [imports40,1237
+          "assetTargetFallback": true,assetTargetFallback49,1424
+          "warn": true,warn50,1463
+              "privateAssets": "all"privateAssets53,1561
+            "Microsoft.NETCore.App": {Microsoft.NETCore.App52,1522
+          "frameworkReferences": {frameworkReferences51,1487
+          "runtimeIdentifierGraphPath": "/home/pedro/.asdf/installs/dotnet-core/8.0.120/sdk/8.0.runtimeIdentifierGraphPath56,1625
+        "net8.0": {net8.038,1182
+      "frameworks": {frameworks37,1160
+    "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj7,133
+      "version": "1.0.0",version61,1866
+        "projectUniqueName": "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.cspprojectUniqueName63,1911
+        "projectName": "Infra",projectName64,2013
+        "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj",projectPath65,2045
+        "packagesPath": "/home/pedro/.nuget/packages/",packagesPath66,2141
+        "outputPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/obj/",outputPath67,2197
+        "projectStyle": "PackageReference",projectStyle68,2284
+          "/home/pedro/.nuget/NuGet/NuGet.Config"070,2357
+        "configFilePaths": [configFilePaths69,2328
+          "net8.0"073,2456
+        "originalTargetFrameworks": [originalTargetFrameworks72,2418
+          "https://api.nuget.org/v3/index.json": {}https://api.nuget.org/v3/index.json76,2507
+        "sources": {sources75,2486
+            "targetAlias": "net8.0",targetAlias80,2616
+                "projectPath": "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.cspprojectPath83,2775
+              "/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/Core/Core.csproj82,2688
+            "projectReferences": {projectReferences81,2653
+          "net8.0": {net8.079,2594
+        "frameworks": {frameworks78,2570
+            "NU1605"090,2987
+          "warnAsError": [warnAsError89,2960
+        "warningProperties": {warningProperties88,2929
+      "restore": {restore62,1892
+          "targetAlias": "net8.0",targetAlias96,3081
+            "net461",098,3139
+            "net462",199,3161
+            "net47",2100,3183
+            "net471",3101,3204
+            "net472",4102,3226
+            "net48",5103,3248
+            "net481"6104,3269
+          "imports": [imports97,3116
+          "assetTargetFallback": true,assetTargetFallback106,3303
+          "warn": true,warn107,3342
+              "privateAssets": "all"privateAssets110,3440
+            "Microsoft.NETCore.App": {Microsoft.NETCore.App109,3401
+          "frameworkReferences": {frameworkReferences108,3366
+          "runtimeIdentifierGraphPath": "/home/pedro/.asdf/installs/dotnet-core/8.0.120/sdk/8.0.runtimeIdentifierGraphPath113,3504
+        "net8.0": {net8.095,3061
+      "frameworks": {frameworks94,3039
+    "/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj": {/home/pedro/programming/mycode/todos-csharp/v2/src/Infra/Infra.csproj60,1787
+  "projects": {projects6,117
+
+src/Infra/obj/project.nuget.cache,0
+
+src/Infra/obj/Infra.csproj.nuget.g.targets,0
+
+src/Infra/obj/Debug/net8.0/Infra.AssemblyInfoInputs.cache,0
+
+src/Infra/obj/Debug/net8.0/Infra.GeneratedMSBuildEditorConfig.editorconfig,0
+
+src/Infra/obj/Debug/net8.0/Infra.assets.cache,0
+
+src/Infra/obj/Debug/net8.0/Infra.pdb,0
+
+src/Infra/obj/Debug/net8.0/Infra.csproj.AssemblyReference.cache,0
+
+src/Infra/obj/Debug/net8.0/Infra.AssemblyInfo.cs,0
+
+src/Infra/obj/Debug/net8.0/Infra.GlobalUsings.g.cs,0
+
+src/Infra/obj/Debug/net8.0/Infra.csproj.CoreCompileInputs.cache,0
+
+src/Infra/obj/Debug/net8.0/Infra.csproj.FileListAbsolute.txt,0
+
+src/Infra/obj/Debug/net8.0/Infra.csproj.CopyComplete,0
+
+src/Infra/obj/Debug/net8.0/Infra.sourcelink.json,258
+{"documents":{"/home/pedro/programming/mycode/todos-csharp/*":"https://raw.githubusercontent.com/home/pedro/programming/mycode/todos-csharp/*1,0
+{"documents":{"/home/pedro/programming/mycode/todos-csharp/*":"https://raw.githubusercontent.comdocuments1,0
+
+src/Infra/obj/Debug/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs,0
+
+src/Infra/bin/Debug/net8.0/Infra.pdb,0
+
+src/Infra/bin/Debug/net8.0/Infra.deps.json,937
+    "name": ".NETCoreApp,Version=v8.0",name3,23
+    "signature": ""signature4,63
+  "runtimeTarget": {runtimeTarget2,2
+  "compilationOptions": {},compilationOptions6,88
+          "Core": "1.0.0"Core11,214
+        "dependencies": {dependencies10,188
+          "Infra.dll": {}Infra.dll14,272
+        "runtime": {runtime13,251
+      "Infra/1.0.0": {Infra/1.0.09,165
+          "Core.dll": {}Core.dll19,360
+        "runtime": {runtime18,339
+      "Core/1.0.0": {Core/1.0.017,317
+    ".NETCoreApp,Version=v8.0": {.NETCoreApp,Version=v8.08,131
+  "targets": {targets7,116
+      "type": "project",type26,452
+      "serviceable": false,serviceable27,477
+      "sha512": ""sha51228,505
+    "Infra/1.0.0": {Infra/1.0.025,431
+      "type": "project",type31,551
+      "serviceable": false,serviceable32,576
+      "sha512": ""sha51233,604
+    "Core/1.0.0": {Core/1.0.030,531
+  "libraries": {libraries24,414
+
+src/Infra/bin/Debug/net8.0/Core.pdb,0
+
+src/Infra/UseCasesFactory.cs,232
+public static class UseCasesFactoryUseCasesFactory8,166
+    public static UserSignUpUseCase GetUserSignUpUseCase()GetUserSignUpUseCase10,206
+    public static UserSignInUseCase GetUserSignInUseCase()GetUserSignInUseCase19,601
+
+src/Infra/Services/PasswordService.cs,225
+public class PasswordService : IPasswordServicePasswordService5,65
+    public bool CheckPassword(string password, string passwordHash)CheckPassword7,117
+    public string HashPassword(string password)HashPassword12,248
+
+TAGS,0
+
+Todos.sln,0

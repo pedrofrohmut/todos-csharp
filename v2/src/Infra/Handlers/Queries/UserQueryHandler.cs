@@ -10,4 +10,9 @@ public class UserQueryHandler : IUserQueryHandler
     {
         throw new NotImplementedException();
     }
+
+    public Task<UserDb?> FindUserById(UserFindByIdQuery query)
+    {
+        throw new NotImplementedException();
+    }
 }

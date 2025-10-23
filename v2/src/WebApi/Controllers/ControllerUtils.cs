@@ -13,4 +13,9 @@ public class ControllerUtils
         httpContext.Response.StatusCode = 500;
         await httpContext.Response.WriteAsync("Server Error: Result Error returned is not mapped.");
     }
+
+    public static string? GetAuthToken(HttpRequest request)
+    {
+        return request.Headers.Authorization.ToString().Split(" ")[1];
+    }
 }

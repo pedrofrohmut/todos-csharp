@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Todos.Core.UseCases.Users;
 using Todos.Infra;
 using Todos.Core.Errors;
+using Todos.Core.Utils;
 
 namespace Todos.WebApi.Controllers;
 
@@ -90,7 +91,36 @@ public class UsersController : ControllerBase
     [HttpGet("verify")]
     public async Task Verify()
     {
-        HttpContext.Response.StatusCode = 200;
-        await HttpContext.Response.WriteAsync("Verify");
+        var token = ControllerUtils.GetAuthToken(Request);
+        var useCase = UseCasesFactory.GetVerifyAuthTokenUseCase();
+        var input = new VerifyAuthTokenInput { Token = token };
+
+        Result<VerifyAuthTokenOutput> result;
+        try {
+            result = await useCase.Execute(input);
+        } catch (Exception e) {
+            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            return;
+        }
+
+        if (result.IsSuccess) {
+            HttpContext.Response.StatusCode = 200;
+            await HttpContext.Response.WriteAsJsonAsync(result.Payload);
+            return;
+        }
+
+        if (result.Error is InvalidTokenError) {
+            HttpContext.Response.StatusCode = 400;
+            await HttpContext.Response.WriteAsync(result.Error.Message);
+            return;
+        }
+
+        if (result.Error is UserNotFoundError) {
+            HttpContext.Response.StatusCode = 404;
+            await HttpContext.Response.WriteAsync(result.Error.Message);
+            return;
+        }
+
+        await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
     }
 }

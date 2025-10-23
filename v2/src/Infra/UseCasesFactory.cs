@@ -23,4 +23,11 @@ public static class UseCasesFactory
         var passwordService = new PasswordService();
         return new UserSignInUseCase(userQueryHandler, passwordService);
     }
+
+    public static VerifyAuthTokenUseCase GetVerifyAuthTokenUseCase()
+    {
+        var authTokenService = new AuthTokenService();
+        var userQueryHandler = new UserQueryHandler();
+        return new VerifyAuthTokenUseCase(authTokenService, userQueryHandler);
+    }
 }

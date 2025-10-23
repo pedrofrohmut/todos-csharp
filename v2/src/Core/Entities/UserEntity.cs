@@ -11,6 +11,14 @@ namespace Todos.Core.Entities;
 
 public static class UserEntity
 {
+    public static Result ValidateId(int id)
+    {
+        if (id < 1) {
+            return Result.Failed(new InvalidUserError("Invalid user id. Id cannot be less than 1"));
+        }
+        return Result.Successed();
+    }
+
     public static Result ValidateName(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) {
@@ -49,6 +57,14 @@ public static class UserEntity
         }
         if (password.Length > 32) {
             return Result.Failed(new InvalidUserError("Password is too long. Password must less than 33 characters long."));
+        }
+        return Result.Successed();
+    }
+
+    public static Result ValidateEncodedToken(string? token)
+    {
+        if (string.IsNullOrWhiteSpace(token)) {
+            return Result.Failed(new InvalidTokenError("Authentication token not provided. Token is required and cannot be blank"));
         }
         return Result.Successed();
     }
@@ -110,6 +126,32 @@ public static class UserEntity
             return Result.Successed();
         } catch (Exception e) {
             return Result.Failed("User:" + nameof(MatchPasswordAndHash), "Error to match password: " + e.Message);
+        }
+    }
+
+    public static Result<AuthToken> DecodeToken(string token, IAuthTokenService authTokenService)
+    {
+        try {
+            var resultDecoded = authTokenService.Decode(token);
+            if (!resultDecoded.IsSuccess) {
+                return Result<AuthToken>.Failed(new InvalidTokenError("The token is invalid and could not be decoded"));
+            }
+            return Result<AuthToken>.Successed(resultDecoded.Payload);
+        } catch (Exception e) {
+            return Result<AuthToken>.Failed("User:" + nameof(DecodeToken), "Error to decode token: " + e.Message);
+        }
+    }
+
+    public static async Task<Result> CheckUserExists(UserFindByIdQuery query, IUserQueryHandler userQueryHandler)
+    {
+        try {
+            UserDb? userDb = await userQueryHandler.FindUserById(query);
+            if (userDb == null) {
+                return Result.Failed(new UserNotFoundError("User not found by id"));
+            }
+            return Result.Successed();
+        } catch (Exception e) {
+            return Result<AuthToken>.Failed("User:" + nameof(CheckUserExists), "Error to check if user exists: " + e.Message);
         }
     }
 }

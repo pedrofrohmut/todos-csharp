@@ -1,5 +1,7 @@
 namespace Todos.Core.Errors;
 
+// TODO: Change the codes to an Enum when possible
+
 public class InvalidUserError : ResultError
 {
     const string code = "User:InvalidUser";

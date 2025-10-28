@@ -154,4 +154,40 @@ public static class UserEntity
             return Result<AuthToken>.Failed("User:" + nameof(CheckUserExists), "Error to check if user exists: " + e.Message);
         }
     }
+
+    public static async Task<Result<UserDb>> GetUserFromToken(string? token,
+                                                              IAuthTokenService authTokenService,
+                                                              IUserQueryHandler userQueryHandler)
+    {
+        if (string.IsNullOrWhiteSpace(token)) {
+            return Result<UserDb>.Failed(new InvalidTokenError("Token not provided."));
+        }
+
+        AuthToken decoded;
+        try {
+            var resultDecoded = authTokenService.Decode(token);
+            if (!resultDecoded.IsSuccess) {
+                return Result<UserDb>.Failed(new InvalidTokenError("The token is invalid and could not be decoded"));
+            }
+            decoded = resultDecoded.Payload;
+        } catch (Exception e) {
+            return Result<UserDb>.Failed("User:" + nameof(GetUserFromToken), "Error to decode token: " + e.Message);
+        }
+
+        var resultId = UserEntity.ValidateId(decoded.UserId);
+        if (!resultId.IsSuccess) {
+            return Result<UserDb>.Failed(new InvalidTokenError("User id in the token is not valid"));
+        }
+
+        try {
+            var query = new UserFindByIdQuery { Id = decoded.UserId };
+            var user = await userQueryHandler.FindUserById(query);
+            if (user == null) {
+                return Result<UserDb>.Failed(new InvalidTokenError("User not found by token's userId"));
+            }
+            return Result<UserDb>.Successed(user.Value);
+        } catch (Exception e) {
+            return Result<UserDb>.Failed("User:" + nameof(GetUserFromToken), "Error to find user by id: " + e.Message);
+        }
+    }
 }

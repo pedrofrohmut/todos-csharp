@@ -2,12 +2,29 @@ using Todos.Core.Errors;
 
 namespace Todos.Core.Utils;
 
+/*
+    TODO: Add Exception property to the result so you can wrap exceptions with result
+    also. This way you will only have try/catch in the lowest levels, in the high level
+    you can just check for Result.Exception.
+
+    In the controllers the try/catch should not be needed anymore.
+
+    When in catch block, do not use Result.Failed anymore, use Result.Throw instead.
+
+    This change should make the Result Errors and Exceptions two different and distinct
+    things. Exceptions for errors that should not normally happen and Errors for the
+    errors the scenarios the the developer want it to happen.
+
+    TLDR: The developer expect the error is a Result.Error, every other error is a
+    Result.Exception.
+*/
+
 public class Result
 {
     public bool IsSuccess { get; set; }
     public ResultError? Error { get; set; }
 
-    protected Result() {}
+    protected Result() { }
 
     public static Result Successed()
     {
@@ -30,7 +47,7 @@ public class Result<T> : Result
 {
     public T? Payload { get; set; }
 
-    private Result() {}
+    private Result() { }
 
     public new static Result<T> Successed()
     {

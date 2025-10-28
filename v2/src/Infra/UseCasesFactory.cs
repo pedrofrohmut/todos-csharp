@@ -1,4 +1,5 @@
 using Todos.Core.UseCases.Users;
+using Todos.Core.UseCases.Todos;
 using Todos.Infra.Handlers.Commands;
 using Todos.Infra.Handlers.Queries;
 using Todos.Infra.Services;
@@ -29,5 +30,13 @@ public static class UseCasesFactory
         var authTokenService = new AuthTokenService();
         var userQueryHandler = new UserQueryHandler();
         return new VerifyAuthTokenUseCase(authTokenService, userQueryHandler);
+    }
+
+    public static CreateTodoUseCase GetCreateTodoUseCase()
+    {
+        var authTokenService = new AuthTokenService();
+        var userQueryHandler = new UserQueryHandler();
+        var todoCommandHandler = new TodoCommandHandler();
+        return new CreateTodoUseCase(authTokenService, userQueryHandler, todoCommandHandler);
     }
 }

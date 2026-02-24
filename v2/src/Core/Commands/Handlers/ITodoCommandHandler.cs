@@ -2,5 +2,6 @@ namespace Todos.Core.Commands.Handlers;
 
 public interface ITodoCommandHandler
 {
-    Task CreateTodo(CreateTodoCommand command);
+    Task CreateTodo(TodoCreateCommand command);
+    Task DeleteTodo(TodoDeleteCommand command);
 }

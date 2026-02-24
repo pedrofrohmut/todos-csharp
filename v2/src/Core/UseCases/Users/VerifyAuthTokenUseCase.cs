@@ -50,6 +50,6 @@ public class VerifyAuthTokenUseCase
         if (!result.IsSuccess) return result;
 
         var validOutput = new VerifyAuthTokenOutput { IsValid = true };
-        return Result<VerifyAuthTokenOutput>.Successed(validOutput);
+        return Result<VerifyAuthTokenOutput>.Succeeded(validOutput);
     }
 }

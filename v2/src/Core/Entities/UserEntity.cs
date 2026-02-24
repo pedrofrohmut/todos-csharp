@@ -16,7 +16,7 @@ public static class UserEntity
         if (id < 1) {
             return Result.Failed(new InvalidUserError("Invalid user id. Id cannot be less than 1"));
         }
-        return Result.Successed();
+        return Result.Succeeded();
     }
 
     public static Result ValidateName(string name)
@@ -30,7 +30,7 @@ public static class UserEntity
         if (name.Length > 120) {
             return Result.Failed(new InvalidUserError("Name is too long. Name must be less than 121 characters long."));
         }
-        return Result.Successed();
+        return Result.Succeeded();
     }
 
     public static Result ValidateEmail(string email)
@@ -44,7 +44,7 @@ public static class UserEntity
         if (email.Length < 6) {
             return Result.Failed(new InvalidUserError("E-mail is too short. E-mail must be at least 6 characters long."));
         }
-        return Result.Successed();
+        return Result.Succeeded();
     }
 
     public static Result ValidatePassword(string password)
@@ -58,7 +58,7 @@ public static class UserEntity
         if (password.Length > 32) {
             return Result.Failed(new InvalidUserError("Password is too long. Password must less than 33 characters long."));
         }
-        return Result.Successed();
+        return Result.Succeeded();
     }
 
     public static Result ValidateEncodedToken(string? token)
@@ -66,7 +66,7 @@ public static class UserEntity
         if (string.IsNullOrWhiteSpace(token)) {
             return Result.Failed(new InvalidTokenError("Authentication token not provided. Token is required and cannot be blank"));
         }
-        return Result.Successed();
+        return Result.Succeeded();
     }
 
     public static async Task<Result> CheckEmailIsAvailable(UserFindByEmailQuery query, IUserQueryHandler handler)
@@ -77,7 +77,7 @@ public static class UserEntity
                 // return Result.Failed("User.EmailUnavailable", "This e-mail is already in use. E-mails must be unique.");
                 return Result.Failed(new EmailAlreadyTakenError());
             }
-            return Result.Successed();
+            return Result.Succeeded();
         } catch (Exception e) {
             return Result.Failed("User:" + nameof(CheckEmailIsAvailable), "Failed to find user by e-mail: " + e.Message);
         }
@@ -87,7 +87,7 @@ public static class UserEntity
     {
         try {
             string hash = passwordService.HashPassword(password);
-            return Result<string>.Successed(hash);
+            return Result<string>.Succeeded(hash);
         } catch (Exception e) {
             return Result<string>.Failed("User:" + nameof(HashPassword), "Error to create a password hash: " + e.Message);
         }
@@ -97,7 +97,7 @@ public static class UserEntity
     {
         try {
             await handler.CreateUser(command);
-            return Result.Successed();
+            return Result.Succeeded();
         } catch (Exception e) {
             return Result.Failed("User:" + nameof(CreateUser), "Error to create user: " + e.Message);
         }
@@ -110,7 +110,7 @@ public static class UserEntity
             if (user == null) {
                 return Result<UserDb>.Failed(new UserNotFoundError("User not found by e-mail"));
             }
-            return Result<UserDb>.Successed(user.Value);
+            return Result<UserDb>.Succeeded(user.Value);
         } catch (Exception e) {
             return Result<UserDb>.Failed("User:" + nameof(FindUserByEmail), "Error to find user by email: " + e.Message);
         }
@@ -123,7 +123,7 @@ public static class UserEntity
             if (!isMatch) {
                 return Result.Failed(new PasswordMatchError());
             }
-            return Result.Successed();
+            return Result.Succeeded();
         } catch (Exception e) {
             return Result.Failed("User:" + nameof(MatchPasswordAndHash), "Error to match password: " + e.Message);
         }
@@ -136,7 +136,7 @@ public static class UserEntity
             if (!resultDecoded.IsSuccess) {
                 return Result<AuthToken>.Failed(new InvalidTokenError("The token is invalid and could not be decoded"));
             }
-            return Result<AuthToken>.Successed(resultDecoded.Payload);
+            return Result<AuthToken>.Succeeded(resultDecoded.Payload);
         } catch (Exception e) {
             return Result<AuthToken>.Failed("User:" + nameof(DecodeToken), "Error to decode token: " + e.Message);
         }
@@ -149,7 +149,7 @@ public static class UserEntity
             if (userDb == null) {
                 return Result.Failed(new UserNotFoundError("User not found by id"));
             }
-            return Result.Successed();
+            return Result.Succeeded();
         } catch (Exception e) {
             return Result<AuthToken>.Failed("User:" + nameof(CheckUserExists), "Error to check if user exists: " + e.Message);
         }
@@ -185,7 +185,7 @@ public static class UserEntity
             if (user == null) {
                 return Result<UserDb>.Failed(new InvalidTokenError("User not found by token's userId"));
             }
-            return Result<UserDb>.Successed(user.Value);
+            return Result<UserDb>.Succeeded(user.Value);
         } catch (Exception e) {
             return Result<UserDb>.Failed("User:" + nameof(GetUserFromToken), "Error to find user by id: " + e.Message);
         }

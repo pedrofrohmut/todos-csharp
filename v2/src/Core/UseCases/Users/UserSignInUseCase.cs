@@ -55,6 +55,6 @@ public class UserSignInUseCase
         if (!result.IsSuccess) return result;
 
         var output = new UserSignInOutput { Id = userDb.Id, Name = userDb.Name, Email = userDb.Email };
-        return Result<UserSignInOutput>.Successed(output);
+        return Result<UserSignInOutput>.Succeeded(output);
     }
 }

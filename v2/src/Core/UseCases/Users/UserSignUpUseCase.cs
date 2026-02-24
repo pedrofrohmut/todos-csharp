@@ -64,6 +64,6 @@ public class UserSignUpUseCase
         result = (Result<UserSignUpOutput>) await UserEntity.CreateUser(command, this.userCommandHandler);
         if (!result.IsSuccess) return result;
 
-        return Result<UserSignUpOutput>.Successed(new UserSignUpOutput {});
+        return Result<UserSignUpOutput>.Succeeded(new UserSignUpOutput {});
     }
 }

@@ -26,7 +26,7 @@ public class Result
 
     protected Result() { }
 
-    public static Result Successed()
+    public static Result Succeeded()
     {
         return new Result { IsSuccess = true, Error = null };
     }
@@ -49,12 +49,12 @@ public class Result<T> : Result
 
     private Result() { }
 
-    public new static Result<T> Successed()
+    public new static Result<T> Succeeded()
     {
         return new Result<T> { IsSuccess = true, Error = null, Payload = default };
     }
 
-    public static Result<T> Successed(T payload)
+    public static Result<T> Succeeded(T payload)
     {
         return new Result<T> { IsSuccess = true, Error = null, Payload = payload };
     }

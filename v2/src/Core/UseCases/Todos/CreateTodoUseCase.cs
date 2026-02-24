@@ -51,7 +51,7 @@ public class CreateTodoUseCase
         UserDb user = resultToken.Payload;
 
         // Create Todo
-        var command = new CreateTodoCommand {
+        var command = new TodoCreateCommand {
             Name = input.Name,
             Description = input.Description,
             UserId = user.Id,
@@ -59,6 +59,6 @@ public class CreateTodoUseCase
         result = (Result<CreateTodoOutput>) await TodoEntity.CreateTodo(command, this.todoCommandHandler);
         if (!result.IsSuccess) return result;
 
-        return Result<CreateTodoOutput>.Successed(new CreateTodoOutput {});
+        return Result<CreateTodoOutput>.Succeeded(new CreateTodoOutput {});
     }
 }

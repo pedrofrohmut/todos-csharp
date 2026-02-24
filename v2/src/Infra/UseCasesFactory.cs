@@ -27,6 +27,7 @@ public static class UseCasesFactory
 
     public static VerifyAuthTokenUseCase GetVerifyAuthTokenUseCase()
     {
+        // TODO: add read dbConnections
         var authTokenService = new AuthTokenService();
         var userQueryHandler = new UserQueryHandler();
         return new VerifyAuthTokenUseCase(authTokenService, userQueryHandler);
@@ -34,9 +35,20 @@ public static class UseCasesFactory
 
     public static CreateTodoUseCase GetCreateTodoUseCase()
     {
+        // TODO: add the write and read dbConnections
         var authTokenService = new AuthTokenService();
         var userQueryHandler = new UserQueryHandler();
         var todoCommandHandler = new TodoCommandHandler();
         return new CreateTodoUseCase(authTokenService, userQueryHandler, todoCommandHandler);
+    }
+
+    public static DeleteTodoUseCase GetDeleteTodoUseCase()
+    {
+        // TODO: add dbConnections
+        var authTokenService = new AuthTokenService();
+        var userQueryHandler = new UserQueryHandler();
+        var todoQueryHandler = new TodoQueryHandler();
+        var todoCommandHandler = new TodoCommandHandler();
+        return new DeleteTodoUseCase(authTokenService, userQueryHandler, todoQueryHandler, todoCommandHandler);
     }
 }

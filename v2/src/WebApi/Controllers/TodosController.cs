@@ -56,6 +56,38 @@ public class TodosController : ControllerBase
     [HttpDelete("{todoId}")]
     public async Task DeleteTodo(int todoId)
     {
+        var useCase = UseCasesFactory.GetDeleteTodoUseCase();
+        var input = new DeleteTodoInput {
+            Id = todoId,
+        };
+
+        Result<DeleteTodoOutput> result;
+        try {
+            result = await useCase.Execute(input);
+        } catch (Exception e) {
+            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            return;
+        }
+
+        if (result.IsSuccess) {
+            HttpContext.Response.StatusCode = 204;
+            await HttpContext.Response.WriteAsync("Delete Todo: Todo deleted successfully.");
+            return;
+        }
+
+        if (result.Error is InvalidTodoError) {
+            HttpContext.Response.StatusCode = 400;
+            await HttpContext.Response.WriteAsync(result.Error.Message);
+            return;
+        }
+
+        if (result.Error is InvalidTokenError) {
+            HttpContext.Response.StatusCode = 401;
+            await HttpContext.Response.WriteAsync(result.Error.Message);
+            return;
+        }
+
+        await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
     }
 
     [HttpGet("{todoId}")]

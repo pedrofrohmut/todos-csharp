@@ -12,11 +12,16 @@ public readonly struct CreateTodoBody
     public string Description { get; init; }
 }
 
+/*
+   TODO:
+   1. Add a way to get auth token from the request headers
+   2. Pass the authToken in the useCaseInput
+*/
 [Route("api/v2/todos")]
 public class TodosController : ControllerBase
 {
     [HttpPost("")]
-    public async Task CreateTodo(CreateTodoBody body)
+    public async Task CreateTodo([FromBody] CreateTodoBody body)
     {
         var useCase = UseCasesFactory.GetCreateTodoUseCase();
         var input = new CreateTodoInput {
@@ -57,9 +62,7 @@ public class TodosController : ControllerBase
     public async Task DeleteTodo(int todoId)
     {
         var useCase = UseCasesFactory.GetDeleteTodoUseCase();
-        var input = new DeleteTodoInput {
-            Id = todoId,
-        };
+        var input = new DeleteTodoInput { Id = todoId };
 
         Result<DeleteTodoOutput> result;
         try {
@@ -93,6 +96,42 @@ public class TodosController : ControllerBase
     [HttpGet("{todoId}")]
     public async Task FindTodoById(int todoId)
     {
+        var useCase = UseCasesFactory.GetFindTodoByIdUseCase();
+        var input = new FindTodoByIdInput { Id = todoId };
+
+        Result<FindTodoByIdOutput> result;
+        try {
+            result = await useCase.Execute(input);
+        } catch (Exception e) {
+            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            return;
+        }
+
+        if (result.IsSuccess) {
+            HttpContext.Response.StatusCode = 200;
+            await HttpContext.Response.WriteAsJsonAsync(result.Payload);
+            return;
+        }
+
+        if (result.Error is InvalidTodoError) {
+            HttpContext.Response.StatusCode = 400;
+            await HttpContext.Response.WriteAsync(result.Error.Message);
+            return;
+        }
+
+        if (result.Error is InvalidTokenError) {
+            HttpContext.Response.StatusCode = 401;
+            await HttpContext.Response.WriteAsync(result.Error.Message);
+            return;
+        }
+
+        if (result.Error is TodoNotFoundError) {
+            HttpContext.Response.StatusCode = 404;
+            await HttpContext.Response.WriteAsync(result.Error.Message);
+            return;
+        }
+
+        await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
     }
 
     [HttpGet("")]

@@ -51,4 +51,13 @@ public static class UseCasesFactory
         var todoCommandHandler = new TodoCommandHandler();
         return new DeleteTodoUseCase(authTokenService, userQueryHandler, todoQueryHandler, todoCommandHandler);
     }
+
+    public static FindTodoByIdUseCase GetFindTodoByIdUseCase()
+    {
+        // TODO: add read dbConnection
+        var authTokenService = new AuthTokenService();
+        var userQueryHandler = new UserQueryHandler();
+        var todoQueryHandler = new TodoQueryHandler();
+        return new FindTodoByIdUseCase(authTokenService, userQueryHandler, todoQueryHandler);
+    }
 }

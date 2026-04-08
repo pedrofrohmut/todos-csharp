@@ -80,4 +80,13 @@ public class TodoEntity
             return Result.Failed("Todo:" + nameof(DeleteTodo), "Error to delete todo: " + e.Message);
         }
     }
+
+    public static Result CheckTodoOwnership(UserDb user, TodoDb todo)
+    {
+        if (user.Id == todo.UserId) {
+            return Result.Succeeded();
+        }
+        return Result.Failed(new TodoOwnershipError());
+    }
+
 }

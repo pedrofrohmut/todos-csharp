@@ -13,3 +13,10 @@ public class TodoNotFoundError : ResultError
     public TodoNotFoundError() : base(code, "Todo not found") {}
     public TodoNotFoundError(string message) : base(code, message) {}
 }
+
+public class TodoOwnershipError : ResultError
+{
+    const string code = "Todo:TodoOwnershipError";
+    public TodoOwnershipError() : base(code, "This Todo does not belong to this user") {}
+    public TodoOwnershipError(string message) : base(code, message) {}
+}

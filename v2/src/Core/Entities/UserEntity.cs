@@ -30,6 +30,11 @@ public static class UserEntity
         if (name.Length > 120) {
             return Result.Failed(new InvalidUserError("Name is too long. Name must be less than 121 characters long."));
         }
+        foreach (char x in name) {
+            if (!EntitiesUtils.IsValidNameCharacter(x)) {
+                return Result.Failed(new InvalidUserError("Name contains invalid character: " + x));
+            }
+        }
         return Result.Succeeded();
     }
 

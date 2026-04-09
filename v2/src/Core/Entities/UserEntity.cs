@@ -30,10 +30,8 @@ public static class UserEntity
         if (name.Length > 120) {
             return Result.Failed(new InvalidUserError("Name is too long. Name must be less than 121 characters long."));
         }
-        foreach (char x in name) {
-            if (!EntitiesUtils.IsValidNameCharacter(x)) {
-                return Result.Failed(new InvalidUserError("Name contains invalid character: " + x));
-            }
+        if (!EntitiesUtils.IsValidName(name)) {
+            return Result.Failed(new InvalidUserError("Name contains invalid characters."));
         }
         return Result.Succeeded();
     }
@@ -43,11 +41,11 @@ public static class UserEntity
         if (string.IsNullOrWhiteSpace(email)) {
             return Result.Failed(new InvalidUserError("E-mail not provided. E-mail is required and cannot be blank."));
         }
-        if (!email.Contains('@') || !email.Contains('.')) { // Just as example
-            return Result.Failed(new InvalidUserError("E-mail is invalid. E-mail must contain the characters @ and . to be valid."));
-        }
         if (email.Length < 6) {
             return Result.Failed(new InvalidUserError("E-mail is too short. E-mail must be at least 6 characters long."));
+        }
+        if (!EntitiesUtils.IsValidEmail(email)) {
+            return Result.Failed(new InvalidUserError("E-mail is invalid."));
         }
         return Result.Succeeded();
     }

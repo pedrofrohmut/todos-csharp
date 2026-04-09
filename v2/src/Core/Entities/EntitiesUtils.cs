@@ -8,4 +8,39 @@ public class EntitiesUtils
         if (x == ' ' || x == '\'' || x == '-' || x == '.') return true;
         return false;
     }
+
+    public static bool IsValidName(string name) {
+        if (name.Length == 0) return false;
+        foreach (var x in name) {
+            if (!IsValidNameCharacter(x)) return false;
+        }
+        return true;
+    }
+
+    public static bool IsValidEmailCharacter(char x)
+    {
+        if (char.IsLetterOrDigit(x)) return true;
+        if (x == '.' || x == '_' || x == '-') return true;
+        return false;
+    }
+
+    public static bool IsValidEmail(string email)
+    {
+        var atIndex = email.IndexOf('@');
+        if (atIndex < 0) return false;
+
+        var local = email.Substring(0, atIndex);
+        if (local.Length < 2) return false;
+        foreach (var x in local) {
+            if (!IsValidEmailCharacter(x)) return false;
+        }
+
+        var domain = email.Substring(atIndex);
+        if (domain.Length < 3) return false;
+        foreach (var x in domain) {
+            if (!IsValidEmailCharacter(x)) return false;
+        }
+
+        return true;
+    }
 }

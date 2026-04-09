@@ -29,10 +29,8 @@ public class TodoEntity
         if (name.Length > 120) {
             return Result.Failed(new InvalidTodoError("Name is too long. Name must be less than 121 characters long."));
         }
-        foreach (char x in name) {
-            if (!EntitiesUtils.IsValidNameCharacter(x)) {
-                return Result.Failed(new InvalidTodoError("Name contains invalid character: " + x));
-            }
+        if (!EntitiesUtils.IsValidName(name)) {
+            return Result.Failed(new InvalidTodoError("Name contains invalid characters."));
         }
         return Result.Succeeded();
     }

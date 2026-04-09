@@ -5,4 +5,5 @@ namespace Todos.Core.Queries.Handlers;
 public interface ITodoQueryHandler
 {
     Task<TodoDb> FindTodoById(TodoFindByIdQuery query);
+    Task<IEnumerable<TodoDb>> FindAllTodos(TodoFindAllQuery query);
 }

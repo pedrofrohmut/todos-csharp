@@ -137,6 +137,30 @@ public class TodosController : ControllerBase
     [HttpGet("")]
     public async Task FindAllTodos()
     {
+        var useCase = UseCasesFactory.GetFindAllTodosUseCase();
+        var input = new FindAllTodosInput { };
+
+        Result<FindAllTodosOutput> result;
+        try {
+            result = await useCase.Execute(input);
+        } catch (Exception e) {
+            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            return;
+        }
+
+        if (result.IsSuccess) {
+            HttpContext.Response.StatusCode = 200;
+            await HttpContext.Response.WriteAsJsonAsync(result.Payload);
+            return;
+        }
+
+        if (result.Error is InvalidTokenError) {
+            HttpContext.Response.StatusCode = 401;
+            await HttpContext.Response.WriteAsync(result.Error.Message);
+            return;
+        }
+
+        await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
     }
 
     [HttpPut("{todoId}")]

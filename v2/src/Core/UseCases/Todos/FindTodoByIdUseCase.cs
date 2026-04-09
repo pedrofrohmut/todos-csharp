@@ -15,7 +15,7 @@ public readonly struct FindTodoByIdInput
 
 public readonly struct FindTodoByIdOutput
 {
-    public TodoDb Todo { get; init; }
+    public TodoOutput Todo { get; init; }
 }
 
 public class FindTodoByIdUseCase
@@ -59,7 +59,9 @@ public class FindTodoByIdUseCase
         result = (Result<FindTodoByIdOutput>) TodoEntity.CheckTodoOwnership(user, todo);
         if (!result.IsSuccess) return result;
 
-        var output = new FindTodoByIdOutput { Todo = todo };
+        var output = new FindTodoByIdOutput {
+            Todo = new TodoOutput(todo),
+        };
         return Result<FindTodoByIdOutput>.Succeeded(output);
     }
 }

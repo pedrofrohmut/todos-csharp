@@ -63,9 +63,19 @@ public class TodoEntity
             if (todo == null) {
                 return Result<TodoDb>.Failed(new TodoNotFoundError("Todo not found by id"));
             }
-            return Result<TodoDb>.Succeeded();
+            return Result<TodoDb>.Succeeded(todo.Value);
         } catch (Exception e) {
             return Result<TodoDb>.Failed("Todo:" + nameof(FindTodoById), "Error to find todo by id: " + e.Message);
+        }
+    }
+
+    public static async Task<Result<IEnumerable<TodoDb>>> FindAllTodos(TodoFindAllQuery query, ITodoQueryHandler handler)
+    {
+        try {
+            IEnumerable<TodoDb> todos = await handler.FindAllTodos(query);
+            return Result<IEnumerable<TodoDb>>.Succeeded(todos);
+        } catch (Exception e) {
+            return Result<IEnumerable<TodoDb>>.Failed("Todo:" + nameof(FindAllTodos), "Error to find all todos: " + e.Message);
         }
     }
 

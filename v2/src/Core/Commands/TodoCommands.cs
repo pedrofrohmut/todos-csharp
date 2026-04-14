@@ -7,6 +7,13 @@ public readonly struct TodoCreateCommand
     public int UserId { get; init; }
 }
 
+public readonly struct TodoUpdateCommand
+{
+    public int Id { get; init; }
+    public string Name { get; init; }
+    public string Description { get; init; }
+}
+
 public readonly struct TodoDeleteCommand
 {
     public int Id { get; init; }

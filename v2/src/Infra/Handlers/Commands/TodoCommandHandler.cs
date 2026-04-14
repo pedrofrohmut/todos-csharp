@@ -14,4 +14,9 @@ public class TodoCommandHandler : ITodoCommandHandler
     {
         throw new NotImplementedException();
     }
+
+    public Task UpdateTodo(TodoUpdateCommand command)
+    {
+        throw new NotImplementedException();
+    }
 }

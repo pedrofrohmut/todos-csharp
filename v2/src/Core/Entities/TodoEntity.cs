@@ -56,6 +56,16 @@ public class TodoEntity
         }
     }
 
+    public static async Task<Result> UpdateTodo(TodoUpdateCommand command, ITodoCommandHandler handler)
+    {
+        try {
+            await handler.UpdateTodo(command);
+            return Result.Succeeded();
+        } catch (Exception e) {
+            return Result.Failed("Todo:" + nameof(UpdateTodo), "Error to update todo: " + e.Message);
+        }
+    }
+
     public static async Task<Result<TodoDb>> FindTodoById(TodoFindByIdQuery query, ITodoQueryHandler handler)
     {
         try {

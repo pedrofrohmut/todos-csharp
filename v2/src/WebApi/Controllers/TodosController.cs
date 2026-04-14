@@ -12,11 +12,12 @@ public readonly struct CreateTodoBody
     public string Description { get; init; }
 }
 
-/*
-   TODO:
-   1. Add a way to get auth token from the request headers
-   2. Pass the authToken in the useCaseInput
-*/
+public readonly struct UpdateTodoBody
+{
+    public string Name { get; init; }
+    public string Description { get; init; }
+}
+
 [Route("api/v2/todos")]
 public class TodosController : ControllerBase
 {
@@ -24,9 +25,11 @@ public class TodosController : ControllerBase
     public async Task CreateTodo([FromBody] CreateTodoBody body)
     {
         var useCase = UseCasesFactory.GetCreateTodoUseCase();
+        var authToken = ControllerUtils.GetAuthToken(HttpContext.Request);
         var input = new CreateTodoInput {
             Name = body.Name,
             Description = body.Description,
+            AuthToken = authToken,
         };
 
         Result<CreateTodoOutput> result;
@@ -62,7 +65,11 @@ public class TodosController : ControllerBase
     public async Task DeleteTodo(int todoId)
     {
         var useCase = UseCasesFactory.GetDeleteTodoUseCase();
-        var input = new DeleteTodoInput { Id = todoId };
+        var authToken = ControllerUtils.GetAuthToken(HttpContext.Request);
+        var input = new DeleteTodoInput {
+            Id = todoId,
+            AuthToken = authToken,
+        };
 
         Result<DeleteTodoOutput> result;
         try {
@@ -84,7 +91,7 @@ public class TodosController : ControllerBase
             return;
         }
 
-        if (result.Error is InvalidTokenError) {
+        if (result.Error is InvalidTokenError or TodoOwnershipError) {
             HttpContext.Response.StatusCode = 401;
             await HttpContext.Response.WriteAsync(result.Error.Message);
             return;
@@ -97,7 +104,11 @@ public class TodosController : ControllerBase
     public async Task FindTodoById(int todoId)
     {
         var useCase = UseCasesFactory.GetFindTodoByIdUseCase();
-        var input = new FindTodoByIdInput { Id = todoId };
+        var authToken = ControllerUtils.GetAuthToken(HttpContext.Request);
+        var input = new FindTodoByIdInput {
+            Id = todoId,
+            AuthToken = authToken,
+        };
 
         Result<FindTodoByIdOutput> result;
         try {
@@ -119,7 +130,7 @@ public class TodosController : ControllerBase
             return;
         }
 
-        if (result.Error is InvalidTokenError) {
+        if (result.Error is InvalidTokenError or TodoOwnershipError) {
             HttpContext.Response.StatusCode = 401;
             await HttpContext.Response.WriteAsync(result.Error.Message);
             return;
@@ -138,7 +149,10 @@ public class TodosController : ControllerBase
     public async Task FindAllTodos()
     {
         var useCase = UseCasesFactory.GetFindAllTodosUseCase();
-        var input = new FindAllTodosInput { };
+        var authToken = ControllerUtils.GetAuthToken(HttpContext.Request);
+        var input = new FindAllTodosInput {
+            AuthToken = authToken,
+        };
 
         Result<FindAllTodosOutput> result;
         try {
@@ -154,7 +168,7 @@ public class TodosController : ControllerBase
             return;
         }
 
-        if (result.Error is InvalidTokenError) {
+        if (result.Error is InvalidTokenError or TodoOwnershipError) {
             HttpContext.Response.StatusCode = 401;
             await HttpContext.Response.WriteAsync(result.Error.Message);
             return;
@@ -164,7 +178,49 @@ public class TodosController : ControllerBase
     }
 
     [HttpPut("{todoId}")]
-    public async Task UpdateTodo(int todoId)
+    public async Task UpdateTodo(int todoId, [FromBody] UpdateTodoBody body)
     {
+        var useCase = UseCasesFactory.GetUpdateTodoUseCase();
+        var authToken = ControllerUtils.GetAuthToken(HttpContext.Request);
+        var input = new UpdateTodoInput {
+            Id = todoId,
+            Name = body.Name,
+            Description = body.Description,
+            AuthToken = authToken,
+        };
+
+        Result<UpdateTodoOutput> result;
+        try {
+            result = await useCase.Execute(input);
+        } catch (Exception e) {
+            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            return;
+        }
+
+        if (result.IsSuccess) {
+            HttpContext.Response.StatusCode = 204;
+            await HttpContext.Response.WriteAsync("");
+            return;
+        }
+
+        if (result.Error is InvalidTodoError) {
+            HttpContext.Response.StatusCode = 400;
+            await HttpContext.Response.WriteAsync(result.Error.Message);
+            return;
+        }
+
+        if (result.Error is InvalidTokenError or TodoOwnershipError) {
+            HttpContext.Response.StatusCode = 401;
+            await HttpContext.Response.WriteAsync(result.Error.Message);
+            return;
+        }
+
+        if (result.Error is TodoNotFoundError) {
+            HttpContext.Response.StatusCode = 404;
+            await HttpContext.Response.WriteAsync(result.Error.Message);
+            return;
+        }
+
+        await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
     }
 }

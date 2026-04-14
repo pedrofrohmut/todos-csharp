@@ -6,7 +6,7 @@ namespace Todos.Infra.Handlers.Queries;
 
 public class TodoQueryHandler : ITodoQueryHandler
 {
-    public Task<TodoDb> FindTodoById(TodoFindByIdQuery query)
+    public Task<TodoDb?> FindTodoById(TodoFindByIdQuery query)
     {
         throw new NotImplementedException();
     }

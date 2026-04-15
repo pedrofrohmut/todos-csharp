@@ -1,3 +1,5 @@
+using Todos.Core.Errors;
+
 namespace Todos.WebApi.Controllers;
 
 public class ControllerUtils
@@ -8,10 +10,14 @@ public class ControllerUtils
         await httpContext.Response.WriteAsync($"Server Error: {e.Message}" );
     }
 
-    public static async Task WriteErrorNotMappedResponse(HttpContext httpContext)
+    public static async Task WriteErrorNotMappedResponse(HttpContext httpContext, ResultError? err = null)
     {
         httpContext.Response.StatusCode = 500;
-        await httpContext.Response.WriteAsync("Server Error: Result Error returned is not mapped.");
+        if (err != null) {
+            await httpContext.Response.WriteAsync("Server Error: " + err.Message);
+        } else {
+            await httpContext.Response.WriteAsync("Server Error: Result Error returned is not mapped.");
+        }
     }
 
     public static string? GetAuthToken(HttpRequest request)

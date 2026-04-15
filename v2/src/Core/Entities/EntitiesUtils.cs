@@ -26,17 +26,26 @@ public class EntitiesUtils
 
     public static bool IsValidEmail(string email)
     {
+        // Validate @
         var atIndex = email.IndexOf('@');
-        if (atIndex < 0) return false;
+        if (atIndex < 0 || atIndex == email.Length - 1) {
+            return false;
+        }
 
+        // Validate the local
         var local = email.Substring(0, atIndex);
-        if (local.Length < 2) return false;
+        if (local.Length < 2) {
+            return false;
+        }
         foreach (var x in local) {
             if (!IsValidEmailCharacter(x)) return false;
         }
 
-        var domain = email.Substring(atIndex);
-        if (domain.Length < 3) return false;
+        // Validate the domain
+        var domain = email.Substring(atIndex + 1);
+        if (domain.Length < 3) {
+            return false;
+        }
         foreach (var x in domain) {
             if (!IsValidEmailCharacter(x)) return false;
         }

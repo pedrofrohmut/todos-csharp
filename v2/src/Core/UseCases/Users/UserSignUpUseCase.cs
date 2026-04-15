@@ -32,37 +32,41 @@ public class UserSignUpUseCase
         this.passwordService = passwordService;
     }
 
+    private Result<UserSignUpOutput> Cast(Result result) => Result<UserSignUpOutput>.Cast(result);
+
     public async Task<Result<UserSignUpOutput>> Execute(UserSignUpInput input)
     {
-        Result<UserSignUpOutput> result;
+        Result result;
 
         // Validate input
-        result = (Result<UserSignUpOutput>) UserEntity.ValidateName(input.Name);
-        if (!result.IsSuccess) return result;
-        result = (Result<UserSignUpOutput>) UserEntity.ValidateEmail(input.Email);
-        if (!result.IsSuccess) return result;
-        result = (Result<UserSignUpOutput>) UserEntity.ValidatePassword(input.Password);
-        if (!result.IsSuccess) return result;
+        result = UserEntity.ValidateName(input.Name);
+        if (!result.IsSuccess) return Cast(result);
+        result = UserEntity.ValidateEmail(input.Email);
+        if (!result.IsSuccess) return Cast(result);
+        result = UserEntity.ValidatePassword(input.Password);
+        if (!result.IsSuccess) return Cast(result);
+        Console.WriteLine("UserSignUp: input is valid");
 
         // Chech e-mail is available
         var query = new UserFindByEmailQuery { Email = input.Email };
-        result = (Result<UserSignUpOutput>) await UserEntity.CheckEmailIsAvailable(query, this.userQueryHandler);
-        if (!result.IsSuccess) return result;
+        result = await UserEntity.CheckEmailIsAvailable(query, this.userQueryHandler);
+        if (!result.IsSuccess) return Cast(result);
+        Console.WriteLine("UserSignUp: e-mail is available");
 
         // Hash password
         var resultHash = UserEntity.HashPassword(input.Password, this.passwordService);
-        if (!resultHash.IsSuccess || resultHash.Payload == null) {
-            return Result<UserSignUpOutput>.Failed(resultHash.Error!);
-        }
+        if (!resultHash.IsSuccess) return Cast(resultHash);
+        Console.WriteLine("UserSignUp: password is hashed");
 
         // Create User
         var command = new CreateUserCommand {
             Name = input.Name,
             Email = input.Email,
-            PasswordHash = resultHash.Payload
+            PasswordHash = resultHash.Payload!
         };
-        result = (Result<UserSignUpOutput>) await UserEntity.CreateUser(command, this.userCommandHandler);
-        if (!result.IsSuccess) return result;
+        result = await UserEntity.CreateUser(command, this.userCommandHandler);
+        if (!result.IsSuccess) return Cast(result);
+        Console.WriteLine("UserSignUp: user is created");
 
         return Result<UserSignUpOutput>.Succeeded(new UserSignUpOutput {});
     }

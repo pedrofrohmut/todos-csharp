@@ -3,14 +3,17 @@ using Todos.Core.UseCases.Todos;
 using Todos.Infra.Handlers.Commands;
 using Todos.Infra.Handlers.Queries;
 using Todos.Infra.Services;
+using System.Data;
 
 namespace Todos.Infra;
 
 public static class UseCasesFactory
 {
-    public static UserSignUpUseCase GetUserSignUpUseCase()
+    public static UserSignUpUseCase GetUserSignUpUseCase(IDbConnection writeConnection, IDbConnection readConnection)
     {
         // TODO: add the write and read dbConnections
+        // TODO: Check if is needed to open the connection
+
         var userQueryHandler = new UserQueryHandler();
         var userCommandHandler = new UserCommandHandler();
         var passwordService = new PasswordService();

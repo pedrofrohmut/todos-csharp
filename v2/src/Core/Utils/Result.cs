@@ -49,6 +49,11 @@ public class Result<T> : Result
 
     private Result() { }
 
+    public static Result<T> Cast(Result result)
+    {
+        return new Result<T> { IsSuccess = result.IsSuccess, Error = result.Error, Payload = default };
+    }
+
     public new static Result<T> Succeeded()
     {
         return new Result<T> { IsSuccess = true, Error = null, Payload = default };

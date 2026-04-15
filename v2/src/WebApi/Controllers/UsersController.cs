@@ -6,12 +6,14 @@ using Todos.Core.Utils;
 
 namespace Todos.WebApi.Controllers;
 
-public readonly struct SignUpBody
+public readonly struct SignUpBody_old
 {
     public string Name { get; init; }
     public string Email { get; init; }
     public string Password { get; init; }
 }
+
+public record SignUpBody(string Name, string Email, string Password);
 
 public readonly struct SignInBody
 {
@@ -22,37 +24,50 @@ public readonly struct SignInBody
 [Route("api/v2/users")]
 public class UsersController : ControllerBase
 {
-    [HttpPost("signup")]
-    public async Task SignUp(SignUpBody body)
-    {
-        var useCase = UseCasesFactory.GetUserSignUpUseCase();
-        var input = new UserSignUpInput {
-            Name = body.Name,
-            Email = body.Email,
-            Password = body.Password,
-        };
+    private readonly IConfiguration configuration;
 
-        Result<UserSignUpOutput> result;
+    public UsersController(IConfiguration configuration)
+    {
+        this.configuration = configuration;
+    }
+
+    [HttpPost("signup")]
+    public async Task SignUp([FromBody] SignUpBody body)
+    {
+        var writeConnection = DbConnectionManager.GetWriteConnection(this.configuration);
+        var readConnection = DbConnectionManager.GetReadConnection(this.configuration);
+
         try {
-            result = await useCase.Execute(input);
+            var useCase = UseCasesFactory.GetUserSignUpUseCase(writeConnection, readConnection);
+            var input = new UserSignUpInput {
+                Name = body.Name,
+                Email = body.Email,
+                Password = body.Password,
+            };
+
+            var result = await useCase.Execute(input);
+
+            if (result.IsSuccess) {
+                HttpContext.Response.StatusCode = 201;
+                await HttpContext.Response.WriteAsync("Sign Up: User created successfully.");
+                return;
+            }
+
+            if (result.Error is InvalidUserError || result.Error is EmailAlreadyTakenError) {
+                HttpContext.Response.StatusCode = 400;
+                await HttpContext.Response.WriteAsync(result.Error.Message);
+                return;
+            }
+
+            await ControllerUtils.WriteErrorNotMappedResponse(HttpContext, result.Error);
         } catch (Exception e) {
+            Console.WriteLine($"ERROR [SignUp]: {e.Message}\n{e.StackTrace}");
             await ControllerUtils.WriteExceptionResponse(HttpContext, e);
             return;
+        } finally {
+            DbConnectionManager.CloseConnection(writeConnection);
+            DbConnectionManager.CloseConnection(readConnection);
         }
-
-        if (result.IsSuccess) {
-            HttpContext.Response.StatusCode = 201;
-            await HttpContext.Response.WriteAsync("Sign Up: User created successfully.");
-            return;
-        }
-
-        if (result.Error is InvalidUserError || result.Error is EmailAlreadyTakenError) {
-            HttpContext.Response.StatusCode = 400;
-            await HttpContext.Response.WriteAsync(result.Error.Message);
-            return;
-        }
-
-        await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
     }
 
     [HttpPost("signin")]

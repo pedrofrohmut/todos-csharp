@@ -77,7 +77,6 @@ public static class UserEntity
         try {
             var userFound = await handler.FindUserByEmail(query);
             if (userFound != null) {
-                // return Result.Failed("User.EmailUnavailable", "This e-mail is already in use. E-mails must be unique.");
                 return Result.Failed(new EmailAlreadyTakenError());
             }
             return Result.Succeeded();
@@ -90,6 +89,9 @@ public static class UserEntity
     {
         try {
             string hash = passwordService.HashPassword(password);
+            if (string.IsNullOrWhiteSpace(hash)) {
+                throw new ArgumentNullException();
+            }
             return Result<string>.Succeeded(hash);
         } catch (Exception e) {
             return Result<string>.Failed("User:" + nameof(HashPassword), "Error to create a password hash: " + e.Message);

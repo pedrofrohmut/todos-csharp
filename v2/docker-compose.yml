@@ -1,0 +1,27 @@
+services:
+
+  # Primary PostgreSQL (Write database)
+  postgres_primary:
+    container_name: write_todos
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_DB: write_db
+      POSTGRES_USER: write_user
+      POSTGRES_PASSWORD: write_password
+    ports:
+      - "5432:5432"
+
+  # PostgreSQL Replica (Read database)
+  postgres_replica:
+    container_name: read_todos
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_DB: read_db
+      POSTGRES_USER: read_user
+      POSTGRES_PASSWORD: read_password
+    ports:
+      - "5433:5432"

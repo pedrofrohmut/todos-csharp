@@ -2,15 +2,17 @@ using Todos.Core.Services;
 
 namespace Todos.Infra.Services;
 
+using BCrypt.Net;
+
 public class PasswordService : IPasswordService
 {
-    public bool CheckPassword(string password, string passwordHash)
-    {
-        throw new NotImplementedException();
-    }
-
     public string HashPassword(string password)
     {
-        throw new NotImplementedException();
+        return BCrypt.HashPassword(password);
+    }
+
+    public bool CheckPassword(string password, string passwordHash)
+    {
+        return BCrypt.Verify(password, passwordHash);
     }
 }

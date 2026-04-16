@@ -8,6 +8,7 @@ public static class DbConnectionManager
 {
     public static IDbConnection GetWriteConnection(IConfiguration configuration)
     {
+        // TODO: Get the user and password from the env on the whole string from other place
         // var username = configuration["write_db_username"];
         // var password = configuration["write_db_password"];
         // var connection_string = $"Host=localhost; Username={username};" +
@@ -19,6 +20,7 @@ public static class DbConnectionManager
 
     public static IDbConnection GetReadConnection(IConfiguration configuration)
     {
+        // TODO: Get the user and password from the env on the whole string from other place
         // var username = configuration["read_db_username"];
         // var password = configuration["read_db_password"];
         // var connection_string = $"Host=localhost; Username={username};" +

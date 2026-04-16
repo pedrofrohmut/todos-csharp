@@ -34,6 +34,9 @@ public class UsersController : ControllerBase
         var readConnection = DbConnectionManager.GetReadConnection(this.configuration);
 
         try {
+            // DbConnectionManager.OpenConnection(writeConnection);
+            // DbConnectionManager.OpenConnection(readConnection);
+
             var useCase = UseCasesFactory.GetUserSignUpUseCase(writeConnection, readConnection);
             var input = new UserSignUpInput {
                 Name = body.Name,

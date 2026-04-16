@@ -15,7 +15,7 @@ public static class UseCasesFactory
         // TODO: Check if is needed to open the connection
 
         var userQueryHandler = new UserQueryHandler(writeConnection);
-        var userCommandHandler = new UserCommandHandler();
+        var userCommandHandler = new UserCommandHandler(writeConnection, readConnection);
         var passwordService = new PasswordService();
         return new UserSignUpUseCase(userQueryHandler, userCommandHandler, passwordService);
     }

@@ -75,8 +75,8 @@ public static class UserEntity
     public static async Task<Result> CheckEmailIsAvailable(UserFindByEmailQuery query, IUserQueryHandler handler)
     {
         try {
-            var userFound = await handler.FindUserByEmail(query);
-            if (userFound != null) {
+            UserDb? userFound = await handler.FindUserByEmail(query);
+            if (userFound != null || userFound?.Id > 0) {
                 return Result.Failed(new EmailAlreadyTakenError());
             }
             return Result.Succeeded();

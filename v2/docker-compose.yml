@@ -4,7 +4,7 @@ services:
   postgres_primary:
     container_name: write_todos
     image: postgres
-    restart: always
+    restart: unless-stopped
     shm_size: 128mb
     environment:
       POSTGRES_DB: write_db
@@ -17,7 +17,7 @@ services:
   postgres_replica:
     container_name: read_todos
     image: postgres
-    restart: always
+    restart: unless-stopped
     shm_size: 128mb
     environment:
       POSTGRES_DB: read_db

@@ -6,14 +6,11 @@ using Todos.Core.Utils;
 
 namespace Todos.WebApi.Controllers;
 
-public readonly struct SignUpBody_old
-{
-    public string Name { get; init; }
-    public string Email { get; init; }
-    public string Password { get; init; }
-}
-
-public record SignUpBody(string Name, string Email, string Password);
+public record SignUpBody(
+    string Name,
+    string Email,
+    string Password
+);
 
 public readonly struct SignInBody
 {

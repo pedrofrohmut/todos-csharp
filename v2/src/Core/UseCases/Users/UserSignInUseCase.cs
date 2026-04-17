@@ -31,28 +31,27 @@ public class UserSignInUseCase
         this.passwordService = passwordService;
     }
 
+    private Result<UserSignInOutput> Cast(Result result) => Result<UserSignInOutput>.Cast(result);
+
     public async Task<Result<UserSignInOutput>> Execute(UserSignInInput input)
     {
-        Result<UserSignInOutput> result;
+        Result result;
 
         // Validate input
-        result = (Result<UserSignInOutput>) UserEntity.ValidateEmail(input.Email);
-        if (!result.IsSuccess) return result;
-        result = (Result<UserSignInOutput>)UserEntity.ValidatePassword(input.Password);
-        if (!result.IsSuccess) return result;
+        result = UserEntity.ValidateEmail(input.Email);
+        if (!result.IsSuccess) return Cast(result);
+        result = UserEntity.ValidatePassword(input.Password);
+        if (!result.IsSuccess) return Cast(result);
 
         // Get user from persistence
         var query = new UserFindByEmailQuery { Email = input.Email };
         Result<UserDb> resultUser = await UserEntity.FindUserByEmail(query, this.userQueryHandler);
-        if (!resultUser.IsSuccess) return Result<UserSignInOutput>.Failed(resultUser.Error!);
-
+        if (!resultUser.IsSuccess) return Cast(resultUser);
         UserDb userDb = resultUser.Payload;
 
         // Check input password with persistence passwordHash
-        result = (Result<UserSignInOutput>) UserEntity.MatchPasswordAndHash(input.Password,
-                                                                            userDb.PasswordHash,
-                                                                            this.passwordService);
-        if (!result.IsSuccess) return result;
+        result = UserEntity.MatchPasswordAndHash(input.Password, userDb.PasswordHash, this.passwordService);
+        if (!result.IsSuccess) return Cast(result);
 
         var output = new UserSignInOutput { Id = userDb.Id, Name = userDb.Name, Email = userDb.Email };
         return Result<UserSignInOutput>.Succeeded(output);

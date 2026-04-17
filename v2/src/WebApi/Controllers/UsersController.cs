@@ -11,11 +11,10 @@ public record SignUpBody(
     string Password
 );
 
-public readonly struct SignInBody
-{
-    public string Email { get; init; }
-    public string Password { get; init; }
-}
+public record SignInBody(
+    string Email,
+    string Password
+);
 
 [Route("api/v2/users")]
 public class UsersController : ControllerBase
@@ -34,9 +33,6 @@ public class UsersController : ControllerBase
         var readConnection = DbConnectionManager.GetReadConnection(this.configuration);
 
         try {
-            // DbConnectionManager.OpenConnection(writeConnection);
-            // DbConnectionManager.OpenConnection(readConnection);
-
             var useCase = UseCasesFactory.GetUserSignUpUseCase(writeConnection, readConnection);
             var input = new UserSignUpInput {
                 Name = body.Name,
@@ -60,8 +56,7 @@ public class UsersController : ControllerBase
 
             await ControllerUtils.WriteErrorNotMappedResponse(HttpContext, result.Error);
         } catch (Exception e) {
-            Console.WriteLine($"ERROR [SignUp]: {e.Message}\n{e.StackTrace}");
-            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            await ControllerUtils.WriteExceptionResponse(nameof(SignUp), HttpContext, e);
             return;
         } finally {
             DbConnectionManager.CloseConnection(writeConnection);
@@ -70,12 +65,12 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("signin")]
-    public async Task SignIn(SignInBody body)
+    public async Task SignIn([FromBody] SignInBody body)
     {
-        var writeConnection = DbConnectionManager.GetWriteConnection(this.configuration);
+        var readConnection = DbConnectionManager.GetReadConnection(this.configuration);
 
         try {
-            var useCase = UseCasesFactory.GetUserSignInUseCase(writeConnection);
+            var useCase = UseCasesFactory.GetUserSignInUseCase(readConnection);
             var input = new UserSignInInput {
                 Email = body.Email,
                 Password = body.Password,
@@ -103,10 +98,10 @@ public class UsersController : ControllerBase
 
             await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
         } catch (Exception e) {
-            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            await ControllerUtils.WriteExceptionResponse(nameof(SignIn), HttpContext, e);
             return;
         } finally {
-            DbConnectionManager.CloseConnection(writeConnection);
+            DbConnectionManager.CloseConnection(readConnection);
         }
     }
 
@@ -143,7 +138,7 @@ public class UsersController : ControllerBase
 
             await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
         } catch (Exception e) {
-            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            await ControllerUtils.WriteExceptionResponse(nameof(Verify), HttpContext, e);
             return;
         } finally {
             DbConnectionManager.CloseConnection(writeConnection);

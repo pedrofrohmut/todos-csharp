@@ -4,8 +4,9 @@ namespace Todos.WebApi.Controllers;
 
 public class ControllerUtils
 {
-    public static async Task WriteExceptionResponse(HttpContext httpContext, Exception e)
+    public static async Task WriteExceptionResponse(string methodName, HttpContext httpContext, Exception e)
     {
+        Console.WriteLine($"ERROR [{methodName}]: {e.Message}\n{e.StackTrace}");
         httpContext.Response.StatusCode = 500;
         await httpContext.Response.WriteAsync($"Server Error: {e.Message}" );
     }

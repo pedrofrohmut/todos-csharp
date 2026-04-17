@@ -20,10 +20,10 @@ public static class UseCasesFactory
         return new UserSignUpUseCase(userQueryHandler, userCommandHandler, passwordService);
     }
 
-    public static UserSignInUseCase GetUserSignInUseCase(IDbConnection writeConnection)
+    public static UserSignInUseCase GetUserSignInUseCase(IDbConnection readConnection)
     {
         // TODO: add the read dbConnections
-        var userQueryHandler = new UserQueryHandler(writeConnection);
+        var userQueryHandler = new UserQueryHandler(readConnection);
         var passwordService = new PasswordService();
         return new UserSignInUseCase(userQueryHandler, passwordService);
     }

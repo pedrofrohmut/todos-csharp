@@ -63,7 +63,7 @@ public class TodosController : ControllerBase
 
             await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
         } catch (Exception e) {
-            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            await ControllerUtils.WriteExceptionResponse(nameof(CreateTodo), HttpContext, e);
             return;
         } finally {
             DbConnectionManager.CloseConnection(writeConnection);
@@ -106,7 +106,7 @@ public class TodosController : ControllerBase
 
             await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
         } catch (Exception e) {
-            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            await ControllerUtils.WriteExceptionResponse(nameof(DeleteTodo), HttpContext, e);
             return;
         } finally {
             DbConnectionManager.CloseConnection(writeConnection);
@@ -154,7 +154,7 @@ public class TodosController : ControllerBase
 
             await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
         } catch (Exception e) {
-            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            await ControllerUtils.WriteExceptionResponse(nameof(FindTodoById), HttpContext, e);
             return;
         } finally {
             DbConnectionManager.CloseConnection(writeConnection);
@@ -189,7 +189,7 @@ public class TodosController : ControllerBase
 
             await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
         } catch (Exception e) {
-            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            await ControllerUtils.WriteExceptionResponse(nameof(FindAllTodos), HttpContext, e);
             return;
         } finally {
             DbConnectionManager.CloseConnection(writeConnection);
@@ -239,7 +239,7 @@ public class TodosController : ControllerBase
 
             await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
         } catch (Exception e) {
-            await ControllerUtils.WriteExceptionResponse(HttpContext, e);
+            await ControllerUtils.WriteExceptionResponse(nameof(UpdateTodo), HttpContext, e);
             return;
         } finally {
             DbConnectionManager.CloseConnection(writeConnection);

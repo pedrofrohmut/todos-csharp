@@ -3,14 +3,8 @@
 ## Build & Run
 
 ```bash
-# Build
 dotnet build Todos.sln
-
-# Run (API on http://localhost:5000)
 dotnet run --project src/WebApi/WebApi.csproj
-
-# Database (must be running first)
-docker compose up -d
 ```
 
 ## Architecture
@@ -25,13 +19,16 @@ Uses Result pattern (no exceptions), CQRS pattern, and Clean/Hexagonal architect
 
 - Primary: `localhost:5432` (user/pass: `write_user`/`write_password`)
 - Replica: `localhost:5433` (user/pass: `read_user`/`read_password`)
-- Schema in `sql/0001_create_tables.sql`
+- Schema in `v2/sql/0001_create_tables.sql`
+- DB must be running first: `docker compose up -d`
 
 ## Style
 
 - `.editorconfig`: `end_of_line = crlf`, `indent_size = 4`
 - .NET 8.0, nullable refs enabled
 
-## Tests
+## Development
 
-No test projects exist. Do not assume a test framework is configured.
+- Run `dotnet test` - no tests exist, command will succeed with no output
+- No lint/typecheck tools configured
+- `dotnet build` runs automatically on `dotnet run`

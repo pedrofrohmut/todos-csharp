@@ -5,11 +5,16 @@ using Todos.Core.Errors;
 
 namespace Todos.WebApi.Controllers;
 
-public readonly struct CreateTodoBody
-{
-    public string Name { get; init; }
-    public string Description { get; init; }
-}
+// public readonly struct CreateTodoBody
+// {
+//     public string Name { get; init; }
+//     public string Description { get; init; }
+// }
+
+public record CreateTodoBody(
+    string Name,
+    string Description
+);
 
 public readonly struct UpdateTodoBody
 {

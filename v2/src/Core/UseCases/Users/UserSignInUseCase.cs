@@ -13,6 +13,7 @@ public readonly struct UserSignInInput
     public string Password { get; init; }
 }
 
+// TODO: Generate and return authToken
 public readonly struct UserSignInOutput
 {
     public int Id { get; init; }

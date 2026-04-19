@@ -5,22 +5,15 @@ using Todos.Core.Errors;
 
 namespace Todos.WebApi.Controllers;
 
-// public readonly struct CreateTodoBody
-// {
-//     public string Name { get; init; }
-//     public string Description { get; init; }
-// }
-
 public record CreateTodoBody(
     string Name,
     string Description
 );
 
-public readonly struct UpdateTodoBody
-{
-    public string Name { get; init; }
-    public string Description { get; init; }
-}
+public record UpdateTodoBody(
+    string Name,
+    string Description
+);
 
 [Route("api/v2/todos")]
 public class TodosController : ControllerBase
@@ -36,9 +29,10 @@ public class TodosController : ControllerBase
     public async Task CreateTodo([FromBody] CreateTodoBody body)
     {
         var writeConnection = DbConnectionManager.GetWriteConnection(this.configuration);
+        var readConnection = DbConnectionManager.GetReadConnection(this.configuration);
 
         try {
-            var useCase = UseCasesFactory.GetCreateTodoUseCase(writeConnection);
+            var useCase = UseCasesFactory.GetCreateTodoUseCase(writeConnection, readConnection);
             var authToken = ControllerUtils.GetAuthToken(HttpContext.Request);
             var input = new CreateTodoInput {
                 Name = body.Name,
@@ -72,6 +66,7 @@ public class TodosController : ControllerBase
             return;
         } finally {
             DbConnectionManager.CloseConnection(writeConnection);
+            DbConnectionManager.CloseConnection(readConnection);
         }
 
     }
@@ -80,9 +75,10 @@ public class TodosController : ControllerBase
     public async Task DeleteTodo(int todoId)
     {
         var writeConnection = DbConnectionManager.GetWriteConnection(this.configuration);
+        var readConnection = DbConnectionManager.GetReadConnection(this.configuration);
 
         try {
-            var useCase = UseCasesFactory.GetDeleteTodoUseCase(writeConnection);
+            var useCase = UseCasesFactory.GetDeleteTodoUseCase(writeConnection, readConnection);
             var authToken = ControllerUtils.GetAuthToken(HttpContext.Request);
             var input = new DeleteTodoInput {
                 Id = todoId,
@@ -115,6 +111,7 @@ public class TodosController : ControllerBase
             return;
         } finally {
             DbConnectionManager.CloseConnection(writeConnection);
+            DbConnectionManager.CloseConnection(readConnection);
         }
     }
 
@@ -205,9 +202,10 @@ public class TodosController : ControllerBase
     public async Task UpdateTodo(int todoId, [FromBody] UpdateTodoBody body)
     {
         var writeConnection = DbConnectionManager.GetWriteConnection(this.configuration);
+        var readConnection = DbConnectionManager.GetReadConnection(this.configuration);
 
         try {
-            var useCase = UseCasesFactory.GetUpdateTodoUseCase(writeConnection);
+            var useCase = UseCasesFactory.GetUpdateTodoUseCase(writeConnection, readConnection);
             var authToken = ControllerUtils.GetAuthToken(HttpContext.Request);
             var input = new UpdateTodoInput {
                 Id = todoId,
@@ -248,6 +246,7 @@ public class TodosController : ControllerBase
             return;
         } finally {
             DbConnectionManager.CloseConnection(writeConnection);
+            DbConnectionManager.CloseConnection(readConnection);
         }
     }
 }

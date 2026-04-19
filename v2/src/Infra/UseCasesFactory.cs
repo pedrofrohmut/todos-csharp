@@ -36,22 +36,21 @@ public static class UseCasesFactory
         return new VerifyAuthTokenUseCase(authTokenService, userQueryHandler);
     }
 
-    public static CreateTodoUseCase GetCreateTodoUseCase(IDbConnection writeConnection)
+    public static CreateTodoUseCase GetCreateTodoUseCase(IDbConnection writeConnection, IDbConnection readConnection)
     {
         // TODO: add the write and read dbConnections
         var authTokenService = new AuthTokenService();
         var userQueryHandler = new UserQueryHandler(writeConnection);
-        var todoCommandHandler = new TodoCommandHandler();
+        var todoCommandHandler = new TodoCommandHandler(writeConnection, readConnection);
         return new CreateTodoUseCase(authTokenService, userQueryHandler, todoCommandHandler);
     }
 
-    public static DeleteTodoUseCase GetDeleteTodoUseCase(IDbConnection writeConnection)
+    public static DeleteTodoUseCase GetDeleteTodoUseCase(IDbConnection writeConnection, IDbConnection readConnection)
     {
-        // TODO: add dbConnections
         var authTokenService = new AuthTokenService();
         var userQueryHandler = new UserQueryHandler(writeConnection);
         var todoQueryHandler = new TodoQueryHandler();
-        var todoCommandHandler = new TodoCommandHandler();
+        var todoCommandHandler = new TodoCommandHandler(writeConnection, readConnection);
         return new DeleteTodoUseCase(authTokenService, userQueryHandler, todoQueryHandler, todoCommandHandler);
     }
 
@@ -73,13 +72,12 @@ public static class UseCasesFactory
         return new FindAllTodosUseCase(authTokenService, userQueryHandler, todoQueryHandler);
     }
 
-    public static UpdateTodoUseCase GetUpdateTodoUseCase(IDbConnection writeConnection)
+    public static UpdateTodoUseCase GetUpdateTodoUseCase(IDbConnection writeConnection, IDbConnection readConnection)
     {
-        // TODO: add the write and read dbConnections
         var authTokenService = new AuthTokenService();
         var userQueryHandler = new UserQueryHandler(writeConnection);
         var todoQueryHandler = new TodoQueryHandler();
-        var todoCommandHandler = new TodoCommandHandler();
+        var todoCommandHandler = new TodoCommandHandler(writeConnection, readConnection);
         return new UpdateTodoUseCase(authTokenService, userQueryHandler, todoQueryHandler, todoCommandHandler);
     }
 }

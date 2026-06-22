@@ -21,6 +21,9 @@ public class UserQueryHandler : IUserQueryHandler
             @"SELECT id, name, email, password_hash AS PasswordHash "+
             " FROM users WHERE email = @Email";
         var user = await this.connection.QueryFirstOrDefaultAsync<UserDb>(sql, new { Email = query.Email });
+        if (user.Id == 0) {
+            return null;
+        }
         return user;
     }
 
@@ -30,6 +33,9 @@ public class UserQueryHandler : IUserQueryHandler
             @"SELECT id, name, email, password_hash AS PasswordHash "+
             " FROM users WHERE id = @Id";
         var user = await this.connection.QueryFirstOrDefaultAsync<UserDb>(sql, new { Id = query.Id });
+        if (user.Id == 0) {
+            return null;
+        }
         return user;
     }
 }

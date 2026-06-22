@@ -23,6 +23,9 @@ public class ControllerUtils
 
     public static string? GetAuthToken(HttpRequest request)
     {
+        if (String.IsNullOrWhiteSpace(request.Headers.Authorization)) {
+            return "";
+        }
         return request.Headers.Authorization.ToString().Split(" ")[1];
     }
 }

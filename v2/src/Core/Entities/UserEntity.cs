@@ -165,7 +165,7 @@ public static class UserEntity
                                                               IUserQueryHandler userQueryHandler)
     {
         if (string.IsNullOrWhiteSpace(token)) {
-            return Result<UserDb>.Failed(new InvalidTokenError("Token not provided."));
+            return Result<UserDb>.Failed(new InvalidTokenError("Cannot get user from token. Token not provided."));
         }
 
         AuthToken decoded;

@@ -37,37 +37,52 @@ public class DeleteTodoUseCase
         this.todoCommandHandler = todoCommandHandler;
     }
 
+    private Result<DeleteTodoOutput> ErrorCast<T>(Result<T> result)
+    {
+        return Result<DeleteTodoOutput>.Fail(result.Error);
+    }
+
     public async Task<Result<DeleteTodoOutput>> Execute(DeleteTodoInput input)
     {
-        Result<DeleteTodoOutput> result;
-
         // Validate Input
-        result = (Result<DeleteTodoOutput>) TodoEntity.ValidateId(input.Id);
-        if (!result.IsSuccess) return result;
+        Result<bool> validationResult = TodoEntity.ValidateId(input.Id);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
 
-        // Check auth token
-        Result<UserDb> resultToken =
+        // Get user info from token and find userDb with it
+        Result<UserDb> getUserResult =
             await UserEntity.GetUserFromToken(input.AuthToken, this.authTokenService, this.userQueryHandler);
-        if (!resultToken.IsSuccess) return Result<DeleteTodoOutput>.Failed(resultToken.Error!);
-        UserDb user = resultToken.Payload;
+        if (!getUserResult.IsSuccess) {
+            return ErrorCast(getUserResult);
+        }
+        UserDb user = getUserResult.Payload;
 
-        // Check todo exists
+        // Checks if todo exists
         var query = new TodoFindByIdQuery {
             Id = input.Id,
         };
-        Result<TodoDb> resultTodo = await TodoEntity.FindTodoById(query, this.todoQueryHandler);
-        if (!resultTodo.IsSuccess) return Result<DeleteTodoOutput>.Failed(resultToken.Error!);
-        TodoDb todo = resultTodo.Payload;
+        Result<TodoDb> findResult = await TodoEntity.FindTodoById(query, this.todoQueryHandler);
+        if (!findResult.IsSuccess) {
+            return ErrorCast(getUserResult);
+        }
+        TodoDb todo = findResult.Payload;
 
         // Check todo ownership
-        // TODO: check todo userId match auth userId
+        Result<bool> ownershipResult = TodoEntity.CheckTodoOwnership(user, todo);
+        if (!ownershipResult.IsSuccess) {
+            return ErrorCast(ownershipResult);
+        }
 
         // Delete todo
         var command = new TodoDeleteCommand {
             Id = input.Id,
         };
-        result = (Result<DeleteTodoOutput>) await TodoEntity.DeleteTodo(command, this.todoCommandHandler);
+        Result<bool> deleteResult = await TodoEntity.DeleteTodo(command, this.todoCommandHandler);
+        if (!deleteResult.IsSuccess) {
+            return ErrorCast(deleteResult);
+        }
 
-        return Result<DeleteTodoOutput>.Succeeded(new DeleteTodoOutput {});
+        return Result<DeleteTodoOutput>.Ok(new DeleteTodoOutput {});
     }
 }

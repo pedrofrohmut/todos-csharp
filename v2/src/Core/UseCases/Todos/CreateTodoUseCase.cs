@@ -34,23 +34,31 @@ public class CreateTodoUseCase
         this.todoCommandHandler = todoCommandHandler;
     }
 
-    private Result<CreateTodoOutput> Cast(Result result) => Result<CreateTodoOutput>.Cast(result);
+    private Result<CreateTodoOutput> ErrorCast<T>(Result<T> result)
+    {
+        return Result<CreateTodoOutput>.Fail(result.Error);
+    }
 
     public async Task<Result<CreateTodoOutput>> Execute(CreateTodoInput input)
     {
-        Result result;
-
         // Validate input
-        result = TodoEntity.ValidateName(input.Name);
-        if (!result.IsSuccess) return Cast(result);
-        result = TodoEntity.ValidateDescription(input.Description);
-        if (!result.IsSuccess) return Cast(result);
+        Result<bool> validationResult;
+        validationResult = TodoEntity.ValidateName(input.Name);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
+        validationResult = TodoEntity.ValidateDescription(input.Description);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
 
-        // Check token and find user by token user id
-        Result<UserDb> resultToken =
+        // Get user info from token and find userDb with it
+        Result<UserDb> getUserResult =
             await UserEntity.GetUserFromToken(input.AuthToken, this.authTokenService, this.userQueryHandler);
-        if (!resultToken.IsSuccess) return Cast(resultToken);
-        UserDb userDb = resultToken.Payload;
+        if (!getUserResult.IsSuccess) {
+            return ErrorCast(getUserResult);
+        }
+        UserDb userDb = getUserResult.Payload;
 
         // Create Todo
         var command = new TodoCreateCommand {
@@ -58,9 +66,11 @@ public class CreateTodoUseCase
             Description = input.Description,
             UserId = userDb.Id,
         };
-        result = await TodoEntity.CreateTodo(command, this.todoCommandHandler);
-        if (!result.IsSuccess) return Cast(result);
+        Result<bool> createResult = await TodoEntity.CreateTodo(command, this.todoCommandHandler);
+        if (!createResult.IsSuccess) {
+            return ErrorCast(createResult);
+        }
 
-        return Result<CreateTodoOutput>.Succeeded(new CreateTodoOutput {});
+        return Result<CreateTodoOutput>.Ok(new CreateTodoOutput {});
     }
 }

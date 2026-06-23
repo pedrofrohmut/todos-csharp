@@ -33,26 +33,35 @@ public class FindAllTodosUseCase
         this.todoQueryHandler = todoQueryHandler;
     }
 
+    private Result<FindAllTodosOutput> ErrorCast<T>(Result<T> result)
+    {
+        return Result<FindAllTodosOutput>.Fail(result.Error);
+    }
+
     public async Task<Result<FindAllTodosOutput>> Execute(FindAllTodosInput input)
     {
-        // Check auth token
-        Result<UserDb> resultToken =
+        // Get user info from token and get user from db
+        Result<UserDb> getUserResult =
             await UserEntity.GetUserFromToken(input.AuthToken, this.authTokenService, this.userQueryHandler);
-        if (!resultToken.IsSuccess) return Result<FindAllTodosOutput>.Failed(resultToken.Error!);
-        UserDb user = resultToken.Payload;
+        if (!getUserResult.IsSuccess) {
+            return ErrorCast(getUserResult);
+        }
+        UserDb user = getUserResult.Payload;
 
         // Find all todos
         var query = new TodoFindAllQuery {
             UserId = input.UserId,
         };
-        Result<IEnumerable<TodoDb>> resultTodos = await TodoEntity.FindAllTodos(query, this.todoQueryHandler);
-        if (!resultTodos.IsSuccess) return Result<FindAllTodosOutput>.Failed(resultTodos.Error!);
-        IEnumerable<TodoDb> todos = resultTodos.Payload!;
+        Result<IEnumerable<TodoDb>> findResult = await TodoEntity.FindAllTodos(query, this.todoQueryHandler);
+        if (!findResult.IsSuccess) {
+            return ErrorCast(findResult);
+        }
+        IEnumerable<TodoDb> todos = findResult.Payload!;
 
         // Return the valid output
         var output = new FindAllTodosOutput {
             Todos = todos.Select(x => new TodoOutput(x)).ToList(),
         };
-        return Result<FindAllTodosOutput>.Succeeded(output);
+        return Result<FindAllTodosOutput>.Ok(output);
     }
 }

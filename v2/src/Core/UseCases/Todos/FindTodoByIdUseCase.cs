@@ -33,35 +33,47 @@ public class FindTodoByIdUseCase
         this.todoQueryHandler = todoQueryHandler;
     }
 
+    private Result<FindTodoByIdOutput> ErrorCast<T>(Result<T> result)
+    {
+        return Result<FindTodoByIdOutput>.Fail(result.Error);
+    }
+
     public async Task<Result<FindTodoByIdOutput>> Execute(FindTodoByIdInput input)
     {
-        Result<FindTodoByIdOutput> result;
-
         // Validate input
-        result = (Result<FindTodoByIdOutput>) TodoEntity.ValidateId(input.Id);
-        if (!result.IsSuccess) return result;
+        Result<bool> validationResult;
+        validationResult = TodoEntity.ValidateId(input.Id);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
 
-        // Check auth token
-        Result<UserDb> resultToken =
+        // Get user info from token and find userDb with it
+        Result<UserDb> getUserResult =
             await UserEntity.GetUserFromToken(input.AuthToken, this.authTokenService, this.userQueryHandler);
-        if (!resultToken.IsSuccess) return Result<FindTodoByIdOutput>.Failed(resultToken.Error!);
-        UserDb user = resultToken.Payload;
+        if (!getUserResult.IsSuccess) {
+            return ErrorCast(getUserResult);
+        }
+        UserDb user = getUserResult.Payload;
 
         // Find to by id
         var query = new TodoFindByIdQuery {
             Id = input.Id,
         };
-        Result<TodoDb> resultTodo = await TodoEntity.FindTodoById(query, this.todoQueryHandler);
-        if (!resultTodo.IsSuccess) return Result<FindTodoByIdOutput>.Failed(resultTodo.Error!);
-        TodoDb todo = resultTodo.Payload;
+        Result<TodoDb> findResult = await TodoEntity.FindTodoById(query, this.todoQueryHandler);
+        if (!findResult.IsSuccess) {
+            return ErrorCast(findResult);
+        }
+        TodoDb todo = findResult.Payload;
 
         // Check todo ownership
-        result = (Result<FindTodoByIdOutput>) TodoEntity.CheckTodoOwnership(user, todo);
-        if (!result.IsSuccess) return result;
+        Result<bool> ownershipResult = TodoEntity.CheckTodoOwnership(user, todo);
+        if (!ownershipResult.IsSuccess) {
+            return ErrorCast(ownershipResult);
+        }
 
         var output = new FindTodoByIdOutput {
             Todo = new TodoOutput(todo),
         };
-        return Result<FindTodoByIdOutput>.Succeeded(output);
+        return Result<FindTodoByIdOutput>.Ok(output);
     }
 }

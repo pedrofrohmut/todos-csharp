@@ -38,35 +38,51 @@ public class UpdateTodoUseCase
         this.todoCommandHandler = todoCommandHandler;
     }
 
+    private Result<UpdateTodoOutput> ErrorCast<T>(Result<T> result)
+    {
+        return Result<UpdateTodoOutput>.Fail(result.Error);
+    }
+
     public async Task<Result<UpdateTodoOutput>> Execute(UpdateTodoInput input)
     {
-        Result<UpdateTodoOutput> result;
-
         // Validate input
-        result = (Result<UpdateTodoOutput>) TodoEntity.ValidateId(input.Id);
-        if (!result.IsSuccess) return result;
-        result = (Result<UpdateTodoOutput>) TodoEntity.ValidateName(input.Name);
-        if (!result.IsSuccess) return result;
-        result = (Result<UpdateTodoOutput>) TodoEntity.ValidateDescription(input.Description);
-        if (!result.IsSuccess) return result;
+        Result<bool> validationResult;
+        validationResult = TodoEntity.ValidateId(input.Id);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
+        validationResult = TodoEntity.ValidateName(input.Name);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
+        validationResult = TodoEntity.ValidateDescription(input.Description);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
 
-        // Check auth token
-        Result<UserDb> resultToken =
+        // Get user info from token and find userDb with it
+        Result<UserDb> getUserResult =
             await UserEntity.GetUserFromToken(input.AuthToken, this.authTokenService, this.userQueryHandler);
-        if (!resultToken.IsSuccess) return Result<UpdateTodoOutput>.Failed(resultToken.Error!);
-        UserDb user = resultToken.Payload;
+        if (!getUserResult.IsSuccess) {
+            return ErrorCast(getUserResult);
+        }
+        UserDb user = getUserResult.Payload;
 
         // Find todo by id
         var query = new TodoFindByIdQuery {
             Id = input.Id,
         };
-        Result<TodoDb> resultTodo = await TodoEntity.FindTodoById(query, this.todoQueryHandler);
-        if (!resultTodo.IsSuccess) return Result<UpdateTodoOutput>.Failed(resultTodo.Error!);
-        TodoDb todo = resultTodo.Payload;
+        Result<TodoDb> findResult = await TodoEntity.FindTodoById(query, this.todoQueryHandler);
+        if (!findResult.IsSuccess) {
+            return ErrorCast(findResult);
+        }
+        TodoDb todo = findResult.Payload;
 
         // Check todo ownership
-        result = (Result<UpdateTodoOutput>) TodoEntity.CheckTodoOwnership(user, todo);
-        if (!result.IsSuccess) return result;
+        Result<bool> ownershiptResult = TodoEntity.CheckTodoOwnership(user, todo);
+        if (!ownershiptResult.IsSuccess) {
+            return ErrorCast(ownershiptResult);
+        }
 
         // Update todo
         var command = new TodoUpdateCommand {
@@ -74,9 +90,11 @@ public class UpdateTodoUseCase
             Name = input.Name,
             Description = input.Description,
         };
-        result = (Result<UpdateTodoOutput>) await TodoEntity.UpdateTodo(command, this.todoCommandHandler);
-        if (!result.IsSuccess) return result;
+        Result<bool> updateResult = await TodoEntity.UpdateTodo(command, this.todoCommandHandler);
+        if (!updateResult.IsSuccess) {
+            return ErrorCast(updateResult);
+        }
 
-        return Result<UpdateTodoOutput>.Succeeded(new UpdateTodoOutput {});
+        return Result<UpdateTodoOutput>.Ok(new UpdateTodoOutput {});
     }
 }

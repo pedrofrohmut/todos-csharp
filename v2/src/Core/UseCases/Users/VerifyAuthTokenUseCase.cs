@@ -27,29 +27,40 @@ public class VerifyAuthTokenUseCase
         this.userQueryHandler = userQueryHandler;
     }
 
+    private Result<VerifyAuthTokenOutput> ErrorCast<T>(Result<T> result)
+    {
+        return Result<VerifyAuthTokenOutput>.Fail(result.Error);
+    }
+
     public async Task<Result<VerifyAuthTokenOutput>> Execute(VerifyAuthTokenInput input)
     {
-        Result<VerifyAuthTokenOutput> result;
-
         // Validate input
-        result = (Result<VerifyAuthTokenOutput>) UserEntity.ValidateEncodedToken(input.Token);
-        if (!result.IsSuccess) return result;
+        Result<bool> validationResult = UserEntity.ValidateEncodedToken(input.Token);
+        if (!validationResult.IsSuccess || input.Token == null) {
+            return ErrorCast(validationResult);
+        }
 
         // Decode token
-        Result<AuthToken> resultDecoded = UserEntity.DecodeToken(input.Token!, authTokenService);
-        if (!resultDecoded.IsSuccess) return Result<VerifyAuthTokenOutput>.Failed(resultDecoded.Error!);
+        Result<AuthToken> decodeResult = UserEntity.DecodeToken(input.Token, authTokenService);
+        if (!decodeResult.IsSuccess) {
+            return Result<VerifyAuthTokenOutput>.Fail(decodeResult.Error);
+        }
 
         // Validate token information
-        int userId = resultDecoded.Payload.UserId;
-        result = (Result<VerifyAuthTokenOutput>) UserEntity.ValidateId(userId);
-        if (!result.IsSuccess) return result;
+        int userId = decodeResult.Payload.UserId;
+        validationResult = UserEntity.ValidateId(userId);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
 
         // Check user exists by id
         var query = new UserFindByIdQuery { Id = userId };
-        result = (Result<VerifyAuthTokenOutput>) await UserEntity.CheckUserExists(query, userQueryHandler);
-        if (!result.IsSuccess) return result;
+        Result<bool> checkResult = await UserEntity.CheckUserExists(query, userQueryHandler);
+        if (!checkResult.IsSuccess) {
+            return ErrorCast(checkResult);
+        }
 
         var validOutput = new VerifyAuthTokenOutput { IsValid = true };
-        return Result<VerifyAuthTokenOutput>.Succeeded(validOutput);
+        return Result<VerifyAuthTokenOutput>.Ok(validOutput);
     }
 }

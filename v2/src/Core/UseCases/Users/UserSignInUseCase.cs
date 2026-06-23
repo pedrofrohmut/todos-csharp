@@ -32,29 +32,42 @@ public class UserSignInUseCase
         this.passwordService = passwordService;
     }
 
-    private Result<UserSignInOutput> Cast(Result result) => Result<UserSignInOutput>.Cast(result);
+    private Result<UserSignInOutput> ErrorCast<T>(Result<T> result)
+    {
+        return Result<UserSignInOutput>.Fail(result.Error);
+    }
 
     public async Task<Result<UserSignInOutput>> Execute(UserSignInInput input)
     {
-        Result result;
+        //Validate Input
+        Result<bool> validationResult;
+        validationResult = UserEntity.ValidateEmail(input.Email);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
+        validationResult = UserEntity.ValidatePassword(input.Password);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
 
-        // Validate input
-        result = UserEntity.ValidateEmail(input.Email);
-        if (!result.IsSuccess) return Cast(result);
-        result = UserEntity.ValidatePassword(input.Password);
-        if (!result.IsSuccess) return Cast(result);
-
-        // Get user from persistence
+        // Find user by e-mail
         var query = new UserFindByEmailQuery { Email = input.Email };
-        Result<UserDb> resultUser = await UserEntity.FindUserByEmail(query, this.userQueryHandler);
-        if (!resultUser.IsSuccess) return Cast(resultUser);
-        UserDb userDb = resultUser.Payload;
+        Result<UserDb> findResult = await UserEntity.FindUserByEmail(query, this.userQueryHandler);
+        if (!findResult.IsSuccess) {
+            return ErrorCast(findResult);
+        }
+        UserDb userDb = findResult.Payload;
 
-        // Check input password with persistence passwordHash
-        result = UserEntity.MatchPasswordAndHash(input.Password, userDb.PasswordHash, this.passwordService);
-        if (!result.IsSuccess) return Cast(result);
+        // Check if input password and userDb passwordHash match
+        Result<bool> matchResult =
+            UserEntity.MatchPasswordAndHash(input.Password, userDb.PasswordHash, this.passwordService);
+        if (!matchResult.IsSuccess) {
+            return ErrorCast(matchResult);
+        }
+
+        // TODO: generate a JWT to send with the output
 
         var output = new UserSignInOutput { Id = userDb.Id, Name = userDb.Name, Email = userDb.Email };
-        return Result<UserSignInOutput>.Succeeded(output);
+        return Result<UserSignInOutput>.Ok(output);
     }
 }

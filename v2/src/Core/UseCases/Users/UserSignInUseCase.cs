@@ -13,23 +13,28 @@ public readonly struct UserSignInInput
     public string Password { get; init; }
 }
 
-// TODO: Generate and return authToken
 public readonly struct UserSignInOutput
 {
     public int Id { get; init; }
     public string Name { get; init; }
     public string Email { get; init; }
+    public string AuthToken { get; init; }
 }
 
 public class UserSignInUseCase
 {
     private readonly IUserQueryHandler userQueryHandler;
     private readonly IPasswordService passwordService;
+    private readonly IAuthTokenService authTokenService;
 
-    public UserSignInUseCase(IUserQueryHandler userQueryHandler, IPasswordService passwordService)
+    public UserSignInUseCase(
+        IUserQueryHandler userQueryHandler,
+        IPasswordService passwordService,
+        IAuthTokenService authTokenService)
     {
         this.userQueryHandler = userQueryHandler;
         this.passwordService = passwordService;
+        this.authTokenService = authTokenService;
     }
 
     private Result<UserSignInOutput> ErrorCast<T>(Result<T> result)
@@ -65,9 +70,19 @@ public class UserSignInUseCase
             return ErrorCast(matchResult);
         }
 
-        // TODO: generate a JWT to send with the output
+        // Generates a JWT with the userId
+        Result<string> tokenResult = UserEntity.GenerateAuthToken(userDb.Id, this.authTokenService);
+        if (!tokenResult.IsSuccess) {
+            return ErrorCast(tokenResult);
+        }
+        string token = tokenResult.Payload!;
 
-        var output = new UserSignInOutput { Id = userDb.Id, Name = userDb.Name, Email = userDb.Email };
+        var output = new UserSignInOutput {
+            Id = userDb.Id,
+            Name = userDb.Name,
+            Email = userDb.Email,
+            AuthToken = token,
+        };
         return Result<UserSignInOutput>.Ok(output);
     }
 }

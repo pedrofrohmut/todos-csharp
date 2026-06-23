@@ -5,4 +5,5 @@ namespace Todos.Core.Services;
 public interface IAuthTokenService
 {
     public Result<AuthToken> Decode(string token);
+    public Result<string> GenerateJWT(int userId);
 }

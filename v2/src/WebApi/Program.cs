@@ -5,6 +5,10 @@ var app = builder.Build();
 AppConfigure(app);
 AppUseMiddlewares(app);
 
+/*
+   TODO: Check the connection with the databases on program start
+   TODO: Validate env on program start
+   */
 app.Run();
 
 static void BuilderAddServices(WebApplicationBuilder builder)

@@ -147,6 +147,15 @@ public static class UserEntity
         }
     }
 
+    public static Result<string> GenerateAuthToken(int userId, IAuthTokenService authTokenService)
+    {
+        try {
+            return authTokenService.GenerateJWT(userId);
+        } catch (Exception e) {
+            return Result<string>.Fail("User:" + nameof(GenerateAuthToken), "Error to generate auth token: " + e.Message);
+        }
+    }
+
     public static async Task<Result<bool>> CheckUserExists(UserFindByIdQuery query, IUserQueryHandler userQueryHandler)
     {
         try {

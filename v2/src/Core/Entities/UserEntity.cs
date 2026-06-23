@@ -147,6 +147,15 @@ public static class UserEntity
         }
     }
 
+    public static Result<bool> ValidateExpiration(long expiration)
+    {
+        long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        if (now >= expiration) {
+            return Result<bool>.Fail(new InvalidTokenError("Token is expired"));
+        }
+        return Result<bool>.Ok();
+    }
+
     public static Result<string> GenerateAuthToken(int userId, IAuthTokenService authTokenService)
     {
         try {

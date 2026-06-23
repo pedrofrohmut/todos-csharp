@@ -46,6 +46,12 @@ public class VerifyAuthTokenUseCase
             return Result<VerifyAuthTokenOutput>.Fail(decodeResult.Error);
         }
 
+        // Checks for expired token
+        validationResult = UserEntity.ValidateExpiration(decodeResult.Payload.Expiration);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
+
         // Validate token information
         int userId = decodeResult.Payload.UserId;
         validationResult = UserEntity.ValidateId(userId);

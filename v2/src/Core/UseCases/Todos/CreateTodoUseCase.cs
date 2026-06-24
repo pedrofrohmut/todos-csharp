@@ -40,10 +40,15 @@ public class CreateTodoUseCase
         return Result<CreateTodoOutput>.Fail(result.Error);
     }
 
+    private Result<CreateTodoOutput> ErrorCast(Result result)
+    {
+        return Result<CreateTodoOutput>.Fail(result.Error);
+    }
+
     public async Task<Result<CreateTodoOutput>> Execute(CreateTodoInput input)
     {
         // Validate input
-        Result<bool> validationResult;
+        Result validationResult;
         validationResult = TodoEntity.ValidateName(input.Name);
         if (!validationResult.IsSuccess) {
             return ErrorCast(validationResult);
@@ -79,7 +84,7 @@ public class CreateTodoUseCase
             Description = input.Description,
             UserId = userDb.Id,
         };
-        Result<bool> createResult = await TodoEntity.CreateTodo(command, this.todoCommandHandler);
+        Result createResult = await TodoEntity.CreateTodo(command, this.todoCommandHandler);
         if (!createResult.IsSuccess) {
             return ErrorCast(createResult);
         }

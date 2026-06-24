@@ -42,10 +42,15 @@ public class DeleteTodoUseCase
         return Result<DeleteTodoOutput>.Fail(result.Error);
     }
 
+    private Result<DeleteTodoOutput> ErrorCast(Result result)
+    {
+        return Result<DeleteTodoOutput>.Fail(result.Error);
+    }
+
     public async Task<Result<DeleteTodoOutput>> Execute(DeleteTodoInput input)
     {
         // Validate Input
-        Result<bool> validationResult = TodoEntity.ValidateId(input.Id);
+        Result validationResult = TodoEntity.ValidateId(input.Id);
         if (!validationResult.IsSuccess) {
             return ErrorCast(validationResult);
         }
@@ -69,7 +74,7 @@ public class DeleteTodoUseCase
         TodoDb todo = findResult.Payload;
 
         // Check todo ownership
-        Result<bool> ownershipResult = TodoEntity.CheckTodoOwnership(user, todo);
+        Result ownershipResult = TodoEntity.CheckTodoOwnership(user, todo);
         if (!ownershipResult.IsSuccess) {
             return ErrorCast(ownershipResult);
         }
@@ -78,7 +83,7 @@ public class DeleteTodoUseCase
         var command = new TodoDeleteCommand {
             Id = input.Id,
         };
-        Result<bool> deleteResult = await TodoEntity.DeleteTodo(command, this.todoCommandHandler);
+        Result deleteResult = await TodoEntity.DeleteTodo(command, this.todoCommandHandler);
         if (!deleteResult.IsSuccess) {
             return ErrorCast(deleteResult);
         }

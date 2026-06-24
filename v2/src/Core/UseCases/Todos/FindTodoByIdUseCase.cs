@@ -38,10 +38,15 @@ public class FindTodoByIdUseCase
         return Result<FindTodoByIdOutput>.Fail(result.Error);
     }
 
+    private Result<FindTodoByIdOutput> ErrorCast(Result result)
+    {
+        return Result<FindTodoByIdOutput>.Fail(result.Error);
+    }
+
     public async Task<Result<FindTodoByIdOutput>> Execute(FindTodoByIdInput input)
     {
         // Validate input
-        Result<bool> validationResult;
+        Result validationResult;
         validationResult = TodoEntity.ValidateId(input.Id);
         if (!validationResult.IsSuccess) {
             return ErrorCast(validationResult);
@@ -66,7 +71,7 @@ public class FindTodoByIdUseCase
         TodoDb todo = findResult.Payload;
 
         // Check todo ownership
-        Result<bool> ownershipResult = TodoEntity.CheckTodoOwnership(user, todo);
+        Result ownershipResult = TodoEntity.CheckTodoOwnership(user, todo);
         if (!ownershipResult.IsSuccess) {
             return ErrorCast(ownershipResult);
         }

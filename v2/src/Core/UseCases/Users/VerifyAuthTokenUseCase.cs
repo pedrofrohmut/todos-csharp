@@ -32,6 +32,11 @@ public class VerifyAuthTokenUseCase
         return Result<VerifyAuthTokenOutput>.Fail(result.Error);
     }
 
+    private Result<VerifyAuthTokenOutput> ErrorCast(Result result)
+    {
+        return Result<VerifyAuthTokenOutput>.Fail(result.Error);
+    }
+
     public async Task<Result<VerifyAuthTokenOutput>> Execute(VerifyAuthTokenInput input)
     {
         // Get decoded token
@@ -42,14 +47,14 @@ public class VerifyAuthTokenUseCase
         AuthToken authToken = tokenResult.Payload;
 
         // Validate token
-        Result<bool> validationResult = UserEntity.ValidateAuthToken(authToken);
+        Result validationResult = UserEntity.ValidateAuthToken(authToken);
         if (!validationResult.IsSuccess) {
             return ErrorCast(tokenResult);
         }
 
         // Check user exists by id
         var query = new UserFindByIdQuery { Id = authToken.UserId };
-        Result<bool> checkResult = await UserEntity.CheckUserExists(query, userQueryHandler);
+        Result checkResult = await UserEntity.CheckUserExists(query, userQueryHandler);
         if (!checkResult.IsSuccess) {
             return ErrorCast(checkResult);
         }

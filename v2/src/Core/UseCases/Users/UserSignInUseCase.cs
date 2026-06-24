@@ -42,10 +42,15 @@ public class UserSignInUseCase
         return Result<UserSignInOutput>.Fail(result.Error);
     }
 
+    private Result<UserSignInOutput> ErrorCast(Result result)
+    {
+        return Result<UserSignInOutput>.Fail(result.Error);
+    }
+
     public async Task<Result<UserSignInOutput>> Execute(UserSignInInput input)
     {
         //Validate Input
-        Result<bool> validationResult;
+        Result validationResult;
         validationResult = UserEntity.ValidateEmail(input.Email);
         if (!validationResult.IsSuccess) {
             return ErrorCast(validationResult);
@@ -64,7 +69,7 @@ public class UserSignInUseCase
         UserDb userDb = findResult.Payload;
 
         // Check if input password and userDb passwordHash match
-        Result<bool> matchResult =
+        Result matchResult =
             UserEntity.MatchPasswordAndHash(input.Password, userDb.PasswordHash, this.passwordService);
         if (!matchResult.IsSuccess) {
             return ErrorCast(matchResult);

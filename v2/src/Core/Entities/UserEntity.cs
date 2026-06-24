@@ -11,57 +11,57 @@ namespace Todos.Core.Entities;
 
 public static class UserEntity
 {
-    public static Result<bool> ValidateId(int id)
+    public static Result ValidateId(int id)
     {
         if (id < 1) {
-            return Result<bool>.Fail(new InvalidUserError("Invalid user id. Id cannot be less than 1"));
+            return Result.Fail(new InvalidUserError("Invalid user id. Id cannot be less than 1"));
         }
-        return Result<bool>.Ok();
+        return Result.Ok();
     }
 
-    public static Result<bool> ValidateName(string name)
+    public static Result ValidateName(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) {
-            return Result<bool>.Fail(new InvalidUserError("Name not provided. Name is required and cannot be blank."));
+            return Result.Fail(new InvalidUserError("Name not provided. Name is required and cannot be blank."));
         }
         if (name.Length < 3) {
-            return Result<bool>.Fail(new InvalidUserError("Name is too short. Name must be at least 3 characters long."));
+            return Result.Fail(new InvalidUserError("Name is too short. Name must be at least 3 characters long."));
         }
         if (name.Length > 120) {
-            return Result<bool>.Fail(new InvalidUserError("Name is too long. Name must be less than 121 characters long."));
+            return Result.Fail(new InvalidUserError("Name is too long. Name must be less than 121 characters long."));
         }
         if (!EntitiesUtils.IsValidName(name)) {
-            return Result<bool>.Fail(new InvalidUserError("Name contains invalid characters."));
+            return Result.Fail(new InvalidUserError("Name contains invalid characters."));
         }
-        return Result<bool>.Ok();
+        return Result.Ok();
     }
 
-    public static Result<bool> ValidateEmail(string email)
+    public static Result ValidateEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email)) {
-            return Result<bool>.Fail(new InvalidUserError("E-mail not provided. E-mail is required and cannot be blank."));
+            return Result.Fail(new InvalidUserError("E-mail not provided. E-mail is required and cannot be blank."));
         }
         if (email.Length < 6) {
-            return Result<bool>.Fail(new InvalidUserError("E-mail is too short. E-mail must be at least 6 characters long."));
+            return Result.Fail(new InvalidUserError("E-mail is too short. E-mail must be at least 6 characters long."));
         }
         if (!EntitiesUtils.IsValidEmail(email)) {
-            return Result<bool>.Fail(new InvalidUserError("E-mail is invalid."));
+            return Result.Fail(new InvalidUserError("E-mail is invalid."));
         }
-        return Result<bool>.Ok();
+        return Result.Ok();
     }
 
-    public static Result<bool> ValidatePassword(string password)
+    public static Result ValidatePassword(string password)
     {
         if (string.IsNullOrWhiteSpace(password)) {
-            return Result<bool>.Fail(new InvalidUserError("Password not provided. Password is required and cannot be blank"));
+            return Result.Fail(new InvalidUserError("Password not provided. Password is required and cannot be blank"));
         }
         if (password.Length < 3) {
-            return Result<bool>.Fail(new InvalidUserError("Password is too short. Password must be at least 3 characters long."));
+            return Result.Fail(new InvalidUserError("Password is too short. Password must be at least 3 characters long."));
         }
         if (password.Length > 32) {
-            return Result<bool>.Fail(new InvalidUserError("Password is too long. Password must less than 33 characters long."));
+            return Result.Fail(new InvalidUserError("Password is too long. Password must less than 33 characters long."));
         }
-        return Result<bool>.Ok();
+        return Result.Ok();
     }
 
     public static Result<AuthToken> GetAuthToken(string? jwt, IAuthTokenService authTokenService)
@@ -77,28 +77,28 @@ public static class UserEntity
         return decodeResult;
     }
 
-    public static Result<bool> ValidateAuthToken(AuthToken token)
+    public static Result ValidateAuthToken(AuthToken token)
     {
         if (token.UserId == 0 || token.Expiration == 0 || token.IssuedAt == 0) {
-            return Result<bool>.Fail(new InvalidTokenError("Invalid token. Token doesnt have enough information in the payload. Or the information is incorrect."));
+            return Result.Fail(new InvalidTokenError("Invalid token. Token doesnt have enough information in the payload. Or the information is incorrect."));
         }
-        Result<bool> validationResult = ValidateId(token.UserId);
+        Result validationResult = ValidateId(token.UserId);
         if (!validationResult.IsSuccess) {
-            return Result<bool>.Fail(new InvalidTokenError("Invalid token. Token userId is not valid"));
+            return Result.Fail(new InvalidTokenError("Invalid token. Token userId is not valid"));
         }
-        return Result<bool>.Ok(true);
+        return Result.Ok();
     }
 
-    public static async Task<Result<bool>> CheckEmailIsAvailable(UserFindByEmailQuery query, IUserQueryHandler handler)
+    public static async Task<Result> CheckEmailIsAvailable(UserFindByEmailQuery query, IUserQueryHandler handler)
     {
         try {
             UserDb? userFound = await handler.FindUserByEmail(query);
             if (userFound != null || userFound?.Id > 0) {
-                return Result<bool>.Fail(new EmailAlreadyTakenError());
+                return Result.Fail(new EmailAlreadyTakenError());
             }
-            return Result<bool>.Ok();
+            return Result.Ok();
         } catch (Exception e) {
-            return Result<bool>.Fail("User:" + nameof(CheckEmailIsAvailable), "Failed to find user by e-mail: " + e.Message);
+            return Result.Fail("User:" + nameof(CheckEmailIsAvailable), "Failed to find user by e-mail: " + e.Message);
         }
     }
 
@@ -115,13 +115,13 @@ public static class UserEntity
         }
     }
 
-    public static async Task<Result<bool>> CreateUser(CreateUserCommand command, IUserCommandHandler handler)
+    public static async Task<Result> CreateUser(CreateUserCommand command, IUserCommandHandler handler)
     {
         try {
             await handler.CreateUser(command);
-            return Result<bool>.Ok();
+            return Result.Ok();
         } catch (Exception e) {
-            return Result<bool>.Fail("User:" + nameof(CreateUser), "Error to create user: " + e.Message);
+            return Result.Fail("User:" + nameof(CreateUser), "Error to create user: " + e.Message);
         }
     }
 
@@ -151,16 +151,16 @@ public static class UserEntity
         }
     }
 
-    public static Result<bool> MatchPasswordAndHash(string password, string hash, IPasswordService passwordService)
+    public static Result MatchPasswordAndHash(string password, string hash, IPasswordService passwordService)
     {
         try {
             bool isMatch = passwordService.CheckPassword(password, hash);
             if (!isMatch) {
-                return Result<bool>.Fail(new PasswordMatchError());
+                return Result.Fail(new PasswordMatchError());
             }
-            return Result<bool>.Ok();
+            return Result.Ok();
         } catch (Exception e) {
-            return Result<bool>.Fail("User:" + nameof(MatchPasswordAndHash), "Error to match password: " + e.Message);
+            return Result.Fail("User:" + nameof(MatchPasswordAndHash), "Error to match password: " + e.Message);
         }
     }
 
@@ -173,16 +173,16 @@ public static class UserEntity
         }
     }
 
-    public static async Task<Result<bool>> CheckUserExists(UserFindByIdQuery query, IUserQueryHandler userQueryHandler)
+    public static async Task<Result> CheckUserExists(UserFindByIdQuery query, IUserQueryHandler userQueryHandler)
     {
         try {
             UserDb? userDb = await userQueryHandler.FindUserById(query);
             if (userDb == null) {
-                return Result<bool>.Fail(new UserNotFoundError("User not found by id"));
+                return Result.Fail(new UserNotFoundError("User not found by id"));
             }
-            return Result<bool>.Ok();
+            return Result.Ok();
         } catch (Exception e) {
-            return Result<bool>.Fail("User:" + nameof(CheckUserExists), "Error to check if user exists: " + e.Message);
+            return Result.Fail("User:" + nameof(CheckUserExists), "Error to check if user exists: " + e.Message);
         }
     }
 

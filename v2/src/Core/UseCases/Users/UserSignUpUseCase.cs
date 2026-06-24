@@ -37,10 +37,15 @@ public class UserSignUpUseCase
         return Result<UserSignUpOutput>.Fail(result.Error);
     }
 
+    private Result<UserSignUpOutput> ErrorCast(Result result)
+    {
+        return Result<UserSignUpOutput>.Fail(result.Error);
+    }
+
     public async Task<Result<UserSignUpOutput>> Execute(UserSignUpInput input)
     {
         // Validate input
-        Result<bool> validationResult;
+        Result validationResult;
         validationResult = UserEntity.ValidateName(input.Name);
         if (!validationResult.IsSuccess) {
             return ErrorCast(validationResult);
@@ -56,7 +61,7 @@ public class UserSignUpUseCase
 
         // Checks if e-mail is available
         var query = new UserFindByEmailQuery { Email = input.Email };
-        Result<bool> checkResult = await UserEntity.CheckEmailIsAvailable(query, this.userQueryHandler);
+        Result checkResult = await UserEntity.CheckEmailIsAvailable(query, this.userQueryHandler);
         if (!checkResult.IsSuccess) {
             return ErrorCast(checkResult);
         }
@@ -73,7 +78,7 @@ public class UserSignUpUseCase
             Email = input.Email,
             PasswordHash = resultHash.Payload!
         };
-        Result<bool> createResult = await UserEntity.CreateUser(command, this.userCommandHandler);
+        Result createResult = await UserEntity.CreateUser(command, this.userCommandHandler);
         if (!createResult.IsSuccess) {
             return ErrorCast(createResult);
         }

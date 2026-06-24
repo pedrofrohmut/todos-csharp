@@ -2,33 +2,6 @@ using Todos.Core.Errors;
 
 namespace Todos.Core.Utils;
 
-public class Result
-{
-    public bool IsSuccess { get; set; }
-    public ResultError? Error { get; set; }
-
-    private Result() {}
-
-    public static Result Ok()
-    {
-        return new Result { IsSuccess = true, Error = null };
-    }
-
-    public static Result Fail(ResultError? error)
-    {
-        if (error == null) {
-            throw new ArgumentNullException();
-        }
-        return new Result { IsSuccess = false, Error = error };
-    }
-
-    public static Result Fail(string code, string message)
-    {
-        var error = new ResultError(code, message);
-        return new Result { IsSuccess = false, Error = error };
-    }
-}
-
 public class Result<T>
 {
     public bool IsSuccess { get; set; }

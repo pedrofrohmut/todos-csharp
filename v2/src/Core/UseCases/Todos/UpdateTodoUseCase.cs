@@ -43,10 +43,15 @@ public class UpdateTodoUseCase
         return Result<UpdateTodoOutput>.Fail(result.Error);
     }
 
+    private Result<UpdateTodoOutput> ErrorCast(Result result)
+    {
+        return Result<UpdateTodoOutput>.Fail(result.Error);
+    }
+
     public async Task<Result<UpdateTodoOutput>> Execute(UpdateTodoInput input)
     {
         // Validate input
-        Result<bool> validationResult;
+        Result validationResult;
         validationResult = TodoEntity.ValidateId(input.Id);
         if (!validationResult.IsSuccess) {
             return ErrorCast(validationResult);
@@ -79,7 +84,7 @@ public class UpdateTodoUseCase
         TodoDb todo = findResult.Payload;
 
         // Check todo ownership
-        Result<bool> ownershiptResult = TodoEntity.CheckTodoOwnership(user, todo);
+        Result ownershiptResult = TodoEntity.CheckTodoOwnership(user, todo);
         if (!ownershiptResult.IsSuccess) {
             return ErrorCast(ownershiptResult);
         }
@@ -90,7 +95,7 @@ public class UpdateTodoUseCase
             Name = input.Name,
             Description = input.Description,
         };
-        Result<bool> updateResult = await TodoEntity.UpdateTodo(command, this.todoCommandHandler);
+        Result updateResult = await TodoEntity.UpdateTodo(command, this.todoCommandHandler);
         if (!updateResult.IsSuccess) {
             return ErrorCast(updateResult);
         }

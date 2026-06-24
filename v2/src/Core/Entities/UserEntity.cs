@@ -67,9 +67,33 @@ public static class UserEntity
     public static Result<bool> ValidateEncodedToken(string? token)
     {
         if (string.IsNullOrWhiteSpace(token)) {
-            return Result<bool>.Fail(new InvalidTokenError("Authentication token not provided. Token is required and cannot be blank"));
+            return Result<bool>.Fail(
+                new InvalidTokenError("Authentication token not provided. Token is required and cannot be blank"));
         }
         return Result<bool>.Ok();
+    }
+
+
+    public static Result<AuthToken> GetAuthToken(string? jwt, IAuthTokenService authTokenService)
+    {
+        if (string.IsNullOrWhiteSpace(jwt)) {
+            return Result<AuthToken>.Fail(
+                new InvalidTokenError("Authentication token not provided. Token is required and cannot be blank"));
+        }
+        Result<AuthToken> decodeResult = authTokenService.Decode(jwt);
+        if (!decodeResult.IsSuccess) {
+            return decodeResult;
+        }
+        return decodeResult;
+    }
+
+    public static Result<bool> ValidateAuthToken(AuthToken token)
+    {
+        if (token.UserId == 0 || token.Expiration == 0 || token.IssuedAt == 0) {
+            return Result<bool>.Fail(
+                new InvalidTokenError("Invalid token. Token doesnt have enough information in the payload."));
+        }
+        return Result<bool>.Ok(true);
     }
 
     public static async Task<Result<bool>> CheckEmailIsAvailable(UserFindByEmailQuery query, IUserQueryHandler handler)
@@ -105,6 +129,19 @@ public static class UserEntity
             return Result<bool>.Ok();
         } catch (Exception e) {
             return Result<bool>.Fail("User:" + nameof(CreateUser), "Error to create user: " + e.Message);
+        }
+    }
+
+    public static async Task<Result<UserDb>> FindUserById(UserFindByIdQuery query, IUserQueryHandler handler)
+    {
+        try {
+            UserDb? user = await handler.FindUserById(query);
+            if (user == null) {
+                return Result<UserDb>.Fail(new UserNotFoundError("User not found by id"));
+            }
+            return Result<UserDb>.Ok(user.Value);
+        } catch (Exception e) {
+            return Result<UserDb>.Fail("User:" + nameof(FindUserById), "Error to find user by id: " + e.Message);
         }
     }
 
@@ -178,6 +215,8 @@ public static class UserEntity
         }
     }
 
+    // TODO: Refactor UseCases to not used it anymore
+    [Obsolete("GetUserFromToken is deprecated. Use GetAuthToken instead. You can also validate the token with ValidateAuthToken.")]
     public static async Task<Result<UserDb>> GetUserFromToken(string? token,
                                                               IAuthTokenService authTokenService,
                                                               IUserQueryHandler userQueryHandler)

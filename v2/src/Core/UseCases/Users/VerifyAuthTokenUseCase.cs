@@ -34,6 +34,8 @@ public class VerifyAuthTokenUseCase
 
     public async Task<Result<VerifyAuthTokenOutput>> Execute(VerifyAuthTokenInput input)
     {
+        // TODO: Check can change lots of stuff here for the ValidateAndGetAuthToken
+
         // Validate input
         Result<bool> validationResult = UserEntity.ValidateEncodedToken(input.Token);
         if (!validationResult.IsSuccess || input.Token == null) {

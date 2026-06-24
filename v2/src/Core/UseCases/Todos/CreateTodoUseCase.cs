@@ -5,6 +5,7 @@ using Todos.Core.Db;
 using Todos.Core.Queries.Handlers;
 using Todos.Core.Commands.Handlers;
 using Todos.Core.Commands;
+using Todos.Core.Queries;
 
 namespace Todos.Core.UseCases.Todos;
 
@@ -52,13 +53,25 @@ public class CreateTodoUseCase
             return ErrorCast(validationResult);
         }
 
-        // Get user info from token and find userDb with it
-        Result<UserDb> getUserResult =
-            await UserEntity.GetUserFromToken(input.AuthToken, this.authTokenService, this.userQueryHandler);
-        if (!getUserResult.IsSuccess) {
-            return ErrorCast(getUserResult);
+        // Get and validate auth token
+        Result<AuthToken> getResult = UserEntity.GetAuthToken(input.AuthToken, this.authTokenService);
+        if (!getResult.IsSuccess) {
+            return ErrorCast(getResult);
         }
-        UserDb userDb = getUserResult.Payload;
+        AuthToken authToken = getResult.Payload;
+        validationResult = UserEntity.ValidateAuthToken(authToken);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
+        int userId = authToken.UserId;
+
+        // Get user from token
+        var query = new UserFindByIdQuery { Id = userId };
+        Result<UserDb> findUserResult = await UserEntity.FindUserById(query, this.userQueryHandler);
+        if (!findUserResult.IsSuccess) {
+            return ErrorCast(findUserResult);
+        }
+        UserDb userDb = findUserResult.Payload;
 
         // Create Todo
         var command = new TodoCreateCommand {

@@ -46,8 +46,8 @@ public class AuthTokenService : IAuthTokenService
     public Result<string> GenerateJWT(int userId)
     {
         long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        // long expiration = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeSeconds();
-        long expiration = DateTimeOffset.UtcNow.AddMinutes(1).ToUnixTimeSeconds();
+        long expiration = DateTimeOffset.UtcNow.AddDays(1).ToUnixTimeSeconds();
+        // long expiration = DateTimeOffset.UtcNow.AddMinutes(1).ToUnixTimeSeconds();
         var payload = new Dictionary<string, object> {
             { "userId", userId },
             { "iat", now },

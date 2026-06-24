@@ -8,7 +8,7 @@ namespace Todos.Core.UseCases.Users;
 
 public readonly struct VerifyAuthTokenInput
 {
-    public string? Token { get; init; }
+    public string? AuthToken { get; init; }
 }
 
 public readonly struct VerifyAuthTokenOutput
@@ -34,41 +34,26 @@ public class VerifyAuthTokenUseCase
 
     public async Task<Result<VerifyAuthTokenOutput>> Execute(VerifyAuthTokenInput input)
     {
-        // TODO: Check can change lots of stuff here for the ValidateAndGetAuthToken
-
-        // Validate input
-        Result<bool> validationResult = UserEntity.ValidateEncodedToken(input.Token);
-        if (!validationResult.IsSuccess || input.Token == null) {
-            return ErrorCast(validationResult);
+        // Get decoded token
+        Result<AuthToken> tokenResult = UserEntity.GetAuthToken(input.AuthToken, this.authTokenService);
+        if (!tokenResult.IsSuccess) {
+            return ErrorCast(tokenResult);
         }
+        AuthToken authToken = tokenResult.Payload;
 
-        // Decode token
-        Result<AuthToken> decodeResult = UserEntity.DecodeToken(input.Token, authTokenService);
-        if (!decodeResult.IsSuccess) {
-            return Result<VerifyAuthTokenOutput>.Fail(decodeResult.Error);
-        }
-
-        // Checks for expired token
-        validationResult = UserEntity.ValidateExpiration(decodeResult.Payload.Expiration);
+        // Validate token
+        Result<bool> validationResult = UserEntity.ValidateAuthToken(authToken);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(validationResult);
-        }
-
-        // Validate token information
-        int userId = decodeResult.Payload.UserId;
-        validationResult = UserEntity.ValidateId(userId);
-        if (!validationResult.IsSuccess) {
-            return ErrorCast(validationResult);
+            return ErrorCast(tokenResult);
         }
 
         // Check user exists by id
-        var query = new UserFindByIdQuery { Id = userId };
+        var query = new UserFindByIdQuery { Id = authToken.UserId };
         Result<bool> checkResult = await UserEntity.CheckUserExists(query, userQueryHandler);
         if (!checkResult.IsSuccess) {
             return ErrorCast(checkResult);
         }
 
-        var validOutput = new VerifyAuthTokenOutput { IsValid = true };
-        return Result<VerifyAuthTokenOutput>.Ok(validOutput);
+        return Result<VerifyAuthTokenOutput>.Ok(new VerifyAuthTokenOutput { IsValid = true });
     }
 }

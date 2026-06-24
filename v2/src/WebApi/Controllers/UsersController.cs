@@ -114,7 +114,7 @@ public class UsersController : ControllerBase
         try {
             var token = ControllerUtils.GetAuthToken(Request);
             var useCase = UseCasesFactory.GetVerifyAuthTokenUseCase(writeConnection);
-            var input = new VerifyAuthTokenInput { Token = token };
+            var input = new VerifyAuthTokenInput { AuthToken = token };
 
             var result = await useCase.Execute(input);
 

@@ -64,16 +64,6 @@ public static class UserEntity
         return Result<bool>.Ok();
     }
 
-    public static Result<bool> ValidateEncodedToken(string? token)
-    {
-        if (string.IsNullOrWhiteSpace(token)) {
-            return Result<bool>.Fail(
-                new InvalidTokenError("Authentication token not provided. Token is required and cannot be blank"));
-        }
-        return Result<bool>.Ok();
-    }
-
-
     public static Result<AuthToken> GetAuthToken(string? jwt, IAuthTokenService authTokenService)
     {
         if (string.IsNullOrWhiteSpace(jwt)) {
@@ -90,8 +80,11 @@ public static class UserEntity
     public static Result<bool> ValidateAuthToken(AuthToken token)
     {
         if (token.UserId == 0 || token.Expiration == 0 || token.IssuedAt == 0) {
-            return Result<bool>.Fail(
-                new InvalidTokenError("Invalid token. Token doesnt have enough information in the payload."));
+            return Result<bool>.Fail(new InvalidTokenError("Invalid token. Token doesnt have enough information in the payload. Or the information is incorrect."));
+        }
+        Result<bool> validationResult = ValidateId(token.UserId);
+        if (!validationResult.IsSuccess) {
+            return Result<bool>.Fail(new InvalidTokenError("Invalid token. Token userId is not valid"));
         }
         return Result<bool>.Ok(true);
     }
@@ -169,28 +162,6 @@ public static class UserEntity
         } catch (Exception e) {
             return Result<bool>.Fail("User:" + nameof(MatchPasswordAndHash), "Error to match password: " + e.Message);
         }
-    }
-
-    public static Result<AuthToken> DecodeToken(string token, IAuthTokenService authTokenService)
-    {
-        try {
-            var resultDecoded = authTokenService.Decode(token);
-            if (!resultDecoded.IsSuccess) {
-                return Result<AuthToken>.Fail(new InvalidTokenError("The token is invalid and could not be decoded"));
-            }
-            return Result<AuthToken>.Ok(resultDecoded.Payload);
-        } catch (Exception e) {
-            return Result<AuthToken>.Fail("User:" + nameof(DecodeToken), "Error to decode token: " + e.Message);
-        }
-    }
-
-    public static Result<bool> ValidateExpiration(long expiration)
-    {
-        long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        if (now >= expiration) {
-            return Result<bool>.Fail(new InvalidTokenError("Token is expired"));
-        }
-        return Result<bool>.Ok();
     }
 
     public static Result<string> GenerateAuthToken(int userId, IAuthTokenService authTokenService)

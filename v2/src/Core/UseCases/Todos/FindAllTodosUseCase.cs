@@ -33,6 +33,11 @@ public class FindAllTodosUseCase
         this.todoQueryHandler = todoQueryHandler;
     }
 
+    private Result<FindAllTodosOutput> ErrorCast(Result result)
+    {
+        return Result<FindAllTodosOutput>.Fail(result.Error);
+    }
+
     private Result<FindAllTodosOutput> ErrorCast<T>(Result<T> result)
     {
         return Result<FindAllTodosOutput>.Fail(result.Error);
@@ -40,19 +45,34 @@ public class FindAllTodosUseCase
 
     public async Task<Result<FindAllTodosOutput>> Execute(FindAllTodosInput input)
     {
-        // Get user info from token and get user from db
-        Result<UserDb> getUserResult =
-            await UserEntity.GetUserFromToken(input.AuthToken, this.authTokenService, this.userQueryHandler);
-        if (!getUserResult.IsSuccess) {
-            return ErrorCast(getUserResult);
+        // Get auth token from jwt string
+        Result<AuthToken> tokenResult = UserEntity.GetAuthToken(input.AuthToken, this.authTokenService);
+        if (!tokenResult.IsSuccess) {
+            return ErrorCast(tokenResult);
         }
-        UserDb user = getUserResult.Payload;
+        AuthToken authToken = tokenResult.Payload;
+
+        // Validate token
+        Result validationResult = UserEntity.ValidateAuthToken(authToken);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
+
+        // Get db user with jwt userId
+        var findUserQuery = new UserFindByIdQuery {
+            Id = authToken.UserId,
+        };
+        Result<UserDb> dbResult = await UserEntity.FindUserById(findUserQuery, this.userQueryHandler);
+        if (!dbResult.IsSuccess) {
+            return ErrorCast(dbResult);
+        }
+        UserDb userDb = dbResult.Payload;
 
         // Find all todos
-        var query = new TodoFindAllQuery {
-            UserId = input.UserId,
+        var findTodosQuery = new TodoFindAllQuery {
+            UserId = userDb.Id,
         };
-        Result<IEnumerable<TodoDb>> findResult = await TodoEntity.FindAllTodos(query, this.todoQueryHandler);
+        Result<IEnumerable<TodoDb>> findResult = await TodoEntity.FindAllTodos(findTodosQuery, this.todoQueryHandler);
         if (!findResult.IsSuccess) {
             return ErrorCast(findResult);
         }

@@ -52,26 +52,41 @@ public class FindTodoByIdUseCase
             return ErrorCast(validationResult);
         }
 
-        // Get user info from token and find userDb with it
-        Result<UserDb> getUserResult =
-            await UserEntity.GetUserFromToken(input.AuthToken, this.authTokenService, this.userQueryHandler);
-        if (!getUserResult.IsSuccess) {
-            return ErrorCast(getUserResult);
+        // Get auth token from jwt string
+        Result<AuthToken> tokenResult = UserEntity.GetAuthToken(input.AuthToken, this.authTokenService);
+        if (!tokenResult.IsSuccess) {
+            return ErrorCast(tokenResult);
         }
-        UserDb user = getUserResult.Payload;
+        AuthToken authToken = tokenResult.Payload;
+
+        // Validate token
+        validationResult = UserEntity.ValidateAuthToken(authToken);
+        if (!validationResult.IsSuccess) {
+            return ErrorCast(validationResult);
+        }
+
+        // Get db user with the jwt userId
+        var findUserQuery = new UserFindByIdQuery {
+            Id = authToken.UserId,
+        };
+        Result<UserDb> dbResult = await UserEntity.FindUserById(findUserQuery, this.userQueryHandler);
+        if (!dbResult.IsSuccess) {
+            return ErrorCast(dbResult);
+        }
+        UserDb userDb = dbResult.Payload;
 
         // Find to by id
-        var query = new TodoFindByIdQuery {
+        var findTodoQuery = new TodoFindByIdQuery {
             Id = input.Id,
         };
-        Result<TodoDb> findResult = await TodoEntity.FindTodoById(query, this.todoQueryHandler);
+        Result<TodoDb> findResult = await TodoEntity.FindTodoById(findTodoQuery, this.todoQueryHandler);
         if (!findResult.IsSuccess) {
             return ErrorCast(findResult);
         }
         TodoDb todo = findResult.Payload;
 
         // Check todo ownership
-        Result ownershipResult = TodoEntity.CheckTodoOwnership(user, todo);
+        Result ownershipResult = TodoEntity.CheckTodoOwnership(userDb, todo);
         if (!ownershipResult.IsSuccess) {
             return ErrorCast(ownershipResult);
         }

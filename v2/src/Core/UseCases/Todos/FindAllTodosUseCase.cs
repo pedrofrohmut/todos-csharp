@@ -58,7 +58,7 @@ public class FindAllTodosUseCase
             return ErrorCast(validationResult);
         }
 
-        // Get db user with jwt userId
+        // Get db user with the jwt userId
         var findUserQuery = new UserFindByIdQuery {
             Id = authToken.UserId,
         };

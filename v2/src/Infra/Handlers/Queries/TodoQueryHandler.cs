@@ -15,9 +15,18 @@ public class TodoQueryHandler : ITodoQueryHandler
         this.connection = connection;
     }
 
-    public Task<TodoDb?> FindTodoById(TodoFindByIdQuery query)
+    public async Task<TodoDb?> FindTodoById(TodoFindByIdQuery query)
     {
-        throw new NotImplementedException();
+        var sql = String.Join(" ", new string[] {
+            "SELECT id, name, description, user_id as UserId, is_done as IsDone",
+            "FROM todos",
+            "WHERE id = @Id",
+        });
+        var todo = await this.connection.QueryFirstOrDefaultAsync<TodoDb>(sql, new { Id = query.Id });
+        if (todo.Id == 0) {
+            return null;
+        }
+        return todo;
     }
 
     public async Task<IEnumerable<TodoDb>> FindAllTodos(TodoFindAllQuery query)

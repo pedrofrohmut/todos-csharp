@@ -18,10 +18,11 @@ public class TodoCommandHandler : ITodoCommandHandler
 
     public async Task CreateTodo(TodoCreateCommand command)
     {
-        var insertSql = @"
-            INSERT INTO todos (name, description, user_id)
-            VALUES (@Name, @Description, @UserId)
-            RETURNING id";
+        var insertSql = String.Join(" ", new string[] {
+            "INSERT INTO todos (name, description, user_id)",
+            "VALUES (@Name, @Description, @UserId)",
+            "RETURNING id",
+        });
 
         var todoId = await this.writeConnection.ExecuteScalarAsync<int>(insertSql, new {
             command.Name,

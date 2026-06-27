@@ -18,10 +18,11 @@ public class UserCommandHandler : IUserCommandHandler
 
     public async Task CreateUser(CreateUserCommand command)
     {
-        var insertSql = @"
-            INSERT INTO users (name, email, password_hash)
-            VALUES (@Name, @Email, @PasswordHash)
-            RETURNING id";
+        var insertSql = String.Join(" ", new string[] {
+            "INSERT INTO users (name, email, password_hash)",
+            "VALUES (@Name, @Email, @PasswordHash)",
+            "RETURNING id",
+        });
 
         var userId = await this.writeConnection.ExecuteScalarAsync<int>(insertSql, new {
             command.Name,

@@ -17,9 +17,11 @@ public class UserQueryHandler : IUserQueryHandler
 
     public async Task<UserDb?> FindUserByEmail(UserFindByEmailQuery query)
     {
-        var sql =
-            @"SELECT id, name, email, password_hash AS PasswordHash "+
-            " FROM users WHERE email = @Email";
+        var sql = String.Join(" ", new string[] {
+            "SELECT id, name, email, password_hash AS PasswordHash",
+            "FROM users",
+            "WHERE email = @Email",
+        });
         var user = await this.connection.QueryFirstOrDefaultAsync<UserDb>(sql, new { Email = query.Email });
         if (user.Id == 0) {
             return null;
@@ -29,9 +31,11 @@ public class UserQueryHandler : IUserQueryHandler
 
     public async Task<UserDb?> FindUserById(UserFindByIdQuery query)
     {
-        var sql =
-            @"SELECT id, name, email, password_hash AS PasswordHash "+
-            " FROM users WHERE id = @Id";
+        var sql = String.Join(" ", new string[] {
+            "SELECT id, name, email, password_hash AS PasswordHash",
+            "FROM users",
+            "WHERE id = @Id",
+        });
         var user = await this.connection.QueryFirstOrDefaultAsync<UserDb>(sql, new { Id = query.Id });
         if (user.Id == 0) {
             return null;

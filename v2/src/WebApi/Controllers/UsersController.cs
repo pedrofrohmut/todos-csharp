@@ -29,8 +29,8 @@ public class UsersController : ControllerBase
     [HttpPost("signup")]
     public async Task SignUp([FromBody] SignUpBody body)
     {
-        var writeConnection = DbConnectionManager.GetWriteConnection(this.configuration);
-        var readConnection = DbConnectionManager.GetReadConnection(this.configuration);
+        var writeConnection = DbConnectionManager.GetWriteConnection();
+        var readConnection = DbConnectionManager.GetReadConnection();
 
         try {
             var useCase = UseCasesFactory.GetUserSignUpUseCase(writeConnection, readConnection);
@@ -67,7 +67,7 @@ public class UsersController : ControllerBase
     [HttpPost("signin")]
     public async Task SignIn([FromBody] SignInBody body)
     {
-        var readConnection = DbConnectionManager.GetReadConnection(this.configuration);
+        var readConnection = DbConnectionManager.GetReadConnection();
 
         try {
             var useCase = UseCasesFactory.GetUserSignInUseCase(readConnection);
@@ -109,7 +109,7 @@ public class UsersController : ControllerBase
     [HttpGet("verify")]
     public async Task Verify()
     {
-        var writeConnection = DbConnectionManager.GetWriteConnection(this.configuration);
+        var writeConnection = DbConnectionManager.GetWriteConnection();
 
         try {
             var token = ControllerUtils.GetAuthToken(Request);

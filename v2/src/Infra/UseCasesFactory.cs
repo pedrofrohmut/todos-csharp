@@ -4,7 +4,6 @@ using Todos.Infra.Handlers.Commands;
 using Todos.Infra.Handlers.Queries;
 using Todos.Infra.Services;
 using System.Data;
-using DotNetEnv;
 using System.Text;
 
 namespace Todos.Infra;
@@ -15,8 +14,6 @@ public static class UseCasesFactory
 
     static UseCasesFactory()
     {
-        Env.Load("../../.env"); // Load the .env file
-
         string? envSecret = System.Environment.GetEnvironmentVariable("JWT_SECRET");
         if (String.IsNullOrWhiteSpace(envSecret)) {
             throw new ArgumentNullException(
@@ -68,7 +65,6 @@ public static class UseCasesFactory
 
     public static FindTodoByIdUseCase GetFindTodoByIdUseCase(IDbConnection readConnection)
     {
-        // TODO: add read dbConnection
         var authTokenService = new AuthTokenService(secretKey);
         var userQueryHandler = new UserQueryHandler(readConnection);
         var todoQueryHandler = new TodoQueryHandler(readConnection);
@@ -77,7 +73,6 @@ public static class UseCasesFactory
 
     public static FindAllTodosUseCase GetFindAllTodosUseCase(IDbConnection readConnection)
     {
-        // TODO: add read dbConnection
         var authTokenService = new AuthTokenService(secretKey);
         var userQueryHandler = new UserQueryHandler(readConnection);
         var todoQueryHandler = new TodoQueryHandler(readConnection);

@@ -1,33 +1,36 @@
 using System.Data;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
+using DotNetEnv;
 
 namespace Todos.Infra;
 
 public static class DbConnectionManager
 {
-    public static IDbConnection GetWriteConnection(IConfiguration configuration)
+    public static IDbConnection GetWriteConnection()
     {
-        // TODO: Get the user and password from the env on the whole string from other place
-        // var username = configuration["write_db_username"];
-        // var password = configuration["write_db_password"];
-        // var connection_string = $"Host=localhost; Username={username};" +
-        //                         $"Password={password}; Database=write_todos_csharp";
-        var connection_string =
-            "Host=localhost; Port=5432; Username=write_user; Password=write_password; Database=write_db";
-        return new NpgsqlConnection(connection_string);
+        var host = Environment.GetEnvironmentVariable("WRITE_DB_HOST");
+        var port = Environment.GetEnvironmentVariable("WRITE_DB_PORT");
+        var username = Environment.GetEnvironmentVariable("WRITE_DB_USERNAME");
+        var password = Environment.GetEnvironmentVariable("WRITE_DB_PASSWORD");
+        var dbName = Environment.GetEnvironmentVariable("WRITE_DB_DBNAME");
+
+        var connectionString = $"Host={host}; Port={port}; Username={username};Password={password}; Database={dbName};";
+
+        return new NpgsqlConnection(connectionString);
     }
 
-    public static IDbConnection GetReadConnection(IConfiguration configuration)
+    public static IDbConnection GetReadConnection()
     {
-        // TODO: Get the user and password from the env on the whole string from other place
-        // var username = configuration["read_db_username"];
-        // var password = configuration["read_db_password"];
-        // var connection_string = $"Host=localhost; Username={username};" +
-        //                         $"Password={password}; Database=read_todos_csharp";
-        var connection_string =
-            "Host=localhost; Port=5433; Username=read_user; Password=read_password; Database=read_db";
-        return new NpgsqlConnection(connection_string);
+        var host = Environment.GetEnvironmentVariable("READ_DB_HOST");
+        var port = Environment.GetEnvironmentVariable("READ_DB_PORT");
+        var username = Environment.GetEnvironmentVariable("READ_DB_USERNAME");
+        var password = Environment.GetEnvironmentVariable("READ_DB_PASSWORD");
+        var dbName = Environment.GetEnvironmentVariable("READ_DB_DBNAME");
+
+        var connectionString = $"Host={host}; Port={port}; Username={username};Password={password}; Database={dbName};";
+
+        return new NpgsqlConnection(connectionString);
     }
 
     public static void OpenConnection(IDbConnection? connection)

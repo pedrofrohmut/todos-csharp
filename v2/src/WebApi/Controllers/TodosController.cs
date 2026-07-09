@@ -28,8 +28,8 @@ public class TodosController : ControllerBase
     [HttpPost("")]
     public async Task CreateTodo([FromBody] CreateTodoBody body)
     {
-        var writeConnection = DbConnectionManager.GetWriteConnection(this.configuration);
-        var readConnection = DbConnectionManager.GetReadConnection(this.configuration);
+        var writeConnection = DbConnectionManager.GetWriteConnection();
+        var readConnection = DbConnectionManager.GetReadConnection();
 
         try {
             var useCase = UseCasesFactory.GetCreateTodoUseCase(writeConnection, readConnection);
@@ -74,8 +74,8 @@ public class TodosController : ControllerBase
     [HttpDelete("{todoId}")]
     public async Task DeleteTodo(int todoId)
     {
-        var writeConnection = DbConnectionManager.GetWriteConnection(this.configuration);
-        var readConnection = DbConnectionManager.GetReadConnection(this.configuration);
+        var writeConnection = DbConnectionManager.GetWriteConnection();
+        var readConnection = DbConnectionManager.GetReadConnection();
 
         try {
             var useCase = UseCasesFactory.GetDeleteTodoUseCase(writeConnection, readConnection);
@@ -118,7 +118,7 @@ public class TodosController : ControllerBase
     [HttpGet("{todoId}")]
     public async Task FindTodoById(int todoId)
     {
-        var writeConnection = DbConnectionManager.GetWriteConnection(this.configuration);
+        var writeConnection = DbConnectionManager.GetWriteConnection();
 
         try {
             var useCase = UseCasesFactory.GetFindTodoByIdUseCase(writeConnection);
@@ -166,7 +166,7 @@ public class TodosController : ControllerBase
     [HttpGet("")]
     public async Task FindAllTodos()
     {
-        var writeConnection = DbConnectionManager.GetWriteConnection(this.configuration);
+        var writeConnection = DbConnectionManager.GetWriteConnection();
 
         try {
             var useCase = UseCasesFactory.GetFindAllTodosUseCase(writeConnection);
@@ -201,8 +201,8 @@ public class TodosController : ControllerBase
     [HttpPut("{todoId}")]
     public async Task UpdateTodo(int todoId, [FromBody] UpdateTodoBody body)
     {
-        var writeConnection = DbConnectionManager.GetWriteConnection(this.configuration);
-        var readConnection = DbConnectionManager.GetReadConnection(this.configuration);
+        var writeConnection = DbConnectionManager.GetWriteConnection();
+        var readConnection = DbConnectionManager.GetReadConnection();
 
         try {
             var useCase = UseCasesFactory.GetUpdateTodoUseCase(writeConnection, readConnection);

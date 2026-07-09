@@ -186,7 +186,6 @@ public static class UserEntity
         }
     }
 
-    // TODO: Refactor UseCases to not used it anymore
     [Obsolete("GetUserFromToken is deprecated. Use GetAuthToken instead. You can also validate the token with ValidateAuthToken.")]
     public static async Task<Result<UserDb>> GetUserFromToken(string? token,
                                                               IAuthTokenService authTokenService,

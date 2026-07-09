@@ -3,7 +3,7 @@ using Todos.Core.Errors;
 namespace Todos.Core.Utils;
 
 /*
-    TODO: Add Exception property to the result so you can wrap exceptions with result
+    MAYBE: Add Exception property to the result so you can wrap exceptions with result
     also. This way you will only have try/catch in the lowest levels, in the high level
     you can just check for Result.Exception.
 

@@ -54,7 +54,7 @@ public class VerifyAuthTokenUseCase
 
         // Check user exists by id
         var query = new UserFindByIdQuery { Id = authToken.UserId };
-        Result checkResult = await UserEntity.CheckUserExists(query, userQueryHandler);
+        Result checkResult = await UserEntity.CheckUserExists(query, this.userQueryHandler);
         if (!checkResult.IsSuccess) {
             return ErrorCast(checkResult);
         }

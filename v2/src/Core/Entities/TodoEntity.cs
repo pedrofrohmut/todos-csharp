@@ -107,4 +107,16 @@ public class TodoEntity
         return Result.Fail(new TodoOwnershipError());
     }
 
+    public static async Task<Result> CheckTodoExists(TodoFindByIdQuery query, ITodoQueryHandler todoQueryHandler)
+    {
+        try {
+            TodoDb? todoDb = await todoQueryHandler.FindTodoById(query);
+            if (todoDb == null) {
+                return Result.Fail(new TodoNotFoundError("Todo not found by id"));
+            }
+            return Result.Ok();
+        } catch (Exception e) {
+            return Result.Fail("Todo:" + nameof(CheckTodoExists), "Error to check if todo exists: " + e.Message);
+        }
+    }
 }

@@ -28,4 +28,10 @@ public class ControllerUtils
         }
         return request.Headers.Authorization.ToString().Split(" ")[1];
     }
+
+    public static async Task SetResponse(HttpContext httpContext, int statusCode, string message)
+    {
+        httpContext.Response.StatusCode = statusCode;
+        await httpContext.Response.WriteAsync(message);
+    }
 }

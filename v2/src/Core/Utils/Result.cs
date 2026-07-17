@@ -2,62 +2,111 @@ using Todos.Core.Errors;
 
 namespace Todos.Core.Utils;
 
+internal class NoErrorOnSuccessException : Exception
+{
+    internal NoErrorOnSuccessException():
+        base("Result won't have a ResultError object in case of success.") {}
+}
+
+internal class NoPayloadOnFailureException : Exception
+{
+    internal NoPayloadOnFailureException():
+        base("Result won't have a Payload object in case of failure.") {}
+}
+
 public class Result
 {
-    public bool IsSuccess { get; set; }
-    public ResultError? Error { get; set; }
+    private readonly bool isSuccess;
+    private readonly ResultError? error;
 
-    private Result() {}
+    public bool IsSuccess { get => this.isSuccess; }
+
+    public ResultError Error
+    {
+        get {
+            if (!IsSuccess || this.error is null) {
+                throw new NoErrorOnSuccessException();
+            }
+            return this.error;
+        }
+    }
+
+    private Result(bool isSuccess, ResultError? error)
+    {
+        this.isSuccess = isSuccess;
+        this.error = error;
+    }
 
     public static Result Ok()
     {
-        return new Result { IsSuccess = true, Error = null };
+        return new Result(isSuccess: true, error: null);
     }
 
     public static Result Fail(ResultError? error)
     {
-        if (error == null) {
-            throw new ArgumentNullException();
-        }
-        return new Result { IsSuccess = false, Error = error };
+        return new Result(isSuccess: false, error: error);
     }
 
     public static Result Fail(string code, string message)
     {
         var error = new ResultError(code, message);
-        return new Result { IsSuccess = false, Error = error };
+        return new Result(isSuccess: false, error: error);
     }
 }
 
 public class Result<T>
 {
-    public bool IsSuccess { get; set; }
-    public ResultError? Error { get; set; }
-    public T? Payload { get; set; }
+    private readonly bool isSuccess;
+    private readonly ResultError? error;
+    private readonly T? payload;
 
-    private Result() {}
+    public bool IsSuccess { get => this.isSuccess; }
+
+    public ResultError Error
+    {
+        get {
+            if (IsSuccess || this.error is null) {
+                throw new NoErrorOnSuccessException();
+            }
+            return this.error;
+        }
+    }
+
+    public T Payload
+    {
+        get {
+            if (!IsSuccess || this.payload is null) {
+                throw new NoPayloadOnFailureException();
+            }
+            return this.payload;
+        }
+    }
+
+    private Result(bool isSuccess, ResultError? error, T? payload)
+    {
+        this.isSuccess = isSuccess;
+        this.error = error;
+        this.payload = payload;
+    }
 
     public static Result<T> Ok()
     {
-        return new Result<T> { IsSuccess = true, Error = null, Payload = default };
+        return new Result<T>(isSuccess: true, error: null, payload: default);
     }
 
     public static Result<T> Ok(T payload)
     {
-        return new Result<T> { IsSuccess = true, Error = null, Payload = payload };
+        return new Result<T>(isSuccess: true, error: null, payload: payload);
     }
 
-    public static Result<T> Fail(ResultError? error)
+    public static Result<T> Fail(ResultError error)
     {
-        if (error == null) {
-            throw new ArgumentNullException();
-        }
-        return new Result<T> { IsSuccess = false, Error = error, Payload = default };
+        return new Result<T>(isSuccess: false, error: error, payload: default);
     }
 
     public static Result<T> Fail(string code, string message)
     {
         var error = new ResultError(code, message);
-        return new Result<T> { IsSuccess = false, Error = error, Payload = default };
+        return new Result<T>(isSuccess: false, error: error, payload: default);
     }
 }

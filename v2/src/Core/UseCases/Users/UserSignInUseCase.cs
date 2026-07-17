@@ -80,7 +80,7 @@ public class UserSignInUseCase
         if (!tokenResult.IsSuccess) {
             return ErrorCast(tokenResult);
         }
-        string token = tokenResult.Payload!;
+        string token = tokenResult.Payload;
 
         var output = new UserSignInOutput {
             Id = userDb.Id,

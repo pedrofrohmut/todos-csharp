@@ -76,7 +76,7 @@ public class FindAllTodosUseCase
         if (!findResult.IsSuccess) {
             return ErrorCast(findResult);
         }
-        IEnumerable<TodoDb> todos = findResult.Payload!;
+        IEnumerable<TodoDb> todos = findResult.Payload;
 
         // Return the valid output
         var output = new FindAllTodosOutput {

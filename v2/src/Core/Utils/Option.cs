@@ -35,7 +35,19 @@ public readonly struct Option<T>
         this.hasVal = hasVal;
     }
 
-    // TODO: add instance methods: HasSome, HasNone, Value
+    public bool HasSome { get => this.hasVal; }
+
+    public bool HasNone { get => !this.hasVal; }
+
+    public T Value
+    {
+        get {
+            if (!this.hasVal) {
+                throw new OptionalHasNoValueException();
+            }
+            return this.val;
+        }
+    }
 
     public static Option<T> Some(T val)
     {
@@ -56,4 +68,10 @@ public static class Option
     public static Option<T> None<T>() => Option<T>.None();
 
     public static Option<T> Some<T>(T val) => Option<T>.Some(val);
+}
+
+public class OptionalHasNoValueException : Exception
+{
+    public OptionalHasNoValueException() : base("Trying to access the value of an Optional that has no value.") {}
+    public OptionalHasNoValueException(string message) : base(message) {}
 }

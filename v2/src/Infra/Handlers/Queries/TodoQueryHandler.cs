@@ -36,7 +36,6 @@ public class TodoQueryHandler : ITodoQueryHandler
             "FROM todos",
             "WHERE user_id = @UserId",
         });
-        var todos = await this.connection.QueryAsync<TodoDb>(sql, new { UserId = query.UserId });
-        return todos.ToList();
+        return await this.connection.QueryAsync<TodoDb>(sql, new { UserId = query.UserId });
     }
 }

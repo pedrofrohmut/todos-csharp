@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Todos.Infra;
 using Todos.Core.UseCases.Items;
 using Todos.Core.Errors;
+using System.Text.Json;
+using Todos.Core.Utils;
 
 namespace Todos.WebApi.Controllers;
 
@@ -14,6 +16,7 @@ public record CreateItemBody(
 [Route("api/v2/items")]
 public class ItemsController : ControllerBase
 {
+    // TODO: Check if this endpoint is working
     [HttpPost("")]
     public async Task CreateItem([FromBody] CreateItemBody body)
     {
@@ -32,21 +35,21 @@ public class ItemsController : ControllerBase
             var result = await useCase.Execute(input);
 
             if (result.IsSuccess) {
-                await ControllerUtils.SetResponse(HttpContext, 201, "Create Item: Item created successfully.");
+                await ControllerUtils.SetResponseText(HttpContext, 201, "Create Item: Item created successfully.");
                 return;
             }
 
             if (result.Error is InvalidItemError) {
-                await ControllerUtils.SetResponse(HttpContext, 400, result.Error.Message);
+                await ControllerUtils.SetResponseText(HttpContext, 400, result.Error.Message);
                 return;
             }
 
             if (result.Error is InvalidTokenError) {
-                await ControllerUtils.SetResponse(HttpContext, 401, result.Error.Message);
+                await ControllerUtils.SetResponseText(HttpContext, 401, result.Error.Message);
                 return;
             }
 
-            await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
+            await ControllerUtils.WriteErrorNotMappedResponse(HttpContext, result.Error);
         } catch (Exception e) {
             await ControllerUtils.WriteExceptionResponse(nameof(CreateItem), HttpContext, e);
             return;
@@ -57,12 +60,46 @@ public class ItemsController : ControllerBase
     }
 
     [HttpGet("todo/{todoId}")]
-    public async Task FindAllItemsByTodoId(int todoId)
+    public async Task FindAllItemsByTodoId([FromRoute] int todoId)
     {
+        var readConnection = DbConnectionManager.GetReadConnection();
+
+        try {
+            var useCase = UseCasesFactory.GetFindAllItemsByTodoIdUseCase(readConnection);
+            var authToken = ControllerUtils.GetAuthToken(HttpContext.Request);
+            var input = new FindAllItemsByTodoIdInput {
+                TodoId = todoId,
+                AuthToken = authToken,
+            };
+
+            var result = await useCase.Execute(input);
+
+            if (result.IsSuccess) {
+                await ControllerUtils.SetResponseJson(HttpContext, 200, result.Payload);
+                return;
+            }
+
+            if (result.Error is InvalidItemError or TodoNotFoundError) {
+                await ControllerUtils.SetResponseText(HttpContext, 400, result.Error.Message);
+                return;
+            }
+
+            if (result.Error is InvalidTokenError or TodoOwnershipError) {
+                await ControllerUtils.SetResponseText(HttpContext, 401, result.Error.Message);
+                return;
+            }
+
+            await ControllerUtils.WriteErrorNotMappedResponse(HttpContext, result.Error);
+        } catch (Exception e) {
+            await ControllerUtils.WriteExceptionResponse(nameof(FindAllItemsByTodoId), HttpContext, e);
+            return;
+        } finally {
+            DbConnectionManager.CloseConnection(readConnection);
+        }
     }
 
     [HttpGet("{itemId}")]
-    public async Task FindItemById(int itemId)
+    public async Task FindItemById([FromRoute] int itemId)
     {
     }
 

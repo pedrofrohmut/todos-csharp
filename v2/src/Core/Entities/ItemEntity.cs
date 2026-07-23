@@ -2,6 +2,9 @@ using Todos.Core.Utils;
 using Todos.Core.Errors;
 using Todos.Core.Commands;
 using Todos.Core.Commands.Handlers;
+using Todos.Core.Db;
+using Todos.Core.Queries;
+using Todos.Core.Queries.Handlers;
 
 namespace Todos.Core.Entities;
 
@@ -50,6 +53,17 @@ public class ItemEntity
             return Result.Ok();
         } catch (Exception e) {
             return Result.Fail("Item:" + nameof(CreateItem), "Error to create item: " + e.Message);
+        }
+    }
+
+    public static async Task<Result<IEnumerable<ItemDb>>> FindAllItemsByTodoId(
+            ItemFindAllByTodoIdQuery query, IItemQueryHandler queryHandler)
+    {
+        try {
+            IEnumerable<ItemDb> items = await queryHandler.FindAllItemByTodoId(query);
+            return Result<IEnumerable<ItemDb>>.Ok(items);
+        } catch (Exception e) {
+            return Result<IEnumerable<ItemDb>>.Fail("Item:" + nameof(FindAllItemsByTodoId), "Error to find all items by todos id: " + e.Message);
         }
     }
 }

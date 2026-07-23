@@ -5,7 +5,6 @@ using Todos.Infra.Handlers.Commands;
 using Todos.Infra.Handlers.Queries;
 using Todos.Infra.Services;
 using System.Data;
-using System.Text;
 
 namespace Todos.Infra;
 
@@ -96,5 +95,14 @@ public static class UseCasesFactory
         var todoQueryHandler = new TodoQueryHandler(readConnection);
         var itemCommandHandler = new ItemCommandHandler(writeConnection, readConnection);
         return new CreateItemUseCase(authTokenService, userQueryHandler, todoQueryHandler, itemCommandHandler);
+    }
+
+    public static FindAllItemsByTodoIdUseCase GetFindAllItemsByTodoIdUseCase(IDbConnection readConnection)
+    {
+        var authTokenService = new AuthTokenService(secretKey);
+        var userQueryHandler = new UserQueryHandler(readConnection);
+        var todoQueryHandler = new TodoQueryHandler(readConnection);
+        var itemQueryHandler = new ItemQueryHandler(readConnection);
+        return new FindAllItemsByTodoIdUseCase(authTokenService, userQueryHandler, todoQueryHandler, itemQueryHandler);
     }
 }

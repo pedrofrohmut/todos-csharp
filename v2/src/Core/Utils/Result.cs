@@ -17,24 +17,24 @@ internal class NoPayloadOnFailureException : Exception
 public class Result
 {
     private readonly bool isSuccess;
-    private readonly ResultError? error;
+    private readonly Option<ResultError> error;
 
     public bool IsSuccess { get => this.isSuccess; }
 
     public ResultError Error
     {
         get {
-            if (!IsSuccess || this.error is null) {
+            if (!IsSuccess || this.error.HasNone) {
                 throw new NoErrorOnSuccessException();
             }
-            return this.error;
+            return error.Value;
         }
     }
 
     private Result(bool isSuccess, ResultError? error)
     {
         this.isSuccess = isSuccess;
-        this.error = error;
+        this.error = Option.New(error);
     }
 
     public static Result Ok()

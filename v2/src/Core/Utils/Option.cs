@@ -24,7 +24,7 @@ namespace Todos.Core.Utils;
    var baz2 = None<int>();
    var bux2 = Some(0);
 */
-public readonly struct Option<T>
+public readonly struct Option<T> where T : notnull
 {
     private readonly T val;
     private readonly bool hasVal;
@@ -51,6 +51,9 @@ public readonly struct Option<T>
 
     public static Option<T> Some(T val)
     {
+        if (val == null) {
+            throw new OptionalSomeNullArgumentException();
+        }
         return new Option<T>(val: val, hasVal: true);
     }
 
@@ -65,9 +68,29 @@ public readonly struct Option<T>
 */
 public static class Option
 {
-    public static Option<T> None<T>() => Option<T>.None();
+    // Creates an option with no value
+    public static Option<T> None<T>() where T : notnull
+    {
+        return Option<T>.None();
+    }
 
-    public static Option<T> Some<T>(T val) => Option<T>.Some(val);
+    // Creates an option with a value
+    public static Option<T> Some<T>(T val) where T : notnull
+    {
+        return Option<T>.Some(val);
+    }
+
+    // Creates a option for a optional value
+    public static Option<T> New<T>(T? val) where T : notnull
+    {
+        return val != null ? Some(val) : None<T>();
+    }
+}
+
+public class OptionalSomeNullArgumentException : Exception
+{
+    public OptionalSomeNullArgumentException() : base("Some cannot be called with a null argument.") {}
+    public OptionalSomeNullArgumentException(string message) : base(message) {}
 }
 
 public class OptionalHasNoValueException : Exception

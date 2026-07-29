@@ -16,10 +16,7 @@ public readonly struct UserSignUpInput
     public string Password { get; init; }
 }
 
-public readonly struct UserSignUpOutput
-{
-    public UserSignUpErrors? ErrorCode { get; init; }
-}
+public readonly struct UserSignUpOutput {}
 
 public enum UserSignUpErrors
 {
@@ -43,14 +40,16 @@ public class UserSignUpUseCase
         this.passwordService = passwordService;
     }
 
-    private Result<UserSignUpOutput> ErrorCast<T>(Result<T> result)
+    private Result<UserSignUpOutput> ErrorCast(Enum errorEnum, Result result)
     {
-        return Result<UserSignUpOutput>.Fail(result.Error);
+        var resultError = new ResultError(errorEnum, result.Error.Message);
+        return Result<UserSignUpOutput>.Fail(resultError);
     }
 
-    private Result<UserSignUpOutput> ErrorCast(Result result)
+    private Result<UserSignUpOutput> ErrorCast<T>(Enum errorEnum, Result<T> result)
     {
-        return Result<UserSignUpOutput>.Fail(result.Error);
+        var resultError = new ResultError(errorEnum, result.Error.Message);
+        return Result<UserSignUpOutput>.Fail(resultError);
     }
 
     public async Task<Result<UserSignUpOutput>> Execute(UserSignUpInput input)
@@ -59,29 +58,28 @@ public class UserSignUpUseCase
         Result validationResult;
         validationResult = UserEntity.ValidateName(input.Name);
         if (!validationResult.IsSuccess) {
-            var resultError = new ResultError(UserSignUpErrors.InvalidUser, validationResult.Error.Message);
-            return Result<UserSignUpOutput>.Fail(resultError);
+            return ErrorCast(UserSignUpErrors.InvalidUser, validationResult);
         }
         validationResult = UserEntity.ValidateEmail(input.Email);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(validationResult);
+            return ErrorCast(UserSignUpErrors.InvalidUser, validationResult);
         }
         validationResult = UserEntity.ValidatePassword(input.Password);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(validationResult);
+            return ErrorCast(UserSignUpErrors.InvalidUser, validationResult);
         }
 
         // Checks if e-mail is available
         var query = new UserFindByEmailQuery { Email = input.Email };
         Result checkResult = await UserEntity.CheckEmailIsAvailable(query, this.userQueryHandler);
         if (!checkResult.IsSuccess) {
-            return ErrorCast(checkResult);
+            return ErrorCast(UserSignUpErrors.EmailAlreadyTaken, checkResult);
         }
 
         // Generate password hash
         Result<string> resultHash = UserEntity.HashPassword(input.Password, this.passwordService);
         if (!resultHash.IsSuccess) {
-            return ErrorCast(resultHash);
+            return ErrorCast(UserSignUpErrors.Unexpected, resultHash);
         }
 
         // Create User
@@ -92,7 +90,7 @@ public class UserSignUpUseCase
         };
         Result createResult = await UserEntity.CreateUser(command, this.userCommandHandler);
         if (!createResult.IsSuccess) {
-            return ErrorCast(createResult);
+            return ErrorCast(UserSignUpErrors.Unexpected, createResult);
         }
 
         return Result<UserSignUpOutput>.Ok(new UserSignUpOutput {});

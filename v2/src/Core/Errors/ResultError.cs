@@ -1,6 +1,8 @@
 namespace Todos.Core.Errors;
 
 // TODO: Make the Enum not optional. And fix all the compiler errors
+// Maybe String Code is no longer needed. Can be only the enum + message
+
 public class ResultError
 {
     public string Code { get; init; }

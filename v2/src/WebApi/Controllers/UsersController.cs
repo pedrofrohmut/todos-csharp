@@ -64,6 +64,48 @@ public class UsersController : ControllerBase
         }
     }
 
+    [HttpPost("signup2")]
+    public async Task SignUp2([FromBody] SignUpBody body)
+    {
+        var writeConnection = DbConnectionManager.GetWriteConnection();
+        var readConnection = DbConnectionManager.GetReadConnection();
+
+        try {
+            var useCase = UseCasesFactory.GetUserSignUpUseCase(writeConnection, readConnection);
+            var input = new UserSignUpInput {
+                Name = body.Name,
+                Email = body.Email,
+                Password = body.Password,
+            };
+
+            var result = await useCase.Execute(input);
+
+            if (result.IsSuccess) {
+                HttpContext.Response.StatusCode = 201;
+                await HttpContext.Response.WriteAsync("Sign Up: User created successfully.");
+                return;
+            }
+
+            int statusCode = result.Error.EnumCode switch {
+                UserSignUpErrors.InvalidUser => 400,
+                UserSignUpErrors.EmailAlreadyTaken => 400,
+                UserSignUpErrors.Unexpected => 500,
+
+                // TODO: This line is crap. Make better decision for not mapped
+                _ => throw new NotImplementedException()
+            };
+
+            HttpContext.Response.StatusCode = statusCode;
+            await HttpContext.Response.WriteAsync(result.Error.Message);
+        } catch (Exception e) {
+            await ControllerUtils.WriteExceptionResponse(nameof(SignUp), HttpContext, e);
+            return;
+        } finally {
+            DbConnectionManager.CloseConnection(writeConnection);
+            DbConnectionManager.CloseConnection(readConnection);
+        }
+    }
+
     [HttpPost("signin")]
     public async Task SignIn([FromBody] SignInBody body)
     {

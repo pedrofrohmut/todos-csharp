@@ -5,6 +5,7 @@ using Todos.Core.Commands;
 using Todos.Core.Queries.Handlers;
 using Todos.Core.Commands.Handlers;
 using Todos.Core.Queries;
+using Todos.Core.Errors;
 
 namespace Todos.Core.UseCases.Users;
 
@@ -15,7 +16,17 @@ public readonly struct UserSignUpInput
     public string Password { get; init; }
 }
 
-public readonly struct UserSignUpOutput {}
+public readonly struct UserSignUpOutput
+{
+    public UserSignUpErrors? ErrorCode { get; init; }
+}
+
+public enum UserSignUpErrors
+{
+    InvalidUser,
+    EmailAlreadyTaken,
+    Unexpected,
+}
 
 public class UserSignUpUseCase
 {
@@ -48,7 +59,8 @@ public class UserSignUpUseCase
         Result validationResult;
         validationResult = UserEntity.ValidateName(input.Name);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(validationResult);
+            var resultError = new ResultError(UserSignUpErrors.InvalidUser, validationResult.Error.Message);
+            return Result<UserSignUpOutput>.Fail(resultError);
         }
         validationResult = UserEntity.ValidateEmail(input.Email);
         if (!validationResult.IsSuccess) {

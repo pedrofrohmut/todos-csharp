@@ -24,7 +24,7 @@ public class Result
     public ResultError Error
     {
         get {
-            if (!IsSuccess || this.error.HasNone) {
+            if (this.isSuccess || this.error.HasNone) {
                 throw new NoErrorOnSuccessException();
             }
             return error.Value;
@@ -54,6 +54,7 @@ public class Result
     }
 }
 
+// TODO: Use Option in the Result<T> also.
 public class Result<T>
 {
     private readonly bool isSuccess;
@@ -65,7 +66,7 @@ public class Result<T>
     public ResultError Error
     {
         get {
-            if (IsSuccess || this.error is null) {
+            if (this.isSuccess || this.error is null) {
                 throw new NoErrorOnSuccessException();
             }
             return this.error;
@@ -75,7 +76,7 @@ public class Result<T>
     public T Payload
     {
         get {
-            if (!IsSuccess || this.payload is null) {
+            if (!this.isSuccess || this.payload is null) {
                 throw new NoPayloadOnFailureException();
             }
             return this.payload;

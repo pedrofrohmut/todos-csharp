@@ -47,7 +47,7 @@ public class Result
         return new Result(isSuccess: false, error: error);
     }
 
-    public static Result Fail(string code, string message)
+    public static Result Fail(Enum code, string message)
     {
         var error = new ResultError(code, message);
         return new Result(isSuccess: false, error: error);
@@ -105,7 +105,7 @@ public class Result<T>
         return new Result<T>(isSuccess: false, error: error, payload: default);
     }
 
-    public static Result<T> Fail(string code, string message)
+    public static Result<T> Fail(Enum code, string message)
     {
         var error = new ResultError(code, message);
         return new Result<T>(isSuccess: false, error: error, payload: default);

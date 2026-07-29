@@ -52,7 +52,8 @@ public class TodoEntity
             await handler.CreateTodo(command);
             return Result.Ok();
         } catch (Exception e) {
-            return Result.Fail("Todo:" + nameof(CreateTodo), "Error to create todo: " + e.Message);
+            return Result.Fail(GlobalErrors.Unknown,
+                "Todo:" + nameof(CreateTodo) + ":Error to create todo: " + e.Message);
         }
     }
 
@@ -62,7 +63,8 @@ public class TodoEntity
             await handler.UpdateTodo(command);
             return Result.Ok();
         } catch (Exception e) {
-            return Result.Fail("Todo:" + nameof(UpdateTodo), "Error to update todo: " + e.Message);
+            return Result.Fail(GlobalErrors.Unknown,
+                "Todo:" + nameof(UpdateTodo) + ":Error to update todo: " + e.Message);
         }
     }
 
@@ -75,7 +77,8 @@ public class TodoEntity
             }
             return Result<TodoDb>.Ok(todo.Value);
         } catch (Exception e) {
-            return Result<TodoDb>.Fail("Todo:" + nameof(FindTodoById), "Error to find todo by id: " + e.Message);
+            return Result<TodoDb>.Fail(GlobalErrors.Unknown,
+                "Todo:" + nameof(FindTodoById) + ":Error to find todo by id: " + e.Message);
         }
     }
 
@@ -85,7 +88,8 @@ public class TodoEntity
             IEnumerable<TodoDb> todos = await handler.FindAllTodos(query);
             return Result<IEnumerable<TodoDb>>.Ok(todos);
         } catch (Exception e) {
-            return Result<IEnumerable<TodoDb>>.Fail("Todo:" + nameof(FindAllTodos), "Error to find all todos: " + e.Message);
+            return Result<IEnumerable<TodoDb>>.Fail(GlobalErrors.Unknown,
+                "Todo:" + nameof(FindAllTodos) + ":Error to find all todos: " + e.Message);
         }
     }
 
@@ -95,7 +99,8 @@ public class TodoEntity
             await handler.DeleteTodo(command);
             return Result.Ok();
         } catch (Exception e) {
-            return Result.Fail("Todo:" + nameof(DeleteTodo), "Error to delete todo: " + e.Message);
+            return Result.Fail(GlobalErrors.Unknown,
+                "Todo:" + nameof(DeleteTodo) + ":Error to delete todo: " + e.Message);
         }
     }
 
@@ -116,7 +121,8 @@ public class TodoEntity
             }
             return Result.Ok();
         } catch (Exception e) {
-            return Result.Fail("Todo:" + nameof(CheckTodoExists), "Error to check if todo exists: " + e.Message);
+            return Result.Fail(GlobalErrors.Unknown,
+                "Todo:" + nameof(CheckTodoExists) + ":Error to check if todo exists: " + e.Message);
         }
     }
 }

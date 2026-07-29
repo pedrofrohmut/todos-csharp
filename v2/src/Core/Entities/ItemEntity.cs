@@ -52,7 +52,8 @@ public class ItemEntity
             await handler.CreateItem(command);
             return Result.Ok();
         } catch (Exception e) {
-            return Result.Fail("Item:" + nameof(CreateItem), "Error to create item: " + e.Message);
+            return Result.Fail(GlobalErrors.Unknown,
+                "Item:" + nameof(CreateItem) + ":Error to create item: " + e.Message);
         }
     }
 
@@ -63,7 +64,8 @@ public class ItemEntity
             IEnumerable<ItemDb> items = await queryHandler.FindAllItemByTodoId(query);
             return Result<IEnumerable<ItemDb>>.Ok(items);
         } catch (Exception e) {
-            return Result<IEnumerable<ItemDb>>.Fail("Item:" + nameof(FindAllItemsByTodoId), "Error to find all items by todos id: " + e.Message);
+            return Result<IEnumerable<ItemDb>>.Fail(GlobalErrors.Unknown,
+                "Item:" + nameof(FindAllItemsByTodoId) + ":Error to find all items by todos id: " + e.Message);
         }
     }
 }

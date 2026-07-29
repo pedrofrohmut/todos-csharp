@@ -1,38 +1,45 @@
 namespace Todos.Core.Errors;
 
-// TODO: Change code (string) to an UserErrors (enum)
+public enum UserErrors
+{
+    Invalid,
+    EmailAlreadyTaken,
+    NotFound,
+    PasswordMismatch,
+    InvalidToken,
+}
 
 public class InvalidUserError : ResultError
 {
-    const string code = "User:InvalidUser";
+    private readonly static Enum code = UserErrors.Invalid;
     public InvalidUserError() : base(code, "User is invalid") {}
     public InvalidUserError(string message) : base(code, message) {}
 }
 
 public class EmailAlreadyTakenError : ResultError
 {
-    const string code = "User:EmailAlreadyTakenError";
+    private readonly static Enum code = UserErrors.EmailAlreadyTaken;
     public EmailAlreadyTakenError() : base(code, "User e-mail is already taken and must be unique") {}
     public EmailAlreadyTakenError(string message) : base(code, message) {}
 }
 
 public class UserNotFoundError : ResultError
 {
-    const string code = "User:NotFound";
+    private readonly static Enum code = UserErrors.NotFound;
     public UserNotFoundError() : base(code, "User not found") {}
     public UserNotFoundError(string message) : base(code, message) {}
 }
 
-public class PasswordMatchError : ResultError
+public class PasswordMismatchError : ResultError
 {
-    const string code = "User:PasswordMatch";
-    public PasswordMatchError() : base(code, "User password and password hash do not match") {}
-    public PasswordMatchError(string message) : base(code, message) {}
+    private readonly static Enum code = UserErrors.PasswordMismatch;
+    public PasswordMismatchError() : base(code, "User password and password hash do not match") {}
+    public PasswordMismatchError(string message) : base(code, message) {}
 }
 
 public class InvalidTokenError : ResultError
 {
-    const string code = "User:InvalidToken";
+    private readonly static Enum code = UserErrors.InvalidToken;
     public InvalidTokenError() : base(code, "Authentication token is not valid") {}
     public InvalidTokenError(string message) : base(code, message) {}
 }

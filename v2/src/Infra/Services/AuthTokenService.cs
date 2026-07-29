@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Todos.Core.Services;
 using Todos.Core.Utils;
+using Todos.Core.Errors;
 
 namespace Todos.Infra.Services;
 
@@ -22,8 +23,8 @@ public class AuthTokenService : IAuthTokenService
 
     public Result<AuthToken> Decode(string token)
     {
-        var failedResult = Result<AuthToken>.Fail(
-            "AuthTokenService:" + nameof(Decode), "Token verification failed. The token is invalid.");
+        var failedResult = Result<AuthToken>.Fail(GlobalErrors.Unknown,
+            "AuthTokenService:" + nameof(Decode) + ":Token verification failed. The token is invalid.");
 
         var verified = Jose.JWT.Verify(token, secretKey, "HS256");
         if (String.IsNullOrWhiteSpace(verified)) {

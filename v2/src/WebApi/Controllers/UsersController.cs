@@ -86,7 +86,7 @@ public class UsersController : ControllerBase
                 return;
             }
 
-            int statusCode = result.Error.EnumCode switch {
+            int statusCode = result.Error.Code switch {
                 UserSignUpErrors.InvalidUser => 400,
                 UserSignUpErrors.EmailAlreadyTaken => 400,
                 UserSignUpErrors.Unexpected => 500,
@@ -129,7 +129,7 @@ public class UsersController : ControllerBase
                 return;
             }
 
-            if (result.Error is InvalidUserError || result.Error is PasswordMatchError) {
+            if (result.Error is InvalidUserError || result.Error is PasswordMismatchError) {
                 HttpContext.Response.StatusCode = 400;
                 await HttpContext.Response.WriteAsync(result.Error.Message);
                 return;

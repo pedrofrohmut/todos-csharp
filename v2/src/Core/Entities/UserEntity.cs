@@ -98,7 +98,8 @@ public static class UserEntity
             }
             return Result.Ok();
         } catch (Exception e) {
-            return Result.Fail("User:" + nameof(CheckEmailIsAvailable), "Failed to find user by e-mail: " + e.Message);
+            return Result.Fail(GlobalErrors.Unknown,
+                "User:" + nameof(CheckEmailIsAvailable) + ":Failed to find user by e-mail: " + e.Message);
         }
     }
 
@@ -111,7 +112,8 @@ public static class UserEntity
             }
             return Result<string>.Ok(hash);
         } catch (Exception e) {
-            return Result<string>.Fail("User:" + nameof(HashPassword), "Error to create a password hash: " + e.Message);
+            return Result<string>.Fail(GlobalErrors.Unknown,
+                "User:" + nameof(HashPassword) + ":Error to create a password hash: " + e.Message);
         }
     }
 
@@ -121,7 +123,8 @@ public static class UserEntity
             await handler.CreateUser(command);
             return Result.Ok();
         } catch (Exception e) {
-            return Result.Fail("User:" + nameof(CreateUser), "Error to create user: " + e.Message);
+            return Result.Fail(GlobalErrors.Unknown,
+                "User:" + nameof(CreateUser) + ":Error to create user: " + e.Message);
         }
     }
 
@@ -134,7 +137,8 @@ public static class UserEntity
             }
             return Result<UserDb>.Ok(user.Value);
         } catch (Exception e) {
-            return Result<UserDb>.Fail("User:" + nameof(FindUserById), "Error to find user by id: " + e.Message);
+            return Result<UserDb>.Fail(GlobalErrors.Unknown,
+                "User:" + nameof(FindUserById) + ":Error to find user by id: " + e.Message);
         }
     }
 
@@ -147,7 +151,8 @@ public static class UserEntity
             }
             return Result<UserDb>.Ok(user.Value);
         } catch (Exception e) {
-            return Result<UserDb>.Fail("User:" + nameof(FindUserByEmail), "Error to find user by email: " + e.Message);
+            return Result<UserDb>.Fail(GlobalErrors.Unknown,
+                "User:" + nameof(FindUserByEmail) + ":Error to find user by email: " + e.Message);
         }
     }
 
@@ -156,11 +161,12 @@ public static class UserEntity
         try {
             bool isMatch = passwordService.CheckPassword(password, hash);
             if (!isMatch) {
-                return Result.Fail(new PasswordMatchError());
+                return Result.Fail(new PasswordMismatchError());
             }
             return Result.Ok();
         } catch (Exception e) {
-            return Result.Fail("User:" + nameof(MatchPasswordAndHash), "Error to match password: " + e.Message);
+            return Result.Fail(GlobalErrors.Unknown,
+                "User:" + nameof(MatchPasswordAndHash) + ":Error to match password: " + e.Message);
         }
     }
 
@@ -169,7 +175,8 @@ public static class UserEntity
         try {
             return authTokenService.GenerateJWT(userId);
         } catch (Exception e) {
-            return Result<string>.Fail("User:" + nameof(GenerateAuthToken), "Error to generate auth token: " + e.Message);
+            return Result<string>.Fail(GlobalErrors.Unknown,
+                "User:" + nameof(GenerateAuthToken) + ":Error to generate auth token: " + e.Message);
         }
     }
 
@@ -182,7 +189,8 @@ public static class UserEntity
             }
             return Result.Ok();
         } catch (Exception e) {
-            return Result.Fail("User:" + nameof(CheckUserExists), "Error to check if user exists: " + e.Message);
+            return Result.Fail(GlobalErrors.Unknown,
+                "User:" + nameof(CheckUserExists) + ":Error to check if user exists: " + e.Message);
         }
     }
 
@@ -203,7 +211,8 @@ public static class UserEntity
             }
             decoded = resultDecoded.Payload;
         } catch (Exception e) {
-            return Result<UserDb>.Fail("User:" + nameof(GetUserFromToken), "Error to decode token: " + e.Message);
+            return Result<UserDb>.Fail(GlobalErrors.Unknown,
+                "User:" + nameof(GetUserFromToken) + ":Error to decode token: " + e.Message);
         }
 
         var resultId = UserEntity.ValidateId(decoded.UserId);
@@ -219,7 +228,8 @@ public static class UserEntity
             }
             return Result<UserDb>.Ok(user.Value);
         } catch (Exception e) {
-            return Result<UserDb>.Fail("User:" + nameof(GetUserFromToken), "Error to find user by id: " + e.Message);
+            return Result<UserDb>.Fail(GlobalErrors.Unknown,
+                "User:" + nameof(GetUserFromToken) + ":Error to find user by id: " + e.Message);
         }
     }
 }

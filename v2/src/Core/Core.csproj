@@ -10,14 +10,15 @@
     <!--
         WarningsAsErrors: Treat specific warnings as build errors
 
-        0219   = CS0219: Variable assigned but never used
+        0219 = CS0219: Variable assigned but never used
         CS0168 = CS0168: Variable declared but never used
         nullable = All nullability warnings (CS8600, CS8625, etc.)
+        CS8509 = Switch expression doesn't handle all possible values
 
         This prevents Option<string>.Some(null) from compiling
         by turning the nullability warning into an error.
     -->
-    <WarningsAsErrors>0219;CS0168;nullable</WarningsAsErrors>
+    <WarningsAsErrors>0219;CS0168;nullable;CS8509;</WarningsAsErrors>
   </PropertyGroup>
 
 </Project>

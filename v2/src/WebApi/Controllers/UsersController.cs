@@ -90,12 +90,15 @@ public class UsersController : ControllerBase
                 UserSignUpErrors.InvalidUser => 400,
                 UserSignUpErrors.EmailAlreadyTaken => 400,
                 UserSignUpErrors.Unexpected => 500,
-
-                // TODO: This line is crap. Make better decision for not mapped
-                _ => throw new NotImplementedException()
+                _ => 501,
             };
-
             HttpContext.Response.StatusCode = statusCode;
+
+            if (statusCode == 501) {
+                await ControllerUtils.WriteErrorNotMappedResponse(HttpContext, result.Error);
+                return;
+            }
+
             await HttpContext.Response.WriteAsync(result.Error.Message);
         } catch (Exception e) {
             await ControllerUtils.WriteExceptionResponse(nameof(SignUp), HttpContext, e);

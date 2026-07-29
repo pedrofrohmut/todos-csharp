@@ -13,9 +13,9 @@ public class ControllerUtils
 
     public static async Task WriteErrorNotMappedResponse(HttpContext httpContext, ResultError? err = null)
     {
-        httpContext.Response.StatusCode = 500;
+        httpContext.Response.StatusCode = 501;
         if (err != null) {
-            await httpContext.Response.WriteAsync("Server Error: " + err.Message);
+            await httpContext.Response.WriteAsync("Server Error: Result Error returned is not mapped.\n" + err.Message);
         } else {
             await httpContext.Response.WriteAsync("Server Error: Result Error returned is not mapped.");
         }

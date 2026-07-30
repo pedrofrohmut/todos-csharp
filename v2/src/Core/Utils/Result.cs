@@ -31,6 +31,15 @@ public class Result
         }
     }
 
+    public Result<T> ErrorCast<T>(Enum errorEnum)
+    {
+        if (this.Error.Code is GlobalErrors.Unknown) {
+            return Result<T>.Fail(this.Error);
+        }
+        var customError = new ResultError(errorEnum, this.Error.Message);
+        return Result<T>.Fail(customError);
+    }
+
     private Result(bool isSuccess, ResultError? error)
     {
         this.isSuccess = isSuccess;
@@ -71,6 +80,15 @@ public class Result<T>
             }
             return this.error;
         }
+    }
+
+    public Result<U> ErrorCast<U>(Enum errorEnum)
+    {
+        if (this.Error.Code is GlobalErrors.Unknown) {
+            return Result<U>.Fail(this.Error);
+        }
+        var customError = new ResultError(errorEnum, this.Error.Message);
+        return Result<U>.Fail(customError);
     }
 
     public T Payload

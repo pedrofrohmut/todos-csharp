@@ -46,59 +46,47 @@ public class UserSignInUseCase
         this.authTokenService = authTokenService;
     }
 
-    private Result<UserSignInOutput> ErrorCast<T>(Enum errorEnum, Result<T> result)
-    {
-        var resultError = new ResultError(errorEnum, result.Error.Message);
-        return Result<UserSignInOutput>.Fail(result.Error);
-    }
-
-    private Result<UserSignInOutput> ErrorCast(Enum errorEnum, Result result)
-    {
-        var resultError = new ResultError(errorEnum, result.Error.Message);
-        return Result<UserSignInOutput>.Fail(result.Error);
-    }
-
     public async Task<Result<UserSignInOutput>> Execute(UserSignInInput input)
     {
         //Validate Input
         Result validationResult;
         validationResult = UserEntity.ValidateEmail(input.Email);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(UserSignInErrors.InvalidUser, validationResult);
+            return validationResult.ErrorCast<UserSignInOutput>(UserSignInErrors.InvalidUser);
         }
         validationResult = UserEntity.ValidatePassword(input.Password);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(UserSignInErrors.InvalidUser, validationResult);
+            return validationResult.ErrorCast<UserSignInOutput>(UserSignInErrors.InvalidUser);
         }
 
         // Find user by e-mail
         var query = new UserFindByEmailQuery { Email = input.Email };
-        Result<UserDb> findResult = await UserEntity.FindUserByEmail(query, this.userQueryHandler);
-        if (!findResult.IsSuccess) {
-            return ErrorCast(UserSignInErrors.UserNotFound, findResult);
+        Result<UserDb> findUserResult = await UserEntity.FindUserByEmail(query, this.userQueryHandler);
+        if (!findUserResult.IsSuccess) {
+            return findUserResult.ErrorCast<UserSignInOutput>(UserSignInErrors.UserNotFound);
         }
-        UserDb userDb = findResult.Payload;
+        UserDb userDb = findUserResult.Payload;
 
         // Check if input password and userDb passwordHash match
-        Result matchResult =
+        Result passwordMatchResult =
             UserEntity.MatchPasswordAndHash(input.Password, userDb.PasswordHash, this.passwordService);
-        if (!matchResult.IsSuccess) {
-            return ErrorCast(UserSignInErrors.PasswordMismatch, matchResult);
+        if (!passwordMatchResult.IsSuccess) {
+            return passwordMatchResult.ErrorCast<UserSignInOutput>(UserSignInErrors.PasswordMismatch);
         }
 
         // Generates a JWT with the userId
-        Result<string> tokenResult = UserEntity.GenerateAuthToken(userDb.Id, this.authTokenService);
-        if (!tokenResult.IsSuccess) {
-            return ErrorCast(UserSignInErrors.Unexpected, tokenResult);
+        Result<string> generateTokenResult = UserEntity.GenerateAuthToken(userDb.Id, this.authTokenService);
+        if (!generateTokenResult.IsSuccess) {
+            return generateTokenResult.ErrorCast<UserSignInOutput>(UserSignInErrors.Unexpected);
         }
-        string token = tokenResult.Payload;
+        string token = generateTokenResult.Payload;
 
-        var output = new UserSignInOutput {
+        var signInOutput = new UserSignInOutput {
             Id = userDb.Id,
             Name = userDb.Name,
             Email = userDb.Email,
             AuthToken = token,
         };
-        return Result<UserSignInOutput>.Ok(output);
+        return Result<UserSignInOutput>.Ok(signInOutput);
     }
 }

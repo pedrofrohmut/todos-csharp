@@ -40,46 +40,34 @@ public class UserSignUpUseCase
         this.passwordService = passwordService;
     }
 
-    private Result<UserSignUpOutput> ErrorCast(Enum errorEnum, Result result)
-    {
-        var resultError = new ResultError(errorEnum, result.Error.Message);
-        return Result<UserSignUpOutput>.Fail(resultError);
-    }
-
-    private Result<UserSignUpOutput> ErrorCast<T>(Enum errorEnum, Result<T> result)
-    {
-        var resultError = new ResultError(errorEnum, result.Error.Message);
-        return Result<UserSignUpOutput>.Fail(resultError);
-    }
-
     public async Task<Result<UserSignUpOutput>> Execute(UserSignUpInput input)
     {
         // Validate input
         Result validationResult;
         validationResult = UserEntity.ValidateName(input.Name);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(UserSignUpErrors.InvalidUser, validationResult);
+            return validationResult.ErrorCast<UserSignUpOutput>(UserSignUpErrors.InvalidUser);
         }
         validationResult = UserEntity.ValidateEmail(input.Email);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(UserSignUpErrors.InvalidUser, validationResult);
+            return validationResult.ErrorCast<UserSignUpOutput>(UserSignUpErrors.InvalidUser);
         }
         validationResult = UserEntity.ValidatePassword(input.Password);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(UserSignUpErrors.InvalidUser, validationResult);
+            return validationResult.ErrorCast<UserSignUpOutput>(UserSignUpErrors.InvalidUser);
         }
 
         // Checks if e-mail is available
         var query = new UserFindByEmailQuery { Email = input.Email };
-        Result checkResult = await UserEntity.CheckEmailIsAvailable(query, this.userQueryHandler);
-        if (!checkResult.IsSuccess) {
-            return ErrorCast(UserSignUpErrors.EmailAlreadyTaken, checkResult);
+        Result checkEmailResult = await UserEntity.CheckEmailIsAvailable(query, this.userQueryHandler);
+        if (!checkEmailResult.IsSuccess) {
+            return checkEmailResult.ErrorCast<UserSignUpOutput>(UserSignUpErrors.EmailAlreadyTaken);
         }
 
         // Generate password hash
-        Result<string> resultHash = UserEntity.HashPassword(input.Password, this.passwordService);
-        if (!resultHash.IsSuccess) {
-            return ErrorCast(UserSignUpErrors.Unexpected, resultHash);
+        Result<string> resultHashPassword = UserEntity.HashPassword(input.Password, this.passwordService);
+        if (!resultHashPassword.IsSuccess) {
+            return resultHashPassword.ErrorCast<UserSignUpOutput>(UserSignUpErrors.Unexpected);
         }
 
         // Create User
@@ -88,9 +76,9 @@ public class UserSignUpUseCase
             Email = input.Email,
             PasswordHash = resultHash.Payload,
         };
-        Result createResult = await UserEntity.CreateUser(command, this.userCommandHandler);
-        if (!createResult.IsSuccess) {
-            return ErrorCast(UserSignUpErrors.Unexpected, createResult);
+        Result createUserResult = await UserEntity.CreateUser(command, this.userCommandHandler);
+        if (!createUserResult.IsSuccess) {
+            return createUserResult.ErrorCast<UserSignUpOutput>(UserSignUpErrors.Unexpected);
         }
 
         return Result<UserSignUpOutput>.Ok(new UserSignUpOutput {});

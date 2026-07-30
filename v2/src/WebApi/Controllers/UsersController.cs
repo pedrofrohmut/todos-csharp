@@ -49,44 +49,6 @@ public class UsersController : ControllerBase
                 return;
             }
 
-            if (result.Error is InvalidUserError || result.Error is EmailAlreadyTakenError) {
-                HttpContext.Response.StatusCode = 400;
-                await HttpContext.Response.WriteAsync(result.Error.Message);
-                return;
-            }
-
-            await ControllerUtils.WriteErrorNotMappedResponse(HttpContext, result.Error);
-        } catch (Exception e) {
-            await ControllerUtils.WriteExceptionResponse(nameof(SignUp), HttpContext, e);
-            return;
-        } finally {
-            DbConnectionManager.CloseConnection(writeConnection);
-            DbConnectionManager.CloseConnection(readConnection);
-        }
-    }
-
-    [HttpPost("signup2")]
-    public async Task SignUp2([FromBody] SignUpBody body)
-    {
-        var writeConnection = DbConnectionManager.GetWriteConnection();
-        var readConnection = DbConnectionManager.GetReadConnection();
-
-        try {
-            var useCase = UseCasesFactory.GetUserSignUpUseCase(writeConnection, readConnection);
-            var input = new UserSignUpInput {
-                Name = body.Name,
-                Email = body.Email,
-                Password = body.Password,
-            };
-
-            var result = await useCase.Execute(input);
-
-            if (result.IsSuccess) {
-                HttpContext.Response.StatusCode = 201;
-                await HttpContext.Response.WriteAsync("Sign Up: User created successfully.");
-                return;
-            }
-
             int statusCode = result.Error.Code switch {
                 UserSignUpErrors.InvalidUser => 400,
                 UserSignUpErrors.EmailAlreadyTaken => 400,
@@ -112,47 +74,6 @@ public class UsersController : ControllerBase
 
     [HttpPost("signin")]
     public async Task SignIn([FromBody] SignInBody body)
-    {
-        var readConnection = DbConnectionManager.GetReadConnection();
-
-        try {
-            var useCase = UseCasesFactory.GetUserSignInUseCase(readConnection);
-            var input = new UserSignInInput {
-                Email = body.Email,
-                Password = body.Password,
-            };
-
-            var result = await useCase.Execute(input);
-
-            if (result.IsSuccess) {
-                HttpContext.Response.StatusCode = 200;
-                await HttpContext.Response.WriteAsJsonAsync(result.Payload);
-                return;
-            }
-
-            if (result.Error is InvalidUserError || result.Error is PasswordMismatchError) {
-                HttpContext.Response.StatusCode = 400;
-                await HttpContext.Response.WriteAsync(result.Error.Message);
-                return;
-            }
-
-            if (result.Error is UserNotFoundError) {
-                HttpContext.Response.StatusCode = 404;
-                await HttpContext.Response.WriteAsync(result.Error.Message);
-                return;
-            }
-
-            await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
-        } catch (Exception e) {
-            await ControllerUtils.WriteExceptionResponse(nameof(SignIn), HttpContext, e);
-            return;
-        } finally {
-            DbConnectionManager.CloseConnection(readConnection);
-        }
-    }
-
-    [HttpPost("signin2")]
-    public async Task SignIn2([FromBody] SignInBody body)
     {
         var readConnection = DbConnectionManager.GetReadConnection();
 

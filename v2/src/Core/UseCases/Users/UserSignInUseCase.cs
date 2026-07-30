@@ -1,5 +1,6 @@
 using Todos.Core.Db;
 using Todos.Core.Entities;
+using Todos.Core.Errors;
 using Todos.Core.Queries;
 using Todos.Core.Queries.Handlers;
 using Todos.Core.Services;
@@ -21,6 +22,14 @@ public readonly struct UserSignInOutput
     public string AuthToken { get; init; }
 }
 
+public enum UserSignInErrors
+{
+    InvalidUser,
+    PasswordMismatch,
+    UserNotFound,
+    Unexpected,
+}
+
 public class UserSignInUseCase
 {
     private readonly IUserQueryHandler userQueryHandler;
@@ -37,13 +46,15 @@ public class UserSignInUseCase
         this.authTokenService = authTokenService;
     }
 
-    private Result<UserSignInOutput> ErrorCast<T>(Result<T> result)
+    private Result<UserSignInOutput> ErrorCast<T>(Enum errorEnum, Result<T> result)
     {
+        var resultError = new ResultError(errorEnum, result.Error.Message);
         return Result<UserSignInOutput>.Fail(result.Error);
     }
 
-    private Result<UserSignInOutput> ErrorCast(Result result)
+    private Result<UserSignInOutput> ErrorCast(Enum errorEnum, Result result)
     {
+        var resultError = new ResultError(errorEnum, result.Error.Message);
         return Result<UserSignInOutput>.Fail(result.Error);
     }
 
@@ -53,18 +64,18 @@ public class UserSignInUseCase
         Result validationResult;
         validationResult = UserEntity.ValidateEmail(input.Email);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(validationResult);
+            return ErrorCast(UserSignInErrors.InvalidUser, validationResult);
         }
         validationResult = UserEntity.ValidatePassword(input.Password);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(validationResult);
+            return ErrorCast(UserSignInErrors.InvalidUser, validationResult);
         }
 
         // Find user by e-mail
         var query = new UserFindByEmailQuery { Email = input.Email };
         Result<UserDb> findResult = await UserEntity.FindUserByEmail(query, this.userQueryHandler);
         if (!findResult.IsSuccess) {
-            return ErrorCast(findResult);
+            return ErrorCast(UserSignInErrors.UserNotFound, findResult);
         }
         UserDb userDb = findResult.Payload;
 
@@ -72,13 +83,13 @@ public class UserSignInUseCase
         Result matchResult =
             UserEntity.MatchPasswordAndHash(input.Password, userDb.PasswordHash, this.passwordService);
         if (!matchResult.IsSuccess) {
-            return ErrorCast(matchResult);
+            return ErrorCast(UserSignInErrors.PasswordMismatch, matchResult);
         }
 
         // Generates a JWT with the userId
         Result<string> tokenResult = UserEntity.GenerateAuthToken(userDb.Id, this.authTokenService);
         if (!tokenResult.IsSuccess) {
-            return ErrorCast(tokenResult);
+            return ErrorCast(UserSignInErrors.Unexpected, tokenResult);
         }
         string token = tokenResult.Payload;
 

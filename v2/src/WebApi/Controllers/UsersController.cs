@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Todos.Core.UseCases.Users;
 using Todos.Infra;
 using Todos.Core.Errors;
+using Todos.Core.Utils;
 
 namespace Todos.WebApi.Controllers;
 
@@ -142,6 +143,48 @@ public class UsersController : ControllerBase
             }
 
             await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
+        } catch (Exception e) {
+            await ControllerUtils.WriteExceptionResponse(nameof(SignIn), HttpContext, e);
+            return;
+        } finally {
+            DbConnectionManager.CloseConnection(readConnection);
+        }
+    }
+
+    [HttpPost("signin2")]
+    public async Task SignIn2([FromBody] SignInBody body)
+    {
+        var readConnection = DbConnectionManager.GetReadConnection();
+
+        try {
+            var useCase = UseCasesFactory.GetUserSignInUseCase(readConnection);
+            var input = new UserSignInInput {
+                Email = body.Email,
+                Password = body.Password,
+            };
+
+            Result<UserSignInOutput> result = await useCase.Execute(input);
+
+            if (result.IsSuccess) {
+                HttpContext.Response.StatusCode = 200;
+                await HttpContext.Response.WriteAsJsonAsync(result.Payload);
+                return;
+            }
+
+            int statusCode = result.Error.Code switch {
+                UserSignInErrors.InvalidUser or UserSignInErrors.PasswordMismatch => 400,
+                UserSignInErrors.UserNotFound => 404,
+                UserSignInErrors.Unexpected => 500,
+                _ => 501,
+            };
+            HttpContext.Response.StatusCode = statusCode;
+
+            if (statusCode == 501) {
+                await ControllerUtils.WriteErrorNotMappedResponse(HttpContext, result.Error);
+                return;
+            }
+
+            await HttpContext.Response.WriteAsync(result.Error.Message);
         } catch (Exception e) {
             await ControllerUtils.WriteExceptionResponse(nameof(SignIn), HttpContext, e);
             return;

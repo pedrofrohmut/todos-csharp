@@ -16,8 +16,14 @@ public readonly struct CreateTodoInput
     public string? AuthToken { get; init; }
 }
 
-public readonly struct CreateTodoOutput
+public readonly struct CreateTodoOutput {}
+
+public enum CreateTodoErrors
 {
+    InvalidTodo,
+    InvalidAuthToken,
+    UserNotFound,
+    Unexpected,
 }
 
 public class CreateTodoUseCase
@@ -35,38 +41,28 @@ public class CreateTodoUseCase
         this.todoCommandHandler = todoCommandHandler;
     }
 
-    private Result<CreateTodoOutput> ErrorCast<T>(Result<T> result)
-    {
-        return Result<CreateTodoOutput>.Fail(result.Error);
-    }
-
-    private Result<CreateTodoOutput> ErrorCast(Result result)
-    {
-        return Result<CreateTodoOutput>.Fail(result.Error);
-    }
-
     public async Task<Result<CreateTodoOutput>> Execute(CreateTodoInput input)
     {
         // Validate input
         Result validationResult;
         validationResult = TodoEntity.ValidateName(input.Name);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(validationResult);
+            return validationResult.ErrorCast<CreateTodoOutput>(CreateTodoErrors.InvalidTodo);
         }
         validationResult = TodoEntity.ValidateDescription(input.Description);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(validationResult);
+            return validationResult.ErrorCast<CreateTodoOutput>(CreateTodoErrors.InvalidTodo);
         }
 
         // Get and validate auth token
-        Result<AuthToken> getResult = UserEntity.GetAuthToken(input.AuthToken, this.authTokenService);
-        if (!getResult.IsSuccess) {
-            return ErrorCast(getResult);
+        Result<AuthToken> getTokenResult = UserEntity.GetAuthToken(input.AuthToken, this.authTokenService);
+        if (!getTokenResult.IsSuccess) {
+            return getTokenResult.ErrorCast<CreateTodoOutput>(CreateTodoErrors.InvalidAuthToken);
         }
-        AuthToken authToken = getResult.Payload;
+        AuthToken authToken = getTokenResult.Payload;
         validationResult = UserEntity.ValidateAuthToken(authToken);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(validationResult);
+            return validationResult.ErrorCast<CreateTodoOutput>(CreateTodoErrors.InvalidAuthToken);
         }
         int userId = authToken.UserId;
 
@@ -74,7 +70,7 @@ public class CreateTodoUseCase
         var query = new UserFindByIdQuery { Id = userId };
         Result<UserDb> findUserResult = await UserEntity.FindUserById(query, this.userQueryHandler);
         if (!findUserResult.IsSuccess) {
-            return ErrorCast(findUserResult);
+            return findUserResult.ErrorCast<CreateTodoOutput>(CreateTodoErrors.UserNotFound);
         }
         UserDb userDb = findUserResult.Payload;
 
@@ -86,7 +82,7 @@ public class CreateTodoUseCase
         };
         Result createResult = await TodoEntity.CreateTodo(command, this.todoCommandHandler);
         if (!createResult.IsSuccess) {
-            return ErrorCast(createResult);
+            return createResult.ErrorCast<CreateTodoOutput>(CreateTodoErrors.Unexpected);
         }
 
         return Result<CreateTodoOutput>.Ok(new CreateTodoOutput {});

@@ -37,6 +37,9 @@ public class TodoEntity
 
     public static Result ValidateDescription(string description)
     {
+        if (string.IsNullOrWhiteSpace(description)) {
+            return Result.Ok();
+        }
         if (description.Length < 3) {
             return Result.Fail(new InvalidTodoError("Description is too short. Description must be at least 3 characters long."));
         }

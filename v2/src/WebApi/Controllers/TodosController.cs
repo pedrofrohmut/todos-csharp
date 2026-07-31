@@ -48,19 +48,21 @@ public class TodosController : ControllerBase
                 return;
             }
 
-            if (result.Error is InvalidTodoError) {
-                HttpContext.Response.StatusCode = 400;
-                await HttpContext.Response.WriteAsync(result.Error.Message);
+            int statusCode = result.Error.Code switch {
+                CreateTodoErrors.InvalidTodo => 400,
+                CreateTodoErrors.InvalidAuthToken => 401,
+                CreateTodoErrors.UserNotFound => 404,
+                CreateTodoErrors.Unexpected => 500,
+                _ => 501,
+            };
+            HttpContext.Response.StatusCode = statusCode;
+
+            if (statusCode == 501) {
+                await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
                 return;
             }
 
-            if (result.Error is InvalidTokenError) {
-                HttpContext.Response.StatusCode = 401;
-                await HttpContext.Response.WriteAsync(result.Error.Message);
-                return;
-            }
-
-            await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
+            await HttpContext.Response.WriteAsync(result.Error.Message);
         } catch (Exception e) {
             await ControllerUtils.WriteExceptionResponse(nameof(CreateTodo), HttpContext, e);
             return;

@@ -16,6 +16,12 @@ public readonly struct VerifyAuthTokenOutput
     public bool IsValid { get; init; }
 }
 
+public enum VerifyAuthTokenErrors
+{
+    InvalidToken,
+    UserNotFound,
+}
+
 public class VerifyAuthTokenUseCase
 {
     private readonly IAuthTokenService authTokenService;
@@ -27,36 +33,26 @@ public class VerifyAuthTokenUseCase
         this.userQueryHandler = userQueryHandler;
     }
 
-    private Result<VerifyAuthTokenOutput> ErrorCast<T>(Result<T> result)
-    {
-        return Result<VerifyAuthTokenOutput>.Fail(result.Error);
-    }
-
-    private Result<VerifyAuthTokenOutput> ErrorCast(Result result)
-    {
-        return Result<VerifyAuthTokenOutput>.Fail(result.Error);
-    }
-
     public async Task<Result<VerifyAuthTokenOutput>> Execute(VerifyAuthTokenInput input)
     {
         // Get decoded token
         Result<AuthToken> tokenResult = UserEntity.GetAuthToken(input.AuthToken, this.authTokenService);
         if (!tokenResult.IsSuccess) {
-            return ErrorCast(tokenResult);
+            return tokenResult.ErrorCast<VerifyAuthTokenOutput>(VerifyAuthTokenErrors.InvalidToken);
         }
         AuthToken authToken = tokenResult.Payload;
 
         // Validate token
         Result validationResult = UserEntity.ValidateAuthToken(authToken);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(tokenResult);
+            return validationResult.ErrorCast<VerifyAuthTokenOutput>(VerifyAuthTokenErrors.InvalidToken);
         }
 
         // Check user exists by id
         var query = new UserFindByIdQuery { Id = authToken.UserId };
         Result checkResult = await UserEntity.CheckUserExists(query, this.userQueryHandler);
         if (!checkResult.IsSuccess) {
-            return ErrorCast(checkResult);
+            return checkResult.ErrorCast<VerifyAuthTokenOutput>(VerifyAuthTokenErrors.UserNotFound);
         }
 
         return Result<VerifyAuthTokenOutput>.Ok(new VerifyAuthTokenOutput { IsValid = true });

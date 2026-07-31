@@ -74,7 +74,7 @@ public class UserSignUpUseCase
         var command = new CreateUserCommand {
             Name = input.Name,
             Email = input.Email,
-            PasswordHash = resultHash.Payload,
+            PasswordHash = resultHashPassword.Payload,
         };
         Result createUserResult = await UserEntity.CreateUser(command, this.userCommandHandler);
         if (!createUserResult.IsSuccess) {

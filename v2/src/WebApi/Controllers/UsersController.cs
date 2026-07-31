@@ -125,7 +125,7 @@ public class UsersController : ControllerBase
             var useCase = UseCasesFactory.GetVerifyAuthTokenUseCase(writeConnection);
             var input = new VerifyAuthTokenInput { AuthToken = token };
 
-            var result = await useCase.Execute(input);
+            Result<VerifyAuthTokenOutput> result = await useCase.Execute(input);
 
             if (result.IsSuccess) {
                 HttpContext.Response.StatusCode = 200;
@@ -133,19 +133,19 @@ public class UsersController : ControllerBase
                 return;
             }
 
-            if (result.Error is InvalidTokenError) {
-                HttpContext.Response.StatusCode = 400;
-                await HttpContext.Response.WriteAsync(result.Error.Message);
+            int statusCode = result.Error.Code switch {
+                VerifyAuthTokenErrors.InvalidToken => 400,
+                VerifyAuthTokenErrors.UserNotFound => 404,
+                _ => 501,
+            };
+            HttpContext.Response.StatusCode = statusCode;
+
+            if (statusCode == 501) {
+                await ControllerUtils.WriteErrorNotMappedResponse(HttpContext, result.Error);
                 return;
             }
 
-            if (result.Error is UserNotFoundError) {
-                HttpContext.Response.StatusCode = 404;
-                await HttpContext.Response.WriteAsync(result.Error.Message);
-                return;
-            }
-
-            await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
+            await HttpContext.Response.WriteAsync(result.Error.Message);
         } catch (Exception e) {
             await ControllerUtils.WriteExceptionResponse(nameof(Verify), HttpContext, e);
             return;

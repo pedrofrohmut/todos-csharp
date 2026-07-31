@@ -7,5 +7,8 @@ public readonly struct TodoDb
     public string Description { get; init; }
     public bool IsDone { get; init; }
 
+    public DateTime CreatedAt { get; init; }
+    public DateTime UpdatedAt { get; init; }
+
     public int UserId { get; init; }
 }

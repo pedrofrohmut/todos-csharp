@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Todos.Core.UseCases.Todos;
 using Todos.Infra;
 using Todos.Core.Errors;
+using Todos.Core.Utils;
 
 namespace Todos.WebApi.Controllers;
 
@@ -40,7 +41,7 @@ public class TodosController : ControllerBase
                 AuthToken = authToken,
             };
 
-            var result = await useCase.Execute(input);
+            Result<CreateTodoOutput> result = await useCase.Execute(input);
 
             if (result.IsSuccess) {
                 HttpContext.Response.StatusCode = 201;
@@ -58,7 +59,7 @@ public class TodosController : ControllerBase
             HttpContext.Response.StatusCode = statusCode;
 
             if (statusCode == 501) {
-                await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
+                await ControllerUtils.WriteErrorNotMappedResponse(HttpContext, result.Error);
                 return;
             }
 
@@ -87,7 +88,7 @@ public class TodosController : ControllerBase
                 AuthToken = authToken,
             };
 
-            var result = await useCase.Execute(input);
+            Result<DeleteTodoOutput> result = await useCase.Execute(input);
 
             if (result.IsSuccess) {
                 HttpContext.Response.StatusCode = 204;
@@ -95,19 +96,22 @@ public class TodosController : ControllerBase
                 return;
             }
 
-            if (result.Error is InvalidTodoError) {
-                HttpContext.Response.StatusCode = 400;
-                await HttpContext.Response.WriteAsync(result.Error.Message);
+            int statusCode = result.Error.Code switch {
+                DeleteTodoErrors.InvalidTodo => 400,
+                DeleteTodoErrors.InvalidAuthToken => 401,
+                DeleteTodoErrors.UserNotFound or DeleteTodoErrors.TodoNotFound => 404,
+                DeleteTodoErrors.Ownership => 403,
+                DeleteTodoErrors.Unexpected => 500,
+                _ => 501,
+            };
+            HttpContext.Response.StatusCode = statusCode;
+
+            if (statusCode == 501) {
+                await ControllerUtils.WriteErrorNotMappedResponse(HttpContext, result.Error);
                 return;
             }
 
-            if (result.Error is InvalidTokenError or TodoOwnershipError) {
-                HttpContext.Response.StatusCode = 401;
-                await HttpContext.Response.WriteAsync(result.Error.Message);
-                return;
-            }
-
-            await ControllerUtils.WriteErrorNotMappedResponse(HttpContext);
+            await HttpContext.Response.WriteAsync(result.Error.Message);
         } catch (Exception e) {
             await ControllerUtils.WriteExceptionResponse(nameof(DeleteTodo), HttpContext, e);
             return;

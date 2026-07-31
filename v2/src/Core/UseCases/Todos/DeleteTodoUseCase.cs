@@ -15,8 +15,16 @@ public readonly struct DeleteTodoInput
     public string? AuthToken { get; init; }
 }
 
-public readonly struct DeleteTodoOutput
+public readonly struct DeleteTodoOutput {}
+
+public enum DeleteTodoErrors
 {
+    InvalidTodo,
+    InvalidAuthToken,
+    UserNotFound,
+    TodoNotFound,
+    Ownership,
+    Unexpected,
 }
 
 public class DeleteTodoUseCase
@@ -37,46 +45,48 @@ public class DeleteTodoUseCase
         this.todoCommandHandler = todoCommandHandler;
     }
 
-    private Result<DeleteTodoOutput> ErrorCast<T>(Result<T> result)
-    {
-        return Result<DeleteTodoOutput>.Fail(result.Error);
-    }
-
-    private Result<DeleteTodoOutput> ErrorCast(Result result)
-    {
-        return Result<DeleteTodoOutput>.Fail(result.Error);
-    }
-
     public async Task<Result<DeleteTodoOutput>> Execute(DeleteTodoInput input)
     {
         // Validate Input
         Result validationResult = TodoEntity.ValidateId(input.Id);
         if (!validationResult.IsSuccess) {
-            return ErrorCast(validationResult);
+            return validationResult.ErrorCast<DeleteTodoOutput>(DeleteTodoErrors.InvalidTodo);
         }
 
-        // Get user info from token and find userDb with it
-        Result<UserDb> getUserResult =
-            await UserEntity.GetUserFromToken(input.AuthToken, this.authTokenService, this.userQueryHandler);
-        if (!getUserResult.IsSuccess) {
-            return ErrorCast(getUserResult);
+        // Get and validate auth token
+        Result<AuthToken> getTokenResult = UserEntity.GetAuthToken(input.AuthToken, this.authTokenService);
+        if (!getTokenResult.IsSuccess) {
+            return getTokenResult.ErrorCast<DeleteTodoOutput>(DeleteTodoErrors.InvalidAuthToken);
         }
-        UserDb user = getUserResult.Payload;
+        AuthToken authToken = getTokenResult.Payload;
+        validationResult = UserEntity.ValidateAuthToken(authToken);
+        if (!validationResult.IsSuccess) {
+            return validationResult.ErrorCast<DeleteTodoOutput>(DeleteTodoErrors.InvalidAuthToken);
+        }
+        int userId = authToken.UserId;
+
+        // Get user from token
+        var findUserQuery = new UserFindByIdQuery { Id = userId };
+        Result<UserDb> findUserResult = await UserEntity.FindUserById(findUserQuery, this.userQueryHandler);
+        if (!findUserResult.IsSuccess) {
+            return findUserResult.ErrorCast<DeleteTodoOutput>(DeleteTodoErrors.UserNotFound);
+        }
+        UserDb userDb = findUserResult.Payload;
 
         // Checks if todo exists
-        var query = new TodoFindByIdQuery {
+        var findTodoQuery = new TodoFindByIdQuery {
             Id = input.Id,
         };
-        Result<TodoDb> findResult = await TodoEntity.FindTodoById(query, this.todoQueryHandler);
-        if (!findResult.IsSuccess) {
-            return ErrorCast(getUserResult);
+        Result<TodoDb> findTodoResult = await TodoEntity.FindTodoById(findTodoQuery, this.todoQueryHandler);
+        if (!findTodoResult.IsSuccess) {
+            return findTodoResult.ErrorCast<DeleteTodoOutput>(DeleteTodoErrors.TodoNotFound);
         }
-        TodoDb todo = findResult.Payload;
+        TodoDb todo = findTodoResult.Payload;
 
         // Check todo ownership
-        Result ownershipResult = TodoEntity.CheckTodoOwnership(user, todo);
+        Result ownershipResult = TodoEntity.CheckTodoOwnership(userDb, todo);
         if (!ownershipResult.IsSuccess) {
-            return ErrorCast(ownershipResult);
+            return ownershipResult.ErrorCast<DeleteTodoOutput>(DeleteTodoErrors.Ownership);
         }
 
         // Delete todo
@@ -85,7 +95,7 @@ public class DeleteTodoUseCase
         };
         Result deleteResult = await TodoEntity.DeleteTodo(command, this.todoCommandHandler);
         if (!deleteResult.IsSuccess) {
-            return ErrorCast(deleteResult);
+            return deleteResult.ErrorCast<DeleteTodoOutput>(DeleteTodoErrors.Unexpected);
         }
 
         return Result<DeleteTodoOutput>.Ok(new DeleteTodoOutput {});

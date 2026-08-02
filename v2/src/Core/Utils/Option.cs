@@ -64,7 +64,7 @@ public readonly struct Option<T> where T : notnull
 }
 
 /*
-   This class serves as a facade to simplify the using Option<T>
+   This is a helper class to simplify the using Option<T>
 */
 public static class Option
 {
